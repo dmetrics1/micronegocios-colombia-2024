@@ -7,8 +7,8 @@
 Abre **RStudio** y copia esto en la consola:
 
 ```r
-# Cambiar directorio
-setwd("C:/Users/Estudiante/OneDrive - Universidad del Magdalena/marca_personal_dm/portafolio/emicron")
+# Abrir el proyecto en RStudio (emicron.Rproj) para configurar el directorio automáticamente
+# O configurar manualmente: setwd(".") 
 
 # Ejecutar el pipeline completo
 source("main.R")
@@ -24,8 +24,7 @@ source("main.R")
 
 Si ya ejecutaste 01 y 02 antes, y solo quieres regenerar los cuadros:
 
-```r
-setwd("C:/Users/Estudiante/OneDrive - Universidad del Magdalena/marca_personal_dm/portafolio/emicron")
+# Asegurarse de estar en la raíz del proyecto (emicron.Rproj)
 source("scripts/03_cuadros_boletin_COMPLETO.R")
 ```
 

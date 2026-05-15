@@ -5,7 +5,8 @@
 # Usa las ~30 variables categóricas para encontrar patrones
 # =====================================================================
 
-setwd("C:/Users/Estudiante/OneDrive - Universidad del Magdalena/marca_personal_dm/portafolio/emicron")
+# Configurar directorio de trabajo (Opcional si usas RProject)
+# setwd(".") # El directorio base es la carpeta del proyecto
 
 cat("=====================================================================\n")
 cat(" EJECUCIÓN RÁPIDA: EDA + APRIORI — EMICRON 2024\n")

@@ -5,7 +5,8 @@
 library(data.table)
 library(stringr)
 
-setwd("C:/Users/Estudiante/OneDrive - Universidad del Magdalena/marca_personal_dm/portafolio/emicron")
+# Configurar directorio de trabajo (Opcional si usas RProject)
+# setwd(".") 
 
 # 1. CARGAR DATOS
 # =====================================================================
