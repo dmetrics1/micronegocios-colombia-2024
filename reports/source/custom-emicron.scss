@@ -1,0 +1,389 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Segoe UI", -apple-system, sans-serif;
+$headings-font-family: "Segoe UI", sans-serif;
+$body-bg: #FAFAF8;
+$body-color: #1a1a1a;
+$link-color: #0072B2;
+$primary: #0072B2;
+$success: #06A77D;
+$warning: #FFB703;
+$danger: #E63946;
+$toc-width: 320px;
+
+/*-- scss:rules --*/
+
+/* ========== 1. RESET GLOBAL ========== */
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ========== 2. CONTENEDOR PRINCIPAL ========== */
+.quarto-container {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ========== 3. LAYOUT CON GRID (MEJOR QUE FLEXBOX) ========== */
+.page-columns {
+  display: grid !important;
+  grid-template-columns: $toc-width 1fr !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  gap: 0 !important;
+  align-items: stretch !important;
+}
+
+/* ========== 4. SIDEBAR / TOC ========== */
+#quarto-sidebar, .sidebar, #TOC {
+  grid-column: 1 !important;
+  width: $toc-width !important;
+  max-width: $toc-width !important;
+  background: #F7F9FB !important;
+  padding: 1.5rem 1rem !important;
+  border-left: 4px solid #0072B2 !important;
+  border-radius: 0 8px 8px 0 !important;
+
+  position: sticky !important;
+  top: 1.5rem !important;
+  height: calc(100vh - 3rem) !important;
+  overflow-y: auto !important;
+  z-index: 1000 !important;
+}
+
+/* Layout principal - EXPANDIR CONTENIDO */
+.quarto-container {
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+main {
+  grid-column: 2 !important;
+  max-width: 100%;
+  padding: 0 3rem 4rem 3rem;
+  margin: 0;
+  width: 100%;
+}
+
+section {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* TOC Links */
+#TOC ul {
+  list-style: none !important;
+  padding-left: 0.5rem !important;
+}
+
+#TOC li {
+  margin: 0.6rem 0 !important;
+  padding-left: 1.2rem !important;
+  position: relative !important;
+
+  &:before {
+    content: "▸";
+    position: absolute !important;
+    left: 0 !important;
+    color: #0072B2 !important;
+    font-weight: bold;
+  }
+}
+
+#TOC a {
+  color: #0072B2 !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 0.9rem !important;
+
+  &:hover {
+    color: #004B87 !important;
+  }
+}
+
+figure {
+  max-width: 100%;
+}
+
+/* Portada elegante */
+.quarto-title-block {
+  background: linear-gradient(135deg, #0072B2 0%, #004B87 100%);
+  color: white;
+  padding: 2.5rem 2rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+  margin-left: 0;
+  margin-right: 0;
+  box-shadow: 0 4px 16px rgba(0, 114, 178, 0.15);
+  width: 100%;
+
+  .title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    opacity: 0.92;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+  }
+  .author, .date {
+    opacity: 0.85;
+    font-size: 0.95rem;
+  }
+}
+
+/* Secciones principales */
+h1 {
+  border-bottom: 3px solid #0072B2;
+  padding-bottom: 0.7rem;
+  margin-top: 2.5rem;
+  font-size: 2rem;
+}
+
+h2 {
+  border-left: 4px solid #0072B2;
+  padding-left: 0.8rem;
+  margin-top: 2rem;
+  color: #0072B2;
+}
+
+h3 {
+  color: #004B87;
+  margin-top: 1.5rem;
+}
+
+/* Tablas profesionales */
+table {
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+
+  thead {
+    background: #E8ECF1;
+    color: #0072B2;
+    font-weight: 600;
+    border-bottom: 2px solid #0072B2;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #F7F9FB;
+  }
+
+  tbody tr:hover {
+    background: #EFF5F9;
+  }
+
+  td, th {
+    padding: 0.75rem 1rem;
+    border: 1px solid #E0E6ED;
+  }
+}
+
+/* Contenedor de tablas expandido */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Callouts personalizados */
+.callout {
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  border-left: 4px solid;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.callout-note {
+  border-left-color: #0072B2;
+  background: #EFF5F9;
+}
+
+.callout-important {
+  border-left-color: #E63946;
+  background: #FFEBEE;
+}
+
+.callout-tip {
+  border-left-color: #06A77D;
+  background: #E8F5E9;
+}
+
+.callout-warning {
+  border-left-color: #FFB703;
+  background: #FFF9C4;
+}
+
+.callout-title {
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+/* Código */
+code {
+  background: #F5F7FA;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  font-family: "Courier New", monospace;
+  color: #004B87;
+}
+
+pre {
+  background: #2B3E50;
+  color: #ECF0F1;
+  border-radius: 8px;
+  padding: 1.5rem;
+  border-left: 4px solid #0072B2;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+pre code {
+  background: none;
+  color: #ECF0F1;
+  padding: 0;
+}
+
+/* Figuras */
+figure {
+  margin: 2rem 0;
+  text-align: center;
+
+  img {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.8rem;
+    font-style: italic;
+  }
+}
+
+
+/* ========== 7. BODY Y PÁGINA ========== */
+body {
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
+a {
+  color: #0072B2;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-bottom-color: #0072B2;
+  }
+}
+
+/* Listados */
+ul, ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+
+  li {
+    margin: 0.5rem 0;
+  }
+}
+
+blockquote {
+  border-left: 4px solid #0072B2;
+  padding-left: 1rem;
+  margin-left: 0;
+  color: #555;
+  font-style: italic;
+  background: #F7F9FB;
+  padding: 1rem;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Botón en HTML */
+.btn {
+  background: #0072B2;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #004B87;
+  }
+}
+
+/* Línea separadora */
+hr {
+  border: none;
+  border-top: 2px solid #E0E6ED;
+  margin: 2rem 0;
+}
+
+/* Footer info */
+.footer-content {
+  background: #F5F7FA;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+  color: #666;
+  border-left: 4px solid #0072B2;
+}
+
+/* Expandir contenido principal */
+.quarto-layout-panel {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.column-screen-inset-right {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+  width: 100% !important;
+}
+
+.column-page {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+.column-page-left {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Aumentar ancho de figuras */
+figure {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+figure img {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* Margenes generales optimizados */
+.quarto-container {
+  max-width: 100% !important;
+  margin-left: auto;
+  margin-right: auto;
+}

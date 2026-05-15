@@ -1,0 +1,51 @@
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+*.Rproj
+.Rprofile
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Quarto
+_quarto.yml
+.quarto/
+*_files/
+*.knit.md
+
+# Data sensible
+*.csv
+!data/raw/**/*.csv
+data/external/
+
+# Archivos generados
+*.html
+*.pdf
+output/
+reports/html/
+reports/pdf/
+
+# Node y dependencias
+node_modules/
+package-lock.json
+
+# Cache
+.cache/
+*.cache

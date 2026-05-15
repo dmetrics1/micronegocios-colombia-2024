@@ -1,0 +1,212 @@
+/*-- scss:defaults --*/
+$font-family-sans-serif: "Segoe UI", -apple-system, sans-serif;
+$headings-font-family: "Segoe UI", sans-serif;
+$body-bg: #FAFAF8;
+$body-color: #1a1a1a;
+$link-color: #0072B2;
+$primary: #0072B2;
+
+/*-- scss:rules --*/
+
+/* 1. RESET Y ESTRUCTURA BASE */
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.quarto-container, 
+.quarto-content, 
+.page-columns, 
+main.content {
+  overflow: visible !important;
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+/* 2. GRID SYSTEM - SIDEBAR FIJO + CONTENIDO EXPANDIDO */
+.page-columns {
+  display: grid !important;
+  grid-template-columns: 320px 1fr !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  align-items: stretch !important;
+}
+
+/* 3. SIDEBAR (CONTENEDOR) */
+#quarto-sidebar, .sidebar {
+  grid-column: 1 !important;
+  width: 320px !important;
+  max-width: 320px !important;
+  background: transparent !important;
+  padding: 0 !important;
+  border: none !important;
+  display: block !important;
+  min-height: 100% !important;
+  overflow: visible !important;
+}
+
+/* 4. TABLA DE CONTENIDOS (TOC) - SIGUE AL USUARIO */
+
+/* Estilos comunes del TOC */
+#TOC {
+  background: white !important;
+  border-left: 6px solid #0072B2 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.12) !important;
+  padding: 2rem 1.5rem !important;
+  z-index: 9999 !important;
+  overflow-x: hidden !important;
+
+  ul {
+    list-style: none !important;
+    padding-left: 0.5rem !important;
+    margin: 0 !important;
+  }
+
+  li {
+    margin: 0.6rem 0 !important;
+    padding-left: 1.2rem !important;
+    position: relative !important;
+    
+    &:before {
+      content: "▶" !important;
+      position: absolute !important;
+      left: 0 !important;
+      color: #0072B2 !important;
+      font-size: 0.7rem !important;
+      top: 0.2rem !important;
+    }
+  }
+
+  a {
+    color: #0072B2 !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important;
+    font-weight: 600 !important;
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+    display: block !important;
+    word-wrap: break-word !important;
+
+    &:hover {
+      color: #004B87 !important;
+      text-decoration: none !important;
+    }
+  }
+}
+
+/* Comportamiento según tamaño de pantalla */
+@media (min-width: 1200px) {
+  #TOC {
+    position: fixed !important;
+    top: 2rem !important;
+    left: 20px !important;
+    width: 280px !important;
+    max-height: calc(100vh - 4rem) !important;
+    overflow-y: auto !important;
+  }
+}
+
+@media (max-width: 1199px) {
+  #TOC {
+    position: relative !important;
+    margin: 0 1rem 2rem 1rem !important;
+    width: auto !important;
+  }
+}
+
+/* 5. CONTENIDO PRINCIPAL */
+main.content {
+  grid-column: 2 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 4rem 5rem 4rem !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+/* 6. PORTADA (BANNER) */
+.quarto-title-block {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 1.5rem 0 3rem 0 !important;
+  padding: 3.5rem 2.5rem !important;
+  background: linear-gradient(135deg, #0072B2 0%, #004B87 100%);
+  color: white;
+  border-radius: 15px !important;
+  box-shadow: 0 8px 25px rgba(0, 75, 135, 0.2) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  
+  .title {
+    font-size: 3rem !important;
+    font-weight: 800;
+    line-height: 1.1;
+    color: white !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* 7. TIPOGRAFÍA DE TÍTULOS (ESTILO SOLICITADO) */
+main.content h1, 
+main.content h2, 
+main.content h3 {
+  border-left: 6px solid #0072B2 !important;
+  border-bottom: 1px solid #E2E8F0 !important;
+  padding-left: 1.2rem !important;
+  padding-bottom: 0.6rem !important;
+  margin-top: 3.5rem !important;
+  color: #0072B2 !important;
+  font-weight: 700 !important;
+}
+
+main.content h1 { font-size: 2.4rem !important; }
+main.content h2 { font-size: 1.8rem !important; margin-top: 2.5rem !important; }
+main.content h3 { font-size: 1.4rem !important; border-left-width: 4px !important; }
+
+.header-section-number {
+  color: #64748B !important;
+  margin-right: 0.6rem !important;
+  font-weight: 500 !important;
+}
+
+/* 8. ELEMENTOS MULTIMEDIA Y TABLAS */
+figure, .quarto-figure, .quarto-layout-panel {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 2.5rem 0 !important;
+}
+
+img {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 8px;
+}
+
+table {
+  width: 100% !important;
+  margin: 2rem 0 !important;
+  font-size: 0.95rem;
+  thead { background: #E8ECF1; color: #0072B2; border-bottom: 2px solid #0072B2; }
+  th, td { padding: 0.8rem 1rem; border: 1px solid #E2E8F0; }
+  tbody tr:nth-child(even) { background: #F8FAFC; }
+}
+
+/* 9. CALLOUTS */
+.callout {
+  border-radius: 12px !important;
+  border-left-width: 6px !important;
+  margin: 2rem 0 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+}
+
+/* 10. LIMPIEZA FINAL */
+#quarto-margin-sidebar { display: none !important; }
+.quarto-secondary-nav { display: none !important; }
+.sidebar nav, .quarto-sidebar-toggle { border: none !important; }

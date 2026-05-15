@@ -1,0 +1,526 @@
+---
+title: "Análisis Integral EMICRON 2024"
+subtitle: "70 Cuadros DANE + Minería de Reglas | Micronegocios Colombianos"
+author:
+  - name: "Análisis DANE Validado"
+    affiliation: "EMICRON 2024"
+date: today
+date-format: "D [de] MMMM [de] YYYY"
+lang: es
+page-layout: full
+
+format:
+  html:
+    theme: [cosmo, custom-wide-pro.scss]
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    smooth-scroll: true
+    embed-resources: true
+    fig-width: 17
+    fig-height: 6
+    fig-dpi: 300
+    df-print: paged
+    margin-top: 1.2cm
+    margin-bottom: 1.5cm
+
+execute:
+  echo: false
+  warning: false
+  message: false
+  cache: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 16,
+  fig.height = 7,
+  fig.align = 'center',
+  dpi = 300
+)
+```
+
+# RESUMEN EJECUTIVO
+
+**Universo:** 5.297.252 micronegocios | **Muestra:** 77.202 negocios | **Período:** 2024
+
+## Indicadores Clave
+
+| Indicador | Valor | Interpretación |
+|-----------|-------|-----------------|
+| **Universo Expandido** | 5,3M negocios | Mercado amplio pero muy informal |
+| **Informalidad Fiscal** | 77,6% sin RUT | Crisis estructural de formalización |
+| **Brecha Digital** | 50,4% sin internet | Polarización tecnológica |
+| **Acceso Crediticio** | 14,2% solicitó | Bajo financiamiento formal |
+| **Madurez Empresarial** | 47,4% con 10+ años | Mercado consolidado pero estancado |
+| **Tecnología Móvil** | 70,9% con celular | Puerta de entrada principal |
+
+---
+
+## Hallazgos Críticos
+
+::: {.callout-warning}
+## ⚠️ Informalidad Dual y Reforzada
+
+**77,6% sin RUT + 89,5% sin registro en Cámara** = Sistema de formalización fallido.
+La barrera es administrativa/costo prohibitivo, no falta de interés empresarial.
+:::
+
+::: {.callout-important}
+## 🔴 Brecha Digital en Punto Crítico
+
+**50,4% completamente desconectados** (sin internet). La brecha celular-internet = -21,3 puntos.
+Grupo C (1,4M negocios con celular SIN internet) es target principal para política pública.
+:::
+
+::: {.callout-tip}
+## 💡 TIC es Sistema Acoplado, No Independiente
+
+Celular + transferencias → internet (lift=1.81). No se adopta una tecnología aisladamente.
+Intervenciones de TIC deben ser integrales, no por componentes.
+:::
+
+::: {.callout-note}
+## 📌 Mercado Polarizado en 3 Grupos
+
+- **A (65%):** Excluidos — sin celular, sin internet, efectivo
+- **B (8%):** Incluidos — formalizados, digitales, competitivos
+- **C (27%):** Transición — celular SIN internet ← **TARGET**
+:::
+
+---
+
+## Metodología y Fuentes
+
+- **Base de datos:** EMICRON 2024 DANE | 77.202 observaciones × 128 variables
+- **Validación:** 70 cuadros comparados contra Boletín Técnico DANE (precisión ±0.1%)
+- **Análisis:** Descriptivo (25 gráficos) + Minería de Reglas Apriori (6 gráficos)
+- **Factor expansión:** F_EXP (DANE) para estimaciones a nivel nacional
+
+---
+
+# GRUPO A: RESULTADOS GENERALES
+
+## Situación en el Empleo del Propietario
+
+![**Figura 1A:** 90.46% Cuenta Propia vs 9.54% Empleador](output/figuras/10_A1_situacion_empleo.png)
+
+**Hallazgos clave:**
+- **90,46% operan como trabajadores independientes** sin capacidad de empleo formal.
+- Solo 9,54% son patrones/empleadores.
+- **Implicación:** Estructura laboral precaria; necesidad de programas de escalamiento.
+
+---
+
+## Sexo del Propietario
+
+![**Figura 1B:** 64.59% Hombre | 35.41% Mujer](output/figuras/11_A2_sexo_propietario.png)
+
+**Hallazgos clave:**
+- **Participación femenina significativa** (~35%) comparado con otros países.
+- Mayor inclusión en zonas urbanas (38%) vs rurales (29,5%).
+- **Implicación:** Oportunidad de políticas de empoderamiento diferenciadas por territorio.
+
+---
+
+# GRUPO B: SECTOR ECONÓMICO
+
+## Sector (4 Grupos Principales)
+
+![**Figura 2A:** Servicios 43.54% | Comercio 23.86% | Agricultura 22.56% | Industria 10.04%](output/figuras/12_B1_sector_4grupos.png)
+
+**Hallazgos clave:**
+- **Servicios concentran casi la mitad** del ecosistema microempresarial.
+- Comercio y agricultura también significativos (~46% combinados).
+- Baja manufactura (10%).
+- **Implicación:** Economía de servicios; oportunidad en agroindustria.
+
+---
+
+## Sector (12 Grupos Detallados)
+
+![**Figura 2B:** Desglose a 12 categorías económicas](output/figuras/13_B2_sector_12grupos.png)
+
+**Hallazgos clave:**
+- Diversidad sectorial importante con top 5 concentrando ~80%.
+- Subsectores de servicios artísticos, alojamiento, construcción relevantes.
+- **Implicación:** Mercado especializável; oportunidades por subsector.
+
+---
+
+# GRUPO C: EMPRENDIMIENTO
+
+## Tiempo de Funcionamiento
+
+![**Figura 3A:** 47.4% con 10+ años | 65% operan 5+ años](output/figuras/14_C3_tiempo_funcionamiento.png)
+
+**Hallazgos clave:**
+- **Mercado maduro:** Casi la mitad llevan más de una década.
+- Solo 7,8% menores a 1 año = baja renovación empresarial.
+- **Implicación:** Base consolidada pero estancada en crecimiento; necesidad de innovación.
+
+---
+
+## Fuente de Financiación
+
+![**Figura 3B:** 61.4% Ahorros | 15.5% Sin financiación | 8.8% Préstamos bancarios](output/figuras/15_C4_fuente_financiacion.png)
+
+**Hallazgos clave:**
+- **76,9% sin acceso a crédito formal** (ahorros + sin financiación).
+- Solo 8,8% acceden a préstamos bancarios.
+- 2,4% recurren a prestamistas informales ("gota a gota").
+- **Implicación:** Modelo de autofinanciamiento; falta capital de crecimiento.
+
+---
+
+# GRUPO D-E: UBICACIÓN Y OPERACIÓN
+
+## Ubicación Principal del Negocio
+
+![**Figura 4A:** 30.56% Vivienda | 17.37% Puerta a puerta | 13.46% Finca](output/figuras/16_D1_tipo_ubicacion.png)
+
+**Hallazgos clave:**
+- **47,93% sin local formal** (vivienda + domiciliarios).
+- Informalidad geográfica muy alta.
+- Agricultura/ganadería ubicada principalmente en fincas (13,46%).
+- **Implicación:** Mayoría opera informalmente sin espacio comercial fijo.
+
+---
+
+## Personal Ocupado
+
+![**Figura 4B:** 82.3% Unipersonales | 14.9% (2-3 personas) | 2.8% (4-9 personas)](output/figuras/17_E2_rangos_personal.png)
+
+**Hallazgos clave:**
+- **Negocios unipersonales prevalecen** (4,36M solo propietario).
+- Capacidad limitada de generación de empleo formal.
+- **Implicación:** Escala muy pequeña; oportunidad de programas de escalamiento.
+
+---
+
+## Personal Promedio por Sector
+
+![**Figura 4C:** Variación en empleados promedio por sector](output/figuras/18_E2a_personal_sector.png)
+
+**Hallazgos clave:**
+- Sectores con mayor empleo promedio: servicios, comercio.
+- Potencial de escalamiento diferenciado por sector.
+
+---
+
+# GRUPO F: FORMALIZACIÓN
+
+## Tenencia de RUT
+
+![**Figura 5A:** 77.61% Sin RUT | 22.39% Con RUT](output/figuras/19_F1_rut.png)
+
+**Hallazgos clave:**
+- **Crisis estructural de informalidad fiscal.** 77,61% sin registro tributario.
+- Variación crítica: Rural 94% vs Cabeceras 70,4% sin RUT.
+- **Implicación:** Barrera administrativa prohibitiva; necesidad urgente de simplificación.
+
+---
+
+## Tipo de Contabilidad
+
+![**Figura 5B:** 68.2% No lleva | 27.1% Cuaderno/Excel | 1.6% Balance formal](output/figuras/20_F4_tipo_contabilidad.png)
+
+**Hallazgos clave:**
+- **95,3% NO lleva contabilidad formal.**
+- Imposibilidad de medir rentabilidad o acceder a crédito.
+- **Implicación:** Falta de gestión financiera; ciclo vicioso de informalidad.
+
+---
+
+## Registro en Cámara de Comercio
+
+![**Figura 5C:** 89.5% No registrados | 10.5% Registrados](output/figuras/21_F6_camara_comercio.png)
+
+**Hallazgos clave:**
+- **Ausencia casi total de formalidad administrativa.**
+- Informalidad dual y reforzada (fiscal + administrativa).
+- **Implicación:** Costo/complejidad prohibitivos para microempresarios.
+
+---
+
+# GRUPO G: TECNOLOGÍA
+
+## Dispositivos Electrónicos
+
+![**Figura 6A:** 89.09% Sin dispositivos | 10.91% Con dispositivos](output/figuras/22_G1_dispositivos.png)
+
+**Hallazgos clave:**
+- **Brecha digital severa:** 89% sin computador, tablet, etc.
+- Falta capacidad para digitalizarse o adoptar pagos digitales.
+
+---
+
+## Uso de Celular
+
+![**Figura 6B:** 70.9% Usa celular | 29.1% No usa](output/figuras/23_G4A_uso_celular.png)
+
+**Hallazgos clave:**
+- **Celular es puerta de entrada más accesible** que computadores.
+- 70,9% > 10,9% (dispositivos) → diferencia crítica.
+- **Implicación:** Apps y pagos móviles podrían alcanzar ~70% del mercado.
+
+---
+
+## Uso de Internet
+
+![**Figura 6C:** 49.6% Con internet | 50.4% Sin internet](output/figuras/24_G9_uso_internet.png)
+
+**Hallazgos clave:**
+- **Brecha digital en punto crítico:** Casi paridad (casi 50-50).
+- Brecha celular-internet = -21,3 puntos (70,9% - 49,6%).
+- **Implicación:** 2,67M negocios completamente desconectados.
+
+---
+
+# GRUPO H: INCLUSIÓN FINANCIERA
+
+## Solicitud de Crédito
+
+![**Figura 7A:** 85.8% No solicitó | 14.2% Sí solicitó](output/figuras/25_H2_solicito_credito.png)
+
+**Hallazgos clave:**
+- **Acceso crediticio extremadamente bajo** (85,8% no solicita).
+- Posibles causas: autofinanciamiento, desconfianza, requisitos prohibitivos.
+- **Implicación:** Vulnerabilidad a endeudamiento predatorio.
+
+---
+
+## Hábito de Ahorro
+
+![**Figura 7B:** 49.6% Ahorra | 50.4% No ahorra](output/figuras/26_H7_ahorro.png)
+
+**Hallazgos clave:**
+- **Apenas mitad ahorra regularmente.**
+- Variación sectorial importante.
+- **Implicación:** Potencial para programas de ahorro incentivado.
+
+---
+
+# GRUPO J + V: GEOGRAFÍA E INGRESOS
+
+## Micronegocios por Departamento
+
+![**Figura 8A:** Concentración geográfica en Top 10](output/figuras/27_J1_departamentos_top10.png)
+
+**Hallazgos clave:**
+- Concentración significativa en grandes ciudades.
+- Top 3 departamentos concentran ~40% del mercado.
+- **Implicación:** Disparidades regionales importantes.
+
+---
+
+## Ingresos Totales por Sector
+
+![**Figura 8B:** Variación en generación de ingresos anuales (millones COP)](output/figuras/28_V1_ingresos_sector.png)
+
+**Hallazgos clave:**
+- Sectores varían significativamente en productividad.
+- Comercio genera ingresos superiores; servicios tienen más negocios.
+- **Implicación:** Oportunidades de crecimiento diferenciadas por sector.
+
+---
+
+# MINERÍA DE REGLAS DE ASOCIACIÓN (APRIORI)
+
+**Metodología:** Algoritmo Apriori con Support ≥15%, Confidence ≥70%
+**Resultados:** 55.906 reglas generadas → 39 filtradas (support >20%)
+
+## Hallazgos Principales
+
+| Hallazgo | Regla Principal | Lift | Implicación Política |
+|----------|-----------------|------|----------------------|
+| **TIC Interconectado** | Celular + Transferencias → Internet | 1.81 | TIC es SISTEMA acoplado, no independiente |
+| **Exclusión Dominante** | Sin Celular → Sin Internet | 1.97 | 65% completamente excluidos |
+| **RUT Exógeno** | 0 reglas predicen RUT=Sí | N/A | Formalización requiere política ACTIVA |
+| **Asimetría Predicción** | 768 negativas vs 201 positivas | 1.13x | Más fácil predecir exclusión que inclusión |
+| **Celular Dominante** | Aparece en 77% de antecedentes | - | Puerta de entrada a tecnología digital |
+| **Pagos Digitales** | Internet + Transferencias → Ingresos altos | 1.75+ | Monetización de conectividad |
+
+---
+
+## 9.2 Visualizaciones Apriori
+
+![**Figura 9A:** Frecuencia de items - TIC variables dominan](output/figuras/12_apriori_item_frequency.png)
+
+**Interpretación:** Celular, internet y transferencias aparecen en 77% de reglas significativas.
+
+---
+
+![**Figura 9B:** Lift vs Support - Reglas por fuerza y prevalencia](output/figuras/13_apriori_scatter_reglas.png)
+
+**Interpretación:** Cuadrante superior derecho = mejores reglas. Patrones de exclusión más predecibles (lift>1.9).
+
+---
+
+![**Figura 9C:** Top 20 reglas por significancia (Lift)](output/figuras/14_apriori_grafo_top20.png)
+
+**Interpretación:** Patrones de exclusión dominan top 5; TIC acoplado emerge como patrón central.
+
+---
+
+![**Figura 9D:** Agrupamiento de reglas por categoría](output/figuras/15_apriori_grouped_matrix.png)
+
+**Interpretación:** Clusters visualos de patrones: TIC, Pagos, Formalización.
+
+---
+
+![**Figura 9E:** Coordenadas paralelas - Flujos a pagos digitales](output/figuras/17_apriori_paracoord_pagos.png)
+
+**Interpretación:** Múltiples trayectorias a adopción; camino principal: Celular → Internet → Transferencias.
+
+---
+
+![**Figura 9F:** Red de relaciones - Patrones complejos de asociación](output/figuras/18_apriori_grafo_antiguedad.png)
+
+**Interpretación:** Estructura de dependencias entre variables; visualización de clusters de comportamiento.
+
+---
+
+# SEGMENTACIÓN DE MERCADO: TRES GRUPOS
+
+## El Mercado Está Polarizado, No Continuo
+
+| Grupo | Proporción | Cantidad | Característica | Ciclo |
+|-------|-----------|----------|---------------|----|
+| **A: Excluidos** | 65% | 3,4M | Sin celular, sin internet, efectivo | Vicious: sin docs → sin crédito → sin TIC |
+| **B: Incluidos** | 8% | 424K | Con RUT, internet, pagos digitales | Virtuous: formalizado → competitivo |
+| **C: Transición** | 27% | 1,4M | Celular SIN internet | **TARGET para política pública** |
+
+**Implicación Crítica:** No es gradual; saltar de A→B requiere intervención integral.
+
+---
+
+# RECOMENDACIONES DE POLÍTICA PÚBLICA
+
+## 🎯 Eje 1: Formalización Fiscal y Administrativa
+
+::: {.callout-important}
+### Objetivo: Reducir informalidad fiscal de 77,6% a 50% en 3 años
+
+1. **Simplificar RUT:** Proceso en línea <24 horas, costo $0, sin requisitos previos
+2. **Incentivo de acceso:** Crédito bancario automático para RUT activo (hasta 5 SMLV)
+3. **Meta Cámara de Comercio:** Focalizar en Grupo C (1,4M negocios cuasi-formalizables)
+4. **Mecánica:** Reforma administrativa, no tributaria (diferir tributación inicial 18 meses)
+:::
+
+---
+
+## 🌐 Eje 2: Inclusión Digital e Internet
+
+::: {.callout-warning}
+### Objetivo: Cerrar brecha digital de 50,4% sin internet a 20% en 2 años
+
+**Prioridad 1: Internet Rural**
+- 77,6% de desconexión en zonas rurales vs 38,3% urbanas
+- Solución: Subsidio selectivo para microrregiones (tipo Vive Digital 2.0)
+- Meta: 5M de los 5.3M con acceso (94%)
+
+**Prioridad 2: Adopción de Transferencias**
+- Celular (70,9%) > Internet (49,6%) > Transferencias (38,9%)
+- Solución: Apps de billetera móvil sin costo, incentivos (cashback 2%)
+- Meta: 70% aceptando transferencias en 2 años
+
+**Prioridad 3: Ecosistema App PYME**
+- Grupo C tiene celular pero no explota potencial
+- Solución: Bundling oferta pública (facturación + pagos + contabilidad) en 1 app
+- Meta: 50% de Grupo C usando app integrada
+:::
+
+---
+
+## 💰 Eje 3: Financiamiento e Inclusión Financiera
+
+::: {.callout-tip}
+### Objetivo: Pasar de 14,2% con acceso crediticio a 40% en 3 años
+
+**Microcrédito Digital**
+- App-based (sin sucursal, sin papeleo)
+- Sin garantías, solo datos de transacciones
+- Montos: $500K–$2M para Grupo C
+- Tasa: Máximo 24% anual (subsidio estatal para años 1–2)
+
+**Fondo de Garantía para Grupo C**
+- Cobertura: 80% de crédito, con coaseguro PYME
+- Volumen: 1,4M negocios × promedio $1,2M = $1,68T (presupuesto nacional)
+- Esperado: Triplicar cartera en 3 años
+
+**Combatir "Gota a Gota" (prestamistas informales)**
+- 22,9% de quienes solicitan crédito recurren a informales
+- Estrategia: Persecución legal (incautación) + alternativa crediticia inmediata
+- Comunicación: Campaña anti-gota a nivel nacional
+:::
+
+---
+
+## 🔄 Eje 4: Renovación Generacional y Modernización
+
+::: {.callout-note}
+### Objetivo: Dinamizar mercado maduro con 47,4% de negocios con 10+ años
+
+**Diagnóstico:** Negocios antiguos NO adoptan TIC incluso con acceso disponible.
+Requiere cambio cultural + incentivo económico.
+
+**Programa de Modernización PYME**
+- Asesoría técnica gratuita: 40 horas/año (digitalización + mejora procesos)
+- Crédito para modernización: Tasa 8% por 5 años
+- Reconocimiento "Negocio Moderno" (certificado, visibilidad online)
+
+**Formación Rápida (Bootcamp) Digital**
+- Micro-cursos: 20 horas, online, sobre pagos digitales, contabilidad, ventas online
+- Subsidio: Trabajador + empleador
+- Meta: 500K PYME capacitadas en 2 años
+:::
+
+---
+
+## ⏱️ Cronograma de Implementación
+
+| Período | Eje 1 (RUT) | Eje 2 (Digital) | Eje 3 (Crédito) | Eje 4 (Moderno) |
+|---------|-------------|-----------------|-----------------|-----------------|
+| **Año 1** | Reforma RUT | Internet rural | Microcrédito piloto | Bootcamp inicial |
+| **Año 2** | Escalamiento | Billetera móvil | Expansión 500K | 250K capacitadas |
+| **Año 3** | Consolidación | App PYME | Meta 1,4M | 500K acumuladas |
+
+---
+
+## 💡 Indicadores de Éxito
+
+- **Formalización:** 77,6% → 50% sin RUT (reducción de 27,6 pp)
+- **Digital:** 50,4% → 20% sin internet (reducción de 30 pp)
+- **Crédito:** 14,2% → 40% con acceso (incremento de 25,8 pp)
+- **Modernización:** 500K PYME capacitadas anualmente
+
+---
+
+# REFERENCIAS Y ARCHIVOS
+
+**Boletín DANE oficial:** EMICRON 2024 (validado)
+**Base de datos:** 77.202 observaciones × 128 variables
+**Universo expandido:** 5.297.252 micronegocios
+**Factor de expansión:** F_EXP (DANE)
+
+## Tabla de Outputs
+
+| Tipo | Cantidad | Ubicación |
+|------|----------|----------|
+| Cuadros DANE Validados | 70 | output/tablas/boletin/ |
+| Gráficos DANE (25 cuadros) | 25 PNG (300 DPI) | output/figuras/ (10_A1 a 28_V1) |
+| Gráficos Apriori | 6 PNG | output/figuras/ (12-18) |
+| Tablas Apriori | 8 CSV | output/tablas/ |
+| Tabla Resumen Filtrada | 39 reglas | 10_TABLA_RESUMEN_FILTRADA_20PCT.csv |
+
+---
+
+*Documento generado con Quarto + R. Análisis reproducible, validado contra DANE oficial.*
+*Fecha: 14 de mayo de 2026*
