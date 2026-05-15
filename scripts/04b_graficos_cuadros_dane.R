@@ -48,7 +48,7 @@ plot_cuadro <- function(cuadro_df, titulo, subtitulo = "", reorder_cols = TRUE) 
     scale_fill_manual(values = rep(cols_tableau, length.out = nrow(dt))) +
     geom_text(aes(label = sprintf("%.1f%%", Pct)), hjust = -0.1, size = 3.5, fontface = "bold") +
     scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-    labs(title = titulo, subtitle = subtitulo, x = "", y = "Porcentaje (%)") +
+    labs(x = "", y = "Porcentaje (%)") +
     theme_minimal() +
     theme(
       legend.position = "none",
@@ -230,9 +230,7 @@ p_J1 <- ggplot(J1_top, aes(x = reorder(J1_top[[1]], J1_top$Cantidad),
   geom_text(aes(label = sprintf("%.1f%%", as.numeric(gsub(",", ".", J1_top$Distribucion_Pct)))),
             hjust = -0.1, size = 3.5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-  labs(title = "Micronegocios por Departamento (Top 10)",
-       subtitle = "Distribución geográfica nacional",
-       x = "", y = "Porcentaje (%)") +
+  labs(x = "", y = "Porcentaje (%)") +
   theme_minimal() +
   theme(
     legend.position = "none",
@@ -259,9 +257,7 @@ p_V1 <- ggplot(V1_clean, aes(x = reorder(V1_clean[[1]], as.numeric(V1_clean[[2]]
   geom_text(aes(label = sprintf("$%.0fM", as.numeric(V1_clean[[2]]) / 1e6)),
             hjust = -0.1, size = 3.5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
-  labs(title = "Ingresos Totales por Sector",
-       subtitle = "Ventas totales anuales en millones COP",
-       x = "", y = "Millones COP") +
+  labs(x = "", y = "Millones COP") +
   theme_minimal() +
   theme(
     legend.position = "none",

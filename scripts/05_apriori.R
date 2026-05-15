@@ -223,7 +223,7 @@ message(sprintf("Transacciones: %d × %d items", length(trans), nitems(trans)))
 png(file.path(DIR_OUTPUT_FIGS, "12_apriori_item_frequency.png"),
     width = 12, height = 8, units = "in", res = 300)
 itemFrequencyPlot(trans, topN = 30,
-                  main = "Top 30 Items Más Frecuentes en Micronegocios",
+                  main = "",
                   col = "#4E79A7", cex.names = 0.8)
 dev.off()
 message("✓ Gráfico: 12_apriori_item_frequency.png")
@@ -395,8 +395,6 @@ if (length(reglas_rut) >= 5) {
     coord_flip() +
     scale_fill_gradient(low = "#FDE725", high = "#440154", name = "Confianza") +
     labs(
-      title = "Top 15 Reglas → Formalización (tiene_rut=Sí)",
-      subtitle = sprintf("Soporte ≥ 3%% | %d reglas totales", length(reglas_rut)),
       x = "", y = "Lift (fuerza de asociación)"
     ) +
     theme_minimal(base_family = "sans") +

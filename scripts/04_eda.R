@@ -34,8 +34,6 @@ p_sector <- ggplot(dist_sector, aes(x = reorder(GRUPOS4_DESC, Total), y = Pct, f
   geom_text(aes(label = sprintf("%.1f%%", Pct)), hjust = -0.2, size = 4, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "Distribución de Micronegocios por Sector Económico",
-    subtitle = "Universo expandido: 5.3 millones | Validado vs DANE 2024",
     x = "", y = "Porcentaje (%)"
   ) +
   theme_minimal() +
@@ -60,8 +58,6 @@ p_sexo <- ggplot(dist_sexo, aes(x = reorder(P35_DESC, -Pct), y = Pct, fill = P35
   geom_text(aes(label = sprintf("%.1f%%", Pct)), vjust = -0.4, size = 5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.2)), limits = c(0, 100)) +
   labs(
-    title = "Distribución por Sexo del Propietario",
-    subtitle = "Paridad de género en el ecosistema EMICRON 2024",
     x = "", y = "Porcentaje (%)"
   ) +
   theme_minimal() +
@@ -87,8 +83,6 @@ p_formal <- ggplot(idx_form_dist, aes(x = factor(idx_formalizacion), y = Pct)) +
   geom_text(aes(label = sprintf("%.1f%%", Pct)), vjust = -0.4, size = 3.5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "A. Nivel de Formalización",
-    subtitle = "RUT, Cámara, Contabilidad, Seg. Social, Impuestos",
     x = "Criterios cumplidos", y = "Porcentaje (%)"
   ) +
   theme_minimal() +
@@ -108,8 +102,6 @@ p_digital <- ggplot(idx_dig_dist, aes(x = factor(idx_digital), y = Pct)) +
   geom_text(aes(label = sprintf("%.1f%%", Pct)), vjust = -0.4, size = 3.5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.15))) +
   labs(
-    title = "B. Nivel de Digitalización",
-    subtitle = "Internet, Redes Sociales, Página Web, Dispositivos",
     x = "Herramientas utilizadas", y = "Porcentaje (%)"
   ) +
   theme_minimal() +
@@ -138,8 +130,6 @@ p_ingresos <- ggplot(ingresos_sector, aes(x = reorder(GRUPOS4_DESC, Ventas_Prome
   scale_y_continuous(labels = function(x) paste0("$", format(x/1e6, digits=1), "M")) +
   geom_text(aes(label = sprintf("$%.0fM", Ventas_Promedio/1e6)), hjust = -0.1, size = 3.5, fontface = "bold") +
   labs(
-    title = "Ventas Mensuales Promedio por Sector",
-    subtitle = "Ponderadas por factor de expansión DANE",
     x = "", y = "COP Mensuales"
   ) +
   theme_minimal() +
@@ -165,8 +155,6 @@ p_ubicacion <- ggplot(ubicacion, aes(x = reorder(P3053_DESC, Pct), y = Pct, fill
   geom_text(aes(label = sprintf("%.1f%%", Pct)), hjust = -0.1, size = 3.5, fontface = "bold") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.12))) +
   labs(
-    title = "Ubicación Principal del Negocio",
-    subtitle = "Dónde operan los micronegocios (Top 6)",
     x = "", y = "Porcentaje (%)"
   ) +
   theme_minimal() +
