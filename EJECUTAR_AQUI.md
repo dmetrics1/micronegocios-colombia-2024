@@ -206,11 +206,12 @@ source("scripts/05_apriori.R")
 
 | Documento | Propósito |
 |-----------|-----------|
-| [STATUS_EJECUCION_PIPELINE_V3.md](docs/STATUS_EJECUCION_PIPELINE_V3.md) | Detalles técnicos + checklist completo |
-| [CUADROS_NUEVOS_AGREGADOS.md](docs/CUADROS_NUEVOS_AGREGADOS.md) | Catálogo de 43-55 cuadros nuevos |
-| [PROMPT_EXTRACCION_GRAFICOS_DANE.md](docs/PROMPT_EXTRACCION_GRAFICOS_DANE.md) | Prompt para validar contra DANE |
-| [COMPARACION_CUADROS_LEGACY_VS_ACTUAL.md](docs/COMPARACION_CUADROS_LEGACY_VS_ACTUAL.md) | Qué faltaba vs qué se agregó |
-| [RESUMEN_CAMBIOS_FLUJO_COMPLETO.md](docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md) | Resumen de cambios en main.R |
+| [STATUS_EJECUCION_PIPELINE_V3.md](docs/STATUS_EJECUCION_PIPELINE_V3.md) | Estado técnico del pipeline, tablas generadas y checklists |
+| [CUADROS_NUEVOS_AGREGADOS.md](docs/CUADROS_NUEVOS_AGREGADOS.md) | Catálogo de los 85 cuadros generados y cobertura del protocolo DANE |
+| [informe_caracterizacion_y_reglas.md](docs/informe_caracterizacion_y_reglas.md) | Síntesis ejecutiva de hallazgos descriptivos y patrones Apriori |
+| [PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md](docs/PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md) | Plan de análisis estratégico para EDA y minería de reglas |
+| [RESUMEN_CAMBIOS_FLUJO_COMPLETO.md](docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md) | Historial técnico de cambios y mejoras en el flujo de main.R |
+| [PROMPT_EXTRACCION_GRAFICOS_DANE.md](docs/PROMPT_EXTRACCION_GRAFICOS_DANE.md) | Herramientas automatizadas para validar contra reportes PDF oficiales |
 
 ---
 
