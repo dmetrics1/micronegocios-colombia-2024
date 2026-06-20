@@ -2,8 +2,9 @@
 title: "Análisis Integral EMICRON 2024"
 subtitle: "85 Cuadros DANE + Minería de Reglas | Micronegocios Colombianos"
 author:
-  - name: "Análisis DANE Validado"
-    affiliation: "EMICRON 2024"
+  - name: "Daniel Molina Barrios"
+    affiliation: "Economista & Data Scientist"
+    url: "https://github.com/dmetrics1"
 date: "2026-05-15"
 date-format: "D [de] MMMM [de] YYYY"
 lang: es
@@ -540,5 +541,6 @@ Este análisis es completamente reproducible. Fue generado con **R** (versión \
 
 ---
 
-*Documento elaborado con R + Quarto. Análisis reproducible, validado contra fuentes oficiales DANE.*  
+*Documento elaborado con R + Quarto. Análisis reproducible, validado contra fuentes oficiales DANE.*
+*Autor: **Daniel Molina Barrios** — Economista &amp; Data Scientist · [GitHub](https://github.com/dmetrics1) · [LinkedIn](https://www.linkedin.com/in/daniel-molina-b76a4323b/)*
 *Última actualización: mayo de 2026.*
