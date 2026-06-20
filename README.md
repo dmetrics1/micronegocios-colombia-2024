@@ -5,12 +5,10 @@
 [![License](https://img.shields.io/github/license/dmetrics1/micronegocios-colombia-2024?style=flat-square&color=2563EB)](LICENSE)
 [![Live Report](https://img.shields.io/badge/Live%20Report-7C3AED?style=flat-square&logo=html5&logoColor=white)](https://dmetrics1.github.io/micronegocios-colombia-2024/)
 
-**Análisis completo de 5.3M micronegocios · 85 cuadros DANE · Minería de patrones (Apriori) · Reportería interactiva**
+**Minería de patrones sobre 5,3M micronegocios colombianos (EMICRON 2024, DANE) · 85 cuadros oficiales · reporte interactivo en R + Quarto.**
 
-> **📊 Reporte en vivo:** [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/)
-> *Reporte interactivo de alto impacto renderizado con Quarto + R + CSS Grid.*
->
-> **🎓 Investigación:** versión académica de este trabajo postulada a **[LatinR 2026](https://latin-r.com/)** — *Economía Popular en Colombia* (ver [`paper/`](paper/)).
+> **📊 Reporte en vivo →** [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/)
+> **🎓 Investigación →** versión académica postulada a **[LatinR 2026](https://latin-r.com/)** — *Economía Popular en Colombia* (ver [`paper/`](paper/)).
 
 ---
 
@@ -26,243 +24,122 @@
   </tr>
 </table>
 
-## 🎯 Descripción
+---
 
-Este repositorio contiene un **pipeline de análisis integral** de la Encuesta de Micronegocios (EMICRON) 2024 del DANE, que combina:
+## 🔑 Hallazgos clave
 
-✅ **Validación de cuadros oficiales DANE**  
-✅ **85 tablas estadísticas** procesadas y exportadas  
-✅ **Análisis exploratorio (EDA)** con visualizaciones avanzadas  
-✅ **Minería de reglas de asociación (Apriori)** para descubrir patrones  
-✅ **Reportes HTML profesionales** con Quarto + R + CSS Grid  
-✅ **Documentación completa** del flujo de análisis  
+El microempresariado colombiano se sostiene sobre **tres fracturas estructurales que se refuerzan entre sí** — informalidad fiscal, exclusión digital y restricción crediticia — formando un *sistema de trampas interdependientes*:
+
+| Indicador | Valor | Lectura |
+|---|---|---|
+| 🏛️ **Informalidad fiscal** | **77,6%** sin RUT | +4M de unidades fuera del radar tributario |
+| 📵 **Brecha digital** | **50,4%** sin internet | Polarización tecnológica en punto crítico |
+| 💳 **Acceso crediticio** | **14,2%** solicitó crédito | Financiamiento formal casi inexistente |
+| 👤 **Autoempleo** | **90,5%** por cuenta propia | Baja generación de empleo asalariado (9,5% patrones) |
+| ♀️ **Brecha de género** | **35,4%** lideradas por mujeres | 64,6% en manos de hombres |
+
+**🔗 Patrón Apriori más fuerte** (de 55.906 reglas → 39 de alta relevancia, soporte ≥15% y confianza ≥70%):
+
+> `{Sin dispositivos, sin celular de negocio, sin transferencias} → {Sin internet}`
+> **Confianza 99,6% · Soporte 26,6%** — ~1,4M de negocios operan en un entorno **totalmente analógico** donde la falta de una herramienta bloquea el acceso a internet y pagos digitales.
+
+📄 *Síntesis completa en [`docs/informe_caracterizacion_y_reglas.md`](docs/informe_caracterizacion_y_reglas.md) · reporte interactivo en [vivo](https://dmetrics1.github.io/micronegocios-colombia-2024/).*
 
 ---
 
-## 📊 Cobertura de Datos
+## 🎯 Qué hace este proyecto
 
-| Métrica | Valor |
-|---------|-------|
-| **Universo** | 5,297,252 micronegocios (Colombia) |
-| **Muestra** | 77,202 negocios encuestados |
-| **Período** | 2024 |
-| **Módulos** | 11 (Identificación, TIC, Ventas, etc.) |
-| **Cuadros Generados** | 85 estadísticos |
-| **Fuente** | [DANE Oficial](https://www.dane.gov.co/) |
+Pipeline reproducible en **R** que toma los microdatos crudos del DANE y produce evidencia lista para decisión:
 
----
+✅ Réplica validada de **85 cuadros oficiales DANE** · ✅ **EDA** ponderado · ✅ **minería de reglas (Apriori)** · ✅ **reporte interactivo** en Quarto + CSS Grid
 
-## 🚀 Inicio Rápido
+## 📊 Datos
 
-### Requisitos Previos
+| | |
+|---|---|
+| **Universo** | 5.297.252 micronegocios (Colombia) |
+| **Muestra** | 77.202 negocios encuestados · 11 módulos |
+| **Período** | 2024 · factor de expansión ponderado |
+| **Salida** | 85 cuadros estadísticos + 39 reglas de asociación |
+| **Fuente** | [Encuesta de Micronegocios (EMICRON) — DANE](https://www.dane.gov.co/) |
 
-```bash
-# R 4.0+ instalado
-# RStudio (recomendado)
-# Quarto CLI (para reportes)
-```
-
-### Instalación de Dependencias
-
-```r
-# Ejecutar en R Console
-packages <- c("tidyverse", "haven", "arules", "arulesViz", "data.table")
-install.packages(packages)
-```
-
-```r
-# En RStudio, abre emicron.Rproj y luego ejecuta el pipeline completo:
-source("main.R")
-```
-
-### Generar Reportes HTML
-
-```bash
-# Desde la raíz del proyecto (el .qmd y el .scss viven aquí)
-quarto render REPORTE_WIDE_PRO_2024.qmd --to html
-```
-
-**Resultado:** `REPORTE_WIDE_PRO_2024.html` (en la raíz del proyecto), publicado en vivo vía GitHub Pages en [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/).
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-emicron/
-│
-├── 📄 README.md                    # Este archivo
-├── 📄 LICENSE                      # Licencia MIT
-├── 📄 index.html                   # Redirect a GitHub Pages → reporte interactivo
-├── 📄 REPORTE_WIDE_PRO_2024.qmd    # Reporte interactivo final en Quarto (diseño ancho premium)
-├── 📄 REPORTE_WIDE_PRO_2024.html   # Reporte interactivo compilado en formato HTML
-├── 📄 custom-wide-pro.scss         # Estilos SCSS premium para el reporte
-├── 📄 main.R                       # Pipeline principal unificado de ejecución secuencial
-├── 📄 EJECUTAR_EDA_APRIORI_AHORA.R # Script rápido para ejecutar solo EDA + Apriori
-├── 📄 ANALISIS_REGLAS_SOPORTE_24.R # Script de análisis de reglas con soporte >= 24%
-├── 📄 emicron.Rproj                # Proyecto RStudio
-└── 📄 .gitignore                   # Configuración de Git
-│
-├── 📂 data/
-│   ├── raw/                        # Datos DANE originales (CSV)
-│   │   └── 2024/
-│   │       ├── capital_social.csv
-│   │       ├── caracteristicas.csv
-│   │       ├── costos_gastos.csv
-│   │       └── ... (11 archivos oficiales DANE)
-│   └── processed/                  # Datos RDS intermedios consolidados y limpios
-│
-├── 📂 scripts/                     # Pipeline de análisis R
-│   ├── 00_config.R                 # Configuración global y carga de paquetes
-│   ├── 01_consolidar.R             # Unión y consolidación de módulos DANE
-│   ├── 02_limpiar.R                # Limpieza, feature engineering y etiquetado DANE
-│   ├── 03_cuadros_boletin_COMPLETO.R # Generación de 85 cuadros estadísticos completos
-│   ├── 04_eda.R                    # Análisis Exploratorio de Datos y visualizaciones
-│   ├── 04b_graficos_cuadros_dane.R # Gráficos estadísticos de cuadros oficiales
-│   └── 05_apriori.R                # Minería de reglas de asociación con algoritmo Apriori
-│
-├── 📂 reports/
-│   ├── source/                     # Estilos y recursos Quarto adicionales
-│   │   └── custom-emicron.scss
-│   ├── html/                       # Reportes HTML generados
-│   └── pdf/                        # Boletines DANE oficiales descargados
-│
-├── 📂 output/
-│   ├── tablas/                     # CSVs con resultados de Apriori y cuadros
-│   │   └── boletin/                # 85 archivos CSV con cuadros descriptivos ponderados
-│   ├── figuras/                    # Visualizaciones exploratorias y de minería generadas
-│   └── informes/                   # Informes auxiliares
-│
-├── 📂 paper/                       # Investigación académica
-│   ├── ResumenLatinR2026_EconomiaPopular_Colombia.docx # Resumen postulado a LatinR 2026
-│   └── Template_LatinR.docx        # Plantilla de postulación LatinR
-│
-└── 📂 docs/                        # Documentación complementaria y metodológica
-    ├── Diccionario_EMICRON_2024.md # Diccionario detallado de variables EMICRON
-    ├── PROTOCOLO_MAESTRO_EMICRON.md # Protocolo de procesamiento y metodologías DANE
-    ├── EJECUTAR_AQUI.md            # Instrucciones de ejecución rápida y checklist
-    ├── RUTA_A_10_PUNTOS_PERFECCION.md # Plan para perfeccionar el reporte final
-    ├── CUADROS_NUEVOS_AGREGADOS.md # Catálogo detallado de los nuevos cuadros agregados
-    ├── RESUMEN_CAMBIOS_FLUJO_COMPLETO.md # Registro del proceso de desarrollo y de cambios en el flujo
-    ├── PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md # Plan estratégico del análisis posterior
-    ├── PROMPT_EXTRACCION_GRAFICOS_DANE.md # Herramientas para validación contra PDF DANE
-    ├── STATUS_EJECUCION_PIPELINE_V3.md # Estado actual del pipeline (100% completado y verificado)
-    ├── GUIA_GRAFICOS_REPORTE_QMD.md # Guía metodológica de los 25 gráficos del reporte
-    ├── INDICE_25_GRAFICOS_REPORTE.md # Índice estructurado de visualizaciones
-    └── informe_caracterizacion_y_reglas.md # Síntesis ejecutiva de hallazgos descriptivos y Apriori
-```
-
----
-
-## 🔍 Flujo de Análisis
+## 🔍 Pipeline
 
 ```
 Data DANE (11 CSV)
-       ↓
-[01] Consolidar → Unión de todos los módulos DANE
-       ↓
-[02] Limpiar → Limpieza de datos, feature engineering y etiquetado DANE
-       ↓
-[03] Cuadros Boletín COMPLETO → Generación de 85 cuadros estadísticos ponderados
-       ↓
-output/tablas/boletin/ → 85 CSVs exportados con resultados descriptivos
-       ↓
-[04] EDA + [04b] Gráficos → Visualizaciones exploratorias y gráficos de boletines
-       ↓
-[05] Apriori → Minería de reglas de asociación (Algoritmo Apriori)
-       ↓
-docs/informe_caracterizacion_y_reglas.md ← Síntesis ejecutiva de patrones encontrados
-       ↓
-REPORTE_WIDE_PRO_2024.qmd → Renderizado interactivo final en HTML
+   → [01] Consolidar → [02] Limpiar + feature engineering
+   → [03] 85 cuadros ponderados  →  output/tablas/boletin/*.csv
+   → [04] EDA + gráficos  →  [05] Apriori (reglas de asociación)
+   → REPORTE_WIDE_PRO_2024.qmd  →  reporte HTML interactivo
 ```
 
----
+## 🚀 Reproducir
 
-## 📈 Cuadros Generados
+```r
+# 1. Dependencias (R 4.0+)
+install.packages(c("tidyverse", "haven", "arules", "arulesViz", "data.table"))
 
-**Por Tema:**
-- ✅ Identificación y Caracterización (10)
-- ✅ Aspecto Empresarial (8)
-- ✅ Empleo y Personal (12)
-- ✅ Financiero e Ingresos (15)
-- ✅ TIC y Digitalización (8)
-- ✅ Inclusión Financiera (7)
-- ✅ Capital Social (8)
+# 2. Abre emicron.Rproj en RStudio y ejecuta el pipeline completo:
+source("main.R")
+```
 
-**Ubicación:** `output/tablas/boletin/*.csv`
+```bash
+# 3. Genera el reporte (desde la raíz, donde viven el .qmd y el .scss):
+quarto render REPORTE_WIDE_PRO_2024.qmd --to html
+```
 
----
+> Los microdatos crudos del DANE **no se versionan** (tamaño + licencia). Descárgalos de [microdatos.dane.gov.co](https://microdatos.dane.gov.co) y colócalos en `data/raw/2024/`.
 
-## 🎨 Reportería
+## 🛠️ Stack
 
-El reporte interactivo principal del proyecto se encuentra en la raíz:
-
-- **REPORTE_WIDE_PRO_2024.qmd** — Reporte de alto impacto con diseño optimizado para pantalla ancha, rejilla CSS Grid, visualizaciones interactivas de ggplot2, tablas con formato dinámico y navegación estructurada.
-
-**Características:**
-- Visualizaciones interactivas con ggplot2 y formateo avanzado.
-- Tablas profesionales con métricas ponderadas.
-- Barra lateral de navegación sticky de 320px + contenido principal adaptativo.
-- Estilos personalizados premium (basados en `custom-wide-pro.scss`).
+**R 4.0+** · `tidyverse` · `data.table` · `arules` / `arulesViz` (minería) · **Quarto** + `ggplot2` (reportería) · SCSS / CSS Grid
 
 ---
 
-## 🧪 Validación
+<details>
+<summary><b>📁 Estructura del proyecto</b></summary>
 
-✅ Cuadros validados contra boletines DANE oficiales  
-✅ Hallazgos Apriori filtrados por soporte ≥15% y confianza ≥70%  
-✅ Documentación de catálogo y cambios en `docs/CUADROS_NUEVOS_AGREGADOS.md`
+```
+emicron/
+├── README.md · LICENSE · index.html        # Doc, licencia, redirect a Pages
+├── REPORTE_WIDE_PRO_2024.qmd / .html        # Reporte interactivo (fuente + compilado)
+├── custom-wide-pro.scss                     # Estilos premium del reporte
+├── main.R                                   # Pipeline completo de ejecución
+├── EJECUTAR_EDA_APRIORI_AHORA.R             # Atajo: solo EDA + Apriori
+├── ANALISIS_REGLAS_SOPORTE_24.R             # Análisis de reglas (soporte ≥ 24%)
+├── emicron.Rproj
+│
+├── data/        raw/2024/ (11 CSV DANE) · processed/ (RDS consolidados)
+├── scripts/     00_config → 01_consolidar → 02_limpiar → 03_cuadros → 04_eda → 04b_graficos → 05_apriori
+├── output/      tablas/boletin/ (85 CSV) · figuras/ · informes/
+├── paper/       Resumen + plantilla LatinR 2026
+└── docs/        Diccionario, Protocolo, guías metodológicas y catálogos
+```
 
----
+</details>
 
-## 📚 Documentación Completa
+<details>
+<summary><b>📚 Documentación completa</b></summary>
 
-| Documento | Propósito | Ubicación |
-|-----------|-----------|-----------|
-| `docs/PROTOCOLO_MAESTRO_EMICRON.md` | Metadatos y metodologías oficiales de procesamiento ponderado del DANE | `docs/` |
-| `docs/Diccionario_EMICRON_2024.md` | Diccionario detallado de variables y variables derivadas | `docs/` |
-| `docs/EJECUTAR_AQUI.md` | Guía de ejecución secuencial del pipeline y checklists de validación | `docs/` |
-| `docs/RUTA_A_10_PUNTOS_PERFECCION.md` | Plan y criterios de excelencia analítica y de diseño del reporte | `docs/` |
-| `docs/STATUS_EJECUCION_PIPELINE_V3.md` | Estado técnico detallado del pipeline (100% Completado y verificado) | `docs/` |
-| `docs/CUADROS_NUEVOS_AGREGADOS.md` | Catálogo detallado de los 85 cuadros generados y cobertura DANE | `docs/` |
-| `docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md` | Historial técnico de cambios y mejoras en el flujo de main.R | `docs/` |
-| `docs/informe_caracterizacion_y_reglas.md` | Síntesis ejecutiva de hallazgos descriptivos y patrones Apriori | `docs/` |
-| `docs/PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md` | Plan de análisis posterior, hipótesis y variables analíticas | `docs/` |
-| `docs/PROMPT_EXTRACCION_GRAFICOS_DANE.md` | Herramientas automatizadas para validar contra reportes PDF oficiales | `docs/` |
-| `paper/ResumenLatinR2026_EconomiaPopular_Colombia.docx` | Resumen académico postulado a LatinR 2026 — *Economía Popular en Colombia* | `paper/` |
+| Documento | Propósito |
+|---|---|
+| [`docs/informe_caracterizacion_y_reglas.md`](docs/informe_caracterizacion_y_reglas.md) | Síntesis ejecutiva de hallazgos descriptivos y patrones Apriori |
+| [`docs/PROTOCOLO_MAESTRO_EMICRON.md`](docs/PROTOCOLO_MAESTRO_EMICRON.md) | Metodologías oficiales de procesamiento ponderado del DANE |
+| [`docs/Diccionario_EMICRON_2024.md`](docs/Diccionario_EMICRON_2024.md) | Diccionario de variables y variables derivadas |
+| [`docs/CUADROS_NUEVOS_AGREGADOS.md`](docs/CUADROS_NUEVOS_AGREGADOS.md) | Catálogo de los 85 cuadros y cobertura DANE |
+| [`docs/EJECUTAR_AQUI.md`](docs/EJECUTAR_AQUI.md) | Guía de ejecución secuencial y checklists |
+| [`docs/GUIA_GRAFICOS_REPORTE_QMD.md`](docs/GUIA_GRAFICOS_REPORTE_QMD.md) · [`docs/INDICE_25_GRAFICOS_REPORTE.md`](docs/INDICE_25_GRAFICOS_REPORTE.md) | Guía e índice de los 25 gráficos del reporte |
+| [`docs/STATUS_EJECUCION_PIPELINE_V3.md`](docs/STATUS_EJECUCION_PIPELINE_V3.md) · [`docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md`](docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md) | Estado del pipeline e historial de cambios |
+| [`paper/`](paper/) | Resumen académico postulado a LatinR 2026 |
 
----
-
-## 🛠️ Stack Tecnológico
-
-- **Lenguaje:** R 4.0+
-- **Procesamiento:** tidyverse, data.table
-- **Minería:** arules, arulesViz
-- **Reportería:** Quarto, ggplot2
-- **Estilos:** SCSS, CSS Grid
-
----
-
-## 📊 Casos de Uso
-
-- **Política Pública:** Entender factores de formalización y digitalización
-- **Investigación Académica:** Análisis de economía informal en Colombia
-- **Emprendimiento:** Identificar brechas y oportunidades por sector
-- **Inclusión Financiera:** Caracterizar adopción de medios de pago
+</details>
 
 ---
 
-## 📄 Licencia
+## 📄 Licencia · 🙏 Créditos
 
-Distribuido bajo licencia **MIT** — úsalo libremente con atribución. Ver [`LICENSE`](LICENSE).
-
----
-
-## 🙏 Créditos
-
-- **Datos:** DANE — Encuesta de Micronegocios (EMICRON) 2024
-- **Metodología:** Análisis exploratorio + reglas de asociación (Apriori, `arules`)
-- **Reportería:** Quarto + R + CSS Grid
+Distribuido bajo licencia **MIT** — úsalo libremente con atribución (ver [`LICENSE`](LICENSE)).
+**Datos:** DANE — EMICRON 2024 · **Métodos:** EDA ponderado + Apriori (`arules`) · **Reportería:** Quarto + R.
 
 ---
 
