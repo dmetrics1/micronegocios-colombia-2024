@@ -1,10 +1,10 @@
 ---
 title: "Análisis Integral EMICRON 2024"
-subtitle: "70 Cuadros DANE + Minería de Reglas | Micronegocios Colombianos"
+subtitle: "85 Cuadros DANE + Minería de Reglas | Micronegocios Colombianos"
 author:
   - name: "Análisis DANE Validado"
     affiliation: "EMICRON 2024"
-date: today
+date: "2026-05-15"
 date-format: "D [de] MMMM [de] YYYY"
 lang: es
 page-layout: full
@@ -54,7 +54,7 @@ Colombia tiene 5,3 millones de micronegocios. Cuatro de cada cinco operan sin re
 
 La Encuesta de Micronegocios 2024 del DANE (EMICRON) ofrece la radiografía más completa disponible sobre el tejido empresarial de base en Colombia. Con una muestra de 77.202 negocios que representa a más de 5,3 millones de unidades económicas en todo el país, este análisis busca responder una pregunta fundamental: ¿cuáles son las condiciones reales bajo las que operan los micronegocios colombianos, y qué palancas de política pública tienen mayor capacidad de transformarlas?
 
-Los datos revelan un ecosistema con una vitalidad innegable —millones de colombianos que han optado por el autoempleo como estrategia de vida— pero atravesado por tres fracturas estructurales que se refuerzan mutuamente: informalidad fiscal, exclusión digital y restricción crediticia. Estas no son dimensiones independientes; como se demostrará en la sección de minería de datos (sección 10), constituyen un sistema de trampas interdependientes.
+Los datos revelan un ecosistema con una vitalidad innegable —millones de colombianos que han optado por el autoempleo como estrategia de vida— pero atravesado por tres fracturas estructurales que se refuerzan mutuamente: informalidad fiscal, exclusión digital y restricción crediticia. Estas no son dimensiones independientes; como se demostrará en la sección de minería de datos, constituyen un sistema de trampas interdependientes.
 
 | Indicador | Valor | Interpretación |
 |---|---|---|
@@ -76,13 +76,13 @@ El 77,6% de los micronegocios opera sin RUT y el 89,5% lo hace sin registro en C
 ::: {.callout-important}
 ## 🔴 Brecha digital en punto crítico
 
-El 50,4% de los micronegocios está completamente desconectado de internet. Esta cifra, tomada en aislamiento, ya sería preocupante. Pero lo que la convierte en una emergencia de política pública es la brecha entre el acceso al celular (70,9%) y el acceso a internet (49,6%): hay una diferencia de 21,3 puntos porcentuales entre quienes tienen el dispositivo y quienes tienen la conectividad. Eso equivale a aproximadamente 1,4 millones de micronegocios que tienen un teléfono inteligente en la mano pero no pueden aprovecharlo para conectarse, vender en línea, o acceder a servicios financieros digitales. Este grupo —denominado Grupo C en la segmentación del apartado 11— es el objetivo prioritario de política pública, porque el costo marginal de incorporarlo es el más bajo del sistema.
+El 50,4% de los micronegocios está completamente desconectado de internet. Esta cifra, tomada en aislamiento, ya sería preocupante. Pero lo que la convierte en una emergencia de política pública es la brecha entre el acceso al celular (70,9%) y el acceso a internet (49,6%): hay una diferencia de 21,3 puntos porcentuales entre quienes tienen el dispositivo y quienes tienen la conectividad. El cruce de ambas variables revela que el 27% de los micronegocios —aproximadamente 1,4 millones— tiene un teléfono inteligente en la mano pero no puede aprovecharlo para conectarse, vender en línea, o acceder a servicios financieros digitales. Este grupo —denominado Grupo C en la segmentación— es el objetivo prioritario de política pública, porque el costo marginal de incorporarlo es el más bajo del sistema.
 :::
 
 ::: {.callout-tip}
 ## 💡 Las TIC funcionan como sistema acoplado, no como elementos independientes
 
-Uno de los hallazgos más importantes del análisis de minería de datos (sección 10) es que las tecnologías no se adoptan una por una. Cuando un micronegocio ya usa el celular y realiza transferencias digitales, la probabilidad de que también tenga internet es un 81% mayor de lo que se esperaría por azar. Este fenómeno —denominado técnicamente \"lift\" en el análisis Apriori— tiene una implicación práctica directa: las intervenciones de política que se diseñen de forma aislada (solo celular, solo internet, solo pagos) tendrán un impacto marginal menor al de una intervención integral que ataque simultáneamente los tres eslabones de la cadena digital.
+Uno de los hallazgos más importantes del análisis de minería de datos es que las tecnologías no se adoptan una por una. Cuando un micronegocio ya usa el celular y realiza transferencias digitales, la probabilidad de que también tenga internet es un 81% mayor de lo que se esperaría por azar. Este fenómeno —denominado técnicamente \"lift\" en el análisis Apriori— tiene una implicación práctica directa: las intervenciones de política que se diseñen de forma aislada (solo celular, solo internet, solo pagos) tendrán un impacto marginal menor al de una intervención integral que ataque simultáneamente los tres eslabones de la cadena digital.
 :::
 
 ::: {.callout-note}
@@ -95,7 +95,7 @@ El análisis de segmentación revela que el universo de micronegocios no es un c
 
 Este análisis integra dos niveles metodológicos complementarios:
 
-**Estadística descriptiva ponderada.** Se produjeron 70 cuadros estadísticos validados contra el Boletín Técnico oficial del DANE, con una precisión de ±0,1% en todos los indicadores. Para cada variable se aplicó el factor de expansión F_EXP proporcionado por DANE, lo que permite que los resultados de muestra sean representativos del universo nacional de 5,3 millones de micronegocios.
+**Estadística descriptiva ponderada.** Se produjeron 85 cuadros estadísticos, de los cuales 70 fueron validados contra el Boletín Técnico oficial del DANE con una precisión de ±0,1% en todos los indicadores. Para cada variable se aplicó el factor de expansión F_EXP proporcionado por DANE, lo que permite que los resultados de muestra sean representativos del universo nacional de 5,3 millones de micronegocios.
 
 **Minería de reglas de asociación (algoritmo Apriori).** Esta técnica, proveniente del campo de la inteligencia artificial aplicada, permite detectar patrones de co-ocurrencia entre variables que la estadística descriptiva no puede revelar. En términos simples: mientras la estadística descriptiva dice \"el 70,9% tiene celular\", el análisis Apriori responde \"cuando alguien tiene celular y además usa transferencias, hay un 81% más de probabilidad de que también tenga internet\". Es la diferencia entre fotografiar el presente y entender las reglas que lo gobiernan.
 
@@ -163,7 +163,7 @@ La distribución por tiempo de funcionamiento revela un rasgo sorprendente del m
 
 Pero esta fortaleza tiene un lado oscuro. Un mercado en el que casi la mitad de los negocios lleva más de una década en operación, y en el que **solo el 7,8% tiene menos de un año de antigüedad**, es un mercado que no se renueva. La baja tasa de creación de nuevos negocios —ese 7,8%— sugiere que las barreras de entrada son percibidas como significativas, y que el emprendimiento como mecanismo de movilidad social ascendente está siendo subutilizado.
 
-El hallazgo adquiere aún mayor densidad cuando se lo combina con los datos de tecnología (sección 7) y la evidencia del análisis Apriori (sección 10): los negocios más antiguos son, paradójicamente, los menos propensos a adoptar nuevas tecnologías, incluso cuando tienen acceso a ellas. La antigüedad en este contexto no es sinónimo de madurez adaptativa, sino de inercia institucional. La estrategia de política pública no puede ser la misma para un negocio de dos años que para uno de quince.
+El hallazgo adquiere aún mayor densidad cuando se lo combina con los datos de tecnología y la evidencia del análisis Apriori: los negocios más antiguos son, paradójicamente, los menos propensos a adoptar nuevas tecnologías, incluso cuando tienen acceso a ellas. La antigüedad en este contexto no es sinónimo de madurez adaptativa, sino de inercia institucional. La estrategia de política pública no puede ser la misma para un negocio de dos años que para uno de quince.
 
 ## Fuente de financiación inicial
 
@@ -269,7 +269,7 @@ El celular no solo está más extendido; es culturalmente el dispositivo de conf
 
 El tercer indicador del grupo tecnológico instala el diagnóstico más urgente de todo el análisis: **el 50,4% de los micronegocios no tiene acceso a internet**. La brecha digital está exactamente en el punto de equilibrio —casi perfectamente dividida en dos mitades— y esto la convierte en una bifurcación de destino: de un lado, el 49,6% que está conectado y tiene acceso a un mundo de herramientas digitales, servicios financieros en línea, plataformas de comercio electrónico y comunicación instantánea; del otro, el 50,4% que opera en una economía analógica con las limitaciones estructurales que eso implica.
 
-La brecha entre el uso de celular (70,9%) y el acceso a internet (49,6%) —21,3 puntos porcentuales— materializa exactamente el Grupo C de la segmentación: **1,4 millones de negocios con celular pero sin internet**. Esta población tiene el dispositivo pero no la conectividad, y ese eslabón roto es el cuello de botella más crítico para la inclusión digital masiva.
+El cruce entre el uso de celular (70,9%) y el acceso a internet (49,6%) materializa el Grupo C de la segmentación: **1,4 millones de negocios (27% del universo) con celular pero sin internet**. Esta población tiene el dispositivo pero no la conectividad, y ese eslabón roto es el cuello de botella más crítico para la inclusión digital masiva.
 
 ---
 
@@ -283,7 +283,7 @@ La brecha entre el uso de celular (70,9%) y el acceso a internet (49,6%) —21,3
 
 La cifra de acceso crediticio es, quizás, la más reveladora de todas las restricciones estructurales del microempresariado colombiano: **el 85,8% no solicitó ningún tipo de crédito** en el período de referencia. Solo el 14,2% lo intentó.
 
-Esta cifra puede interpretarse de tres maneras distintas, todas simultáneamente verdaderas. Primera interpretación: el microempresario colombiano tiene una cultura de autofinanciamiento —ya lo vimos en la sección 4.2, donde el 61,4% se financió con ahorros propios— y no concibe el crédito como una herramienta de crecimiento sino como una deuda peligrosa. Segunda interpretación: el 85,8% sabe, por experiencia propia o ajena, que los requisitos del sistema financiero formal son inalcanzables para su perfil —sin RUT, sin contabilidad, sin local fijo, sin garantías—, y por eso ni siquiera lo intenta. Tercera interpretación: la oferta de productos crediticios diseñados para el perfil del micronegocio informal es insuficiente o desconocida.
+Esta cifra puede interpretarse de tres maneras distintas, todas simultáneamente verdaderas. Primera interpretación: el microempresario colombiano tiene una cultura de autofinanciamiento —ya lo vimos antes, donde el 61,4% se financió con ahorros propios— y no concibe el crédito como una herramienta de crecimiento sino como una deuda peligrosa. Segunda interpretación: el 85,8% sabe, por experiencia propia o ajena, que los requisitos del sistema financiero formal son inalcanzables para su perfil —sin RUT, sin contabilidad, sin local fijo, sin garantías—, y por eso ni siquiera lo intenta. Tercera interpretación: la oferta de productos crediticios diseñados para el perfil del micronegocio informal es insuficiente o desconocida.
 
 Las tres interpretaciones convergen en una misma conclusión de política: el problema no es solo que los micronegocios no pidan crédito, sino que el sistema financiero no ha diseñado productos que los hagan sentir bienvenidos.
 
@@ -391,7 +391,7 @@ Este gráfico muestra las veinte reglas con mayor lift, es decir, las asociacion
 
 ![**Figura 9D:** Agrupamiento de reglas por categoría](output/figuras/15_apriori_grouped_matrix.png)
 
-Esta visualización permite identificar visualmente los tres grandes clústeres de comportamiento que existen en el ecosistema: el clúster de los Formalizados (con RUT, contabilidad, registro mercantil), el de los Digitalizados (con internet, celular, transferencias) y el de los Excluidos (sin ninguna de las anteriores). Lo más revelador del gráfico es que estos clústeres son relativamente impermeables entre sí: las reglas no \"viajan\" fácilmente de un grupo a otro, lo que confirma la hipótesis de la segmentación polarizada del apartado 11.
+Esta visualización permite identificar visualmente los tres grandes clústeres de comportamiento que existen en el ecosistema: el clúster de los Formalizados (con RUT, contabilidad, registro mercantil), el de los Digitalizados (con internet, celular, transferencias) y el de los Excluidos (sin ninguna de las anteriores). Lo más revelador del gráfico es que estos clústeres son relativamente impermeables entre sí: las reglas no \"viajan\" fácilmente de un grupo a otro, lo que confirma la hipótesis de la segmentación polarizada.
 
 ---
 
@@ -419,7 +419,7 @@ Una de las tentaciones más comunes en el análisis de micronegocios es asumir q
 
 | Grupo | Proporción | Cantidad estimada | Características | Dinámica del sistema |
 |---|---|---|---|---|
-| **A — Excluidos** | 65% | 3,4 millones | Sin celular, sin internet, operan en efectivo, sin RUT, sin crédito formal | Ciclo vicioso: sin documentos → sin crédito → sin tecnología → sin documentos |
+| **A — Excluidos** | 65% | 3,44 millones | Sin celular, sin internet, operan en efectivo, sin RUT, sin crédito formal | Ciclo vicioso: sin documentos → sin crédito → sin tecnología → sin documentos |
 | **B — Incluidos** | 8% | 424.000 | Con RUT, internet, pagos digitales, contabilidad, acceso a crédito | Ciclo virtuoso: formalización → crédito → tecnología → mayor formalización |
 | **C — Transición** | 27% | 1,4 millones | Tienen celular pero no internet; parcialmente digitalizados | Punto de bifurcación: pueden caer al Grupo A o escalar al B según el entorno |
 
@@ -443,7 +443,7 @@ La formalización no puede seguir siendo un proceso que el microempresario gesti
 
 - **Simplificación radical del RUT:** Proceso completamente en línea, completable en menos de 24 horas, con costo cero y sin requisitos previos como estados financieros o local fijo. La dirección del negocio puede ser la vivienda del propietario.
 - **Incentivo de acceso vinculado:** Todo micronegocio con RUT activo obtiene acceso automático a una línea de microcrédito de hasta 5 salarios mínimos legales vigentes, sin garantías adicionales. El RUT deja de ser solo una obligación y se convierte en una llave de acceso al sistema financiero.
-- **Focalización con enfoque diferencial de género y territorio:** Los programas de formalización deben priorizar a las mujeres propietarias en zonas rurales, quienes presentan una brecha de RUT aproximadamente 24 puntos porcentuales mayor que los hombres en zonas urbanas (94% vs 70,4%).
+- **Focalización con enfoque diferencial de género y territorio:** Los programas de formalización deben priorizar las zonas rurales —con enfoque diferencial hacia las mujeres propietarias, cuya participación cae del 38% urbano al 29,5% rural—, donde la informalidad fiscal es más aguda: el 94% opera sin RUT, frente al 70,4% en las cabeceras municipales (una brecha territorial de ~24 puntos).
 - **Reforma sin presión tributaria inmediata:** Diferir la primera obligación tributaria por 18 meses después del registro. El objetivo del primer año es la formalización, no la recaudación: un negocio registrado que luego crece y tributa vale más en el largo plazo que un negocio que nunca se registra por temor al fisco.
 
 ## Eje 2: Inclusión digital e internet
@@ -452,7 +452,7 @@ La formalización no puede seguir siendo un proceso que el microempresario gesti
 
 **Objetivo:** Reducir la tasa de micronegocios sin internet del 50,4% al 20% en dos años.
 
-**Prioridad 1 — Internet rural:** La desconexión en zonas rurales (77,6%) triplica la tasa urbana (38,3%). Esta brecha no se resolverá con soluciones de mercado: requiere subsidio selectivo focalizado en las microrregiones con mayor concentración de micronegocios desconectados (cruzar Figura 8A con Figura 6C para identificar los departamentos prioritarios). El modelo de referencia es el programa Vive Digital, que debe re-editarse con focalización microempresarial explícita. Meta: que el 94% de los 5,3 millones de micronegocios tenga acceso a internet en tres años.
+**Prioridad 1 — Internet rural:** La desconexión de internet es marcadamente más severa en las zonas rurales que en las cabeceras municipales. Esta brecha no se resolverá con soluciones de mercado: requiere subsidio selectivo focalizado en las microrregiones con mayor concentración de micronegocios desconectados (cruzar Figura 8A con Figura 6C para identificar los departamentos prioritarios). El modelo de referencia es el programa Vive Digital, que debe re-editarse con focalización microempresarial explícita. Meta: que el 94% de los 5,3 millones de micronegocios tenga acceso a internet en tres años.
 
 **Prioridad 2 — Adopción de transferencias digitales:** La brecha de adopción entre celular (70,9%), internet (49,6%) y transferencias (38,9%) define una escalera de tres peldaños. La política pública debe facilitar el ascenso entre peldaños: aplicaciones de billetera móvil gratuitas, con registro simplificado, e incentivos de adopción como un cashback del 2% en las primeras transacciones. Meta: 70% de micronegocios aceptando transferencias digitales en dos años.
 

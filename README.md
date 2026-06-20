@@ -60,7 +60,7 @@ Pipeline reproducible en **R** que toma los microdatos crudos del DANE y produce
 | **Universo** | 5.297.252 micronegocios (Colombia) |
 | **Muestra** | 77.202 negocios encuestados · 11 módulos |
 | **Período** | 2024 · factor de expansión ponderado |
-| **Salida** | 85 cuadros estadísticos + 39 reglas de asociación |
+| **Salida** | 85 cuadros (70 validados contra el boletín DANE) + 39 reglas de asociación |
 | **Fuente** | [Encuesta de Micronegocios (EMICRON) — DANE](https://www.dane.gov.co/) |
 
 ## 🔍 Pipeline
@@ -113,7 +113,7 @@ emicron/
 ├── scripts/     00_config → 01_consolidar → 02_limpiar → 03_cuadros → 04_eda → 04b_graficos → 05_apriori
 ├── output/      tablas/boletin/ (85 CSV) · figuras/ · informes/
 ├── paper/       Resumen + plantilla LatinR 2026
-└── docs/        Diccionario, Protocolo, guías metodológicas y catálogos
+└── docs/        Diccionario, Protocolo, informe de hallazgos y catálogo de cuadros
 ```
 
 </details>
@@ -127,9 +127,6 @@ emicron/
 | [`docs/PROTOCOLO_MAESTRO_EMICRON.md`](docs/PROTOCOLO_MAESTRO_EMICRON.md) | Metodologías oficiales de procesamiento ponderado del DANE |
 | [`docs/Diccionario_EMICRON_2024.md`](docs/Diccionario_EMICRON_2024.md) | Diccionario de variables y variables derivadas |
 | [`docs/CUADROS_NUEVOS_AGREGADOS.md`](docs/CUADROS_NUEVOS_AGREGADOS.md) | Catálogo de los 85 cuadros y cobertura DANE |
-| [`docs/EJECUTAR_AQUI.md`](docs/EJECUTAR_AQUI.md) | Guía de ejecución secuencial y checklists |
-| [`docs/GUIA_GRAFICOS_REPORTE_QMD.md`](docs/GUIA_GRAFICOS_REPORTE_QMD.md) · [`docs/INDICE_25_GRAFICOS_REPORTE.md`](docs/INDICE_25_GRAFICOS_REPORTE.md) | Guía e índice de los 25 gráficos del reporte |
-| [`docs/STATUS_EJECUCION_PIPELINE_V3.md`](docs/STATUS_EJECUCION_PIPELINE_V3.md) · [`docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md`](docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md) | Estado del pipeline e historial de cambios |
 | [`paper/`](paper/) | Resumen académico postulado a LatinR 2026 |
 
 </details>
