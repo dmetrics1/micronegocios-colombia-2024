@@ -80,12 +80,6 @@ emicron/
 ├── 📄 README.md                    # Este archivo
 ├── 📄 LICENSE                      # Licencia MIT
 ├── 📄 index.html                   # Redirect a GitHub Pages → reporte interactivo
-├── 📄 EJECUTAR_AQUI.md             # Instrucciones de ejecución rápida y checklist
-├── 📄 RUTA_A_10_PUNTOS_PERFECCION.md # Plan para perfeccionar el reporte final
-├── 📄 Diccionario_EMICRON_2024.md  # Diccionario detallado de variables EMICRON
-├── 📄 PROTOCOLO_MAESTRO_EMICRON.md # Protocolo de procesamiento y metodologías DANE
-├── 📄 ResumenLatinR2026_EconomiaPopular_Colombia.docx # Resumen académico postulado a LatinR 2026
-├── 📄 Template_LatinR.docx         # Plantilla de postulación LatinR
 ├── 📄 REPORTE_WIDE_PRO_2024.qmd    # Reporte interactivo final en Quarto (diseño ancho premium)
 ├── 📄 REPORTE_WIDE_PRO_2024.html   # Reporte interactivo compilado en formato HTML
 ├── 📄 custom-wide-pro.scss         # Estilos SCSS premium para el reporte
@@ -125,7 +119,15 @@ emicron/
 │   ├── figuras/                    # Visualizaciones exploratorias y de minería generadas
 │   └── informes/                   # Informes auxiliares
 │
+├── 📂 paper/                       # Investigación académica
+│   ├── ResumenLatinR2026_EconomiaPopular_Colombia.docx # Resumen postulado a LatinR 2026
+│   └── Template_LatinR.docx        # Plantilla de postulación LatinR
+│
 └── 📂 docs/                        # Documentación complementaria y metodológica
+    ├── Diccionario_EMICRON_2024.md # Diccionario detallado de variables EMICRON
+    ├── PROTOCOLO_MAESTRO_EMICRON.md # Protocolo de procesamiento y metodologías DANE
+    ├── EJECUTAR_AQUI.md            # Instrucciones de ejecución rápida y checklist
+    ├── RUTA_A_10_PUNTOS_PERFECCION.md # Plan para perfeccionar el reporte final
     ├── CUADROS_NUEVOS_AGREGADOS.md # Catálogo detallado de los nuevos cuadros agregados
     ├── RESUMEN_CAMBIOS_FLUJO_COMPLETO.md # Registro del proceso de desarrollo y de cambios en el flujo
     ├── PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md # Plan estratégico del análisis posterior
@@ -203,16 +205,17 @@ El reporte interactivo principal del proyecto se encuentra en la raíz:
 
 | Documento | Propósito | Ubicación |
 |-----------|-----------|-----------|
-| `PROTOCOLO_MAESTRO_EMICRON.md` | Metadatos y metodologías oficiales de procesamiento ponderado del DANE | Raíz |
-| `Diccionario_EMICRON_2024.md` | Diccionario detallado de variables y variables derivadas | Raíz |
-| `EJECUTAR_AQUI.md` | Guía de ejecución secuencial del pipeline y checklists de validación | Raíz |
-| `RUTA_A_10_PUNTOS_PERFECCION.md` | Plan y criterios de excelencia analítica y de diseño del reporte | Raíz |
+| `docs/PROTOCOLO_MAESTRO_EMICRON.md` | Metadatos y metodologías oficiales de procesamiento ponderado del DANE | `docs/` |
+| `docs/Diccionario_EMICRON_2024.md` | Diccionario detallado de variables y variables derivadas | `docs/` |
+| `docs/EJECUTAR_AQUI.md` | Guía de ejecución secuencial del pipeline y checklists de validación | `docs/` |
+| `docs/RUTA_A_10_PUNTOS_PERFECCION.md` | Plan y criterios de excelencia analítica y de diseño del reporte | `docs/` |
 | `docs/STATUS_EJECUCION_PIPELINE_V3.md` | Estado técnico detallado del pipeline (100% Completado y verificado) | `docs/` |
 | `docs/CUADROS_NUEVOS_AGREGADOS.md` | Catálogo detallado de los 85 cuadros generados y cobertura DANE | `docs/` |
 | `docs/RESUMEN_CAMBIOS_FLUJO_COMPLETO.md` | Historial técnico de cambios y mejoras en el flujo de main.R | `docs/` |
 | `docs/informe_caracterizacion_y_reglas.md` | Síntesis ejecutiva de hallazgos descriptivos y patrones Apriori | `docs/` |
 | `docs/PLAN_EDA_APRIORI_ANALISIS_POSTERIOR.md` | Plan de análisis posterior, hipótesis y variables analíticas | `docs/` |
 | `docs/PROMPT_EXTRACCION_GRAFICOS_DANE.md` | Herramientas automatizadas para validar contra reportes PDF oficiales | `docs/` |
+| `paper/ResumenLatinR2026_EconomiaPopular_Colombia.docx` | Resumen académico postulado a LatinR 2026 — *Economía Popular en Colombia* | `paper/` |
 
 ---
 
@@ -237,19 +240,24 @@ El reporte interactivo principal del proyecto se encuentra en la raíz:
 
 ## 📄 Licencia
 
-MIT License - Úsalo libremente con atribución.
-
----
-
-## 👤 Autor
-
-**Daniel Molina** | Análisis de Datos & Estadística  
-📧 dm0025900@gmail.com
+Distribuido bajo licencia **MIT** — úsalo libremente con atribución. Ver [`LICENSE`](LICENSE).
 
 ---
 
 ## 🙏 Créditos
 
-- **Datos:** DANE - Encuesta de Micronegocios (EMICRON) 2024
-- **Metodología:** Análisis exploratorio + Apriori (arules)
-- **Reportería:** Quarto v1.0+
+- **Datos:** DANE — Encuesta de Micronegocios (EMICRON) 2024
+- **Metodología:** Análisis exploratorio + reglas de asociación (Apriori, `arules`)
+- **Reportería:** Quarto + R + CSS Grid
+
+---
+
+## 👤 Autor
+
+**Daniel Molina Barrios** — Economista & Data Scientist · Santa Marta, Colombia
+
+> *"Transformo datos en soluciones, productos y decisiones."*
+
+[![GitHub](https://img.shields.io/badge/GitHub-2563EB?style=flat-square&logo=github&logoColor=white)](https://github.com/dmetrics1)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-7C3AED?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/daniel-molina-b76a4323b/)
+[![Email](https://img.shields.io/badge/Email-06B6D4?style=flat-square&logo=gmail&logoColor=white)](mailto:dm0025900@gmail.com)
