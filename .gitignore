@@ -42,6 +42,11 @@ output/
 reports/html/
 reports/pdf/
 
+# Excepciones: el reporte premium y su redirect SÍ se versionan
+# para servirse en GitHub Pages (es el entregable principal del repo).
+!REPORTE_WIDE_PRO_2024.html
+!index.html
+
 # Node y dependencias
 node_modules/
 package-lock.json

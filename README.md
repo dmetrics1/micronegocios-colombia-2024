@@ -1,17 +1,23 @@
-# EMICRON 2024 - Análisis Integral de Micronegocios Colombianos
+# EMICRON 2024 — Análisis Integral de Micronegocios Colombianos
 
-[![R](https://img.shields.io/badge/R-4.0%2B-276DC3?logo=r)](https://www.r-project.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Production-brightgreen.svg)]()
+[![R](https://img.shields.io/badge/R-4.0+-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.r-project.org/)
+[![Quarto](https://img.shields.io/badge/Quarto-06B6D4?style=flat-square&logo=quarto&logoColor=white)](https://quarto.org/)
+[![License](https://img.shields.io/github/license/dmetrics1/micronegocios-colombia-2024?style=flat-square&color=2563EB)](LICENSE)
+[![Live Report](https://img.shields.io/badge/Live%20Report-7C3AED?style=flat-square&logo=html5&logoColor=white)](https://dmetrics1.github.io/micronegocios-colombia-2024/)
 
-**Análisis completo de 5.3M micronegocios | 70+ cuadros DANE | Minería de patrones | Reportería interactiva**
+**Análisis completo de 5.3M micronegocios · 85 cuadros DANE · Minería de patrones (Apriori) · Reportería interactiva**
+
+> **📊 Reporte en vivo:** [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/)
+> *Reporte interactivo de alto impacto renderizado con Quarto + R + CSS Grid.*
+>
+> **🎓 Investigación:** versión académica de este trabajo aceptada/postulada a **[LatinR 2026](https://latin-r.com/)** — *Economía Popular en Colombia* (ver `ResumenLatinR2026_EconomiaPopular_Colombia.docx`).
 
 ## 🎯 Descripción
 
 Este repositorio contiene un **pipeline de análisis integral** de la Encuesta de Micronegocios (EMICRON) 2024 del DANE, que combina:
 
 ✅ **Validación de cuadros oficiales DANE**  
-✅ **70+ tablas estadísticas** procesadas y exportadas  
+✅ **85 tablas estadísticas** procesadas y exportadas  
 ✅ **Análisis exploratorio (EDA)** con visualizaciones avanzadas  
 ✅ **Minería de reglas de asociación (Apriori)** para descubrir patrones  
 ✅ **Reportes HTML profesionales** con Quarto + R + CSS Grid  
@@ -27,7 +33,7 @@ Este repositorio contiene un **pipeline de análisis integral** de la Encuesta d
 | **Muestra** | 77,202 negocios encuestados |
 | **Período** | 2024 |
 | **Módulos** | 11 (Identificación, TIC, Ventas, etc.) |
-| **Cuadros Generados** | 70+ estadísticos |
+| **Cuadros Generados** | 85 estadísticos |
 | **Fuente** | [DANE Oficial](https://www.dane.gov.co/) |
 
 ---
@@ -58,11 +64,11 @@ source("main.R")
 ### Generar Reportes HTML
 
 ```bash
-cd reports/source
+# Desde la raíz del proyecto (el .qmd y el .scss viven aquí)
 quarto render REPORTE_WIDE_PRO_2024.qmd --to html
 ```
 
-**Resultado:** `REPORTE_WIDE_PRO_2024.html` (en la raíz del proyecto)
+**Resultado:** `REPORTE_WIDE_PRO_2024.html` (en la raíz del proyecto), publicado en vivo vía GitHub Pages en [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/).
 
 ---
 
@@ -72,13 +78,14 @@ quarto render REPORTE_WIDE_PRO_2024.qmd --to html
 emicron/
 │
 ├── 📄 README.md                    # Este archivo
+├── 📄 LICENSE                      # Licencia MIT
+├── 📄 index.html                   # Redirect a GitHub Pages → reporte interactivo
 ├── 📄 EJECUTAR_AQUI.md             # Instrucciones de ejecución rápida y checklist
 ├── 📄 RUTA_A_10_PUNTOS_PERFECCION.md # Plan para perfeccionar el reporte final
 ├── 📄 Diccionario_EMICRON_2024.md  # Diccionario detallado de variables EMICRON
 ├── 📄 PROTOCOLO_MAESTRO_EMICRON.md # Protocolo de procesamiento y metodologías DANE
-├── 📄 AUDITORIA_DATA_STORYTELLING_FINAL.md # Primera auditoría del reporte
-├── 📄 AUDITORIA_SEGUIMIENTO_POST_CAMBIOS.md # Seguimiento de cambios realizados v2
-├── 📄 AUDITORIA_FINAL_DOCUMENTO_EXPANDIDO.md # Auditoría final para reporte expandido v3
+├── 📄 ResumenLatinR2026_EconomiaPopular_Colombia.docx # Resumen académico postulado a LatinR 2026
+├── 📄 Template_LatinR.docx         # Plantilla de postulación LatinR
 ├── 📄 REPORTE_WIDE_PRO_2024.qmd    # Reporte interactivo final en Quarto (diseño ancho premium)
 ├── 📄 REPORTE_WIDE_PRO_2024.html   # Reporte interactivo compilado en formato HTML
 ├── 📄 custom-wide-pro.scss         # Estilos SCSS premium para el reporte
