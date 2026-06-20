@@ -10,7 +10,21 @@
 > **📊 Reporte en vivo:** [dmetrics1.github.io/micronegocios-colombia-2024](https://dmetrics1.github.io/micronegocios-colombia-2024/)
 > *Reporte interactivo de alto impacto renderizado con Quarto + R + CSS Grid.*
 >
-> **🎓 Investigación:** versión académica de este trabajo aceptada/postulada a **[LatinR 2026](https://latin-r.com/)** — *Economía Popular en Colombia* (ver `ResumenLatinR2026_EconomiaPopular_Colombia.docx`).
+> **🎓 Investigación:** versión académica de este trabajo postulada a **[LatinR 2026](https://latin-r.com/)** — *Economía Popular en Colombia* (ver [`paper/`](paper/)).
+
+---
+
+## 📸 Capturas del reporte
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/01-portada-reporte.png" alt="Portada del reporte interactivo EMICRON 2024" /></td>
+    <td width="50%"><img src="docs/screenshots/03-empleo-propietario.png" alt="Situación en el empleo del propietario — cuenta propia vs. empleador" /></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/02-apriori-scatter.png" alt="Scatter Lift vs. Soporte de 55.906 reglas de asociación (Apriori)" /></td>
+  </tr>
+</table>
 
 ## 🎯 Descripción
 
