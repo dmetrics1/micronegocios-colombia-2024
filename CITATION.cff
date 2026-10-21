@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+message: "Si usas este código o sus resultados, cita el repositorio como se indica abajo."
+type: software
+title: "Minería de reglas de asociación y caracterización de la economía popular en Colombia: un enfoque de datos abiertos basado en R y Quarto"
+authors:
+  - family-names: "Molina Barrios"
+    given-names: "Daniel José"
+    email: "dm0025900@gmail.com"
+version: "1.0.0"
+date-released: "2026-10-17"
+url: "https://github.com/dmetrics1/micronegocios-colombia-2024"
+repository-code: "https://github.com/dmetrics1/micronegocios-colombia-2024"
+license: MIT
+keywords:
+  - economía popular
+  - micronegocios
+  - EMICRON
+  - DANE
+  - reglas de asociación
+  - Apriori
+  - arules
+  - R
+  - Quarto
+  - Colombia
+abstract: >-
+  Pipeline reproducible en R que consolida los microdatos de la Encuesta de
+  Micronegocios (EMICRON) 2024 del DANE, genera cuadros ponderados por el
+  factor de expansión, aplica minería de reglas de asociación (Apriori) con
+  medidas ponderadas, segmenta los micronegocios en tres grupos y documenta
+  los resultados en un reporte Quarto. Trabajo aceptado como presentación
+  en LatinR 2026 (Medellín).
