@@ -233,15 +233,15 @@ header#title-block-header { display: none !important; }
 
   .dm-kpis {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 1.6rem;
+    grid-template-columns: 1.35fr repeat(3, minmax(0, 1fr));   /* la primera cifra tiene 9 caracteres */
+    column-gap: 2rem; row-gap: 1.4rem;
     margin-bottom: 2.2rem;
   }
   .dm-kpi { border-top: 3px solid rgba(96, 165, 250, 0.55); padding-top: 1rem; }
   .dm-kpi:first-child { border-top-color: #22D3EE; }
   .dm-kpi-valor {
     font-family: $font-family-monospace; font-weight: 700;
-    font-size: clamp(1.5rem, 1rem + 1.4vw, 2.3rem); line-height: 1.05;
+    font-size: clamp(1.35rem, 0.8rem + 1.25vw, 2.2rem); line-height: 1.05;
     letter-spacing: -0.02em; color: #22D3EE;
     font-variant-numeric: tabular-nums;
   }

@@ -646,7 +646,7 @@ clave[1, confidence_pond]<br>
   const deptos = document.getElementById("deptos");
   D.top3_deptos.forEach(d => {
     deptos.insertAdjacentHTML("beforeend",
-      `<div class="stat" style="padding-top:18px;"><div class="num" style="font-size:64px;">${F.pct1(d.Pct_Con_Internet)} <span class="muted" style="font-size:30px;">internet</span> · ${F.pct1(d.Pct_Con_RUT)} <span class="muted" style="font-size:30px;">RUT</span></div><div class="lbl">${d.COD_DEPTO_DESC} · ${F.pct1(d.Pct_Distribucion)} de los micronegocios</div></div>`);
+      `<div class="stat" style="padding-top:18px;"><div class="num" style="font-size:64px;">${F.pct1(d.Pct_Con_Internet)} <span class="muted" style="font-size:30px;">internet</span><br>${F.pct1(d.Pct_Con_RUT)} <span class="muted" style="font-size:30px;">RUT</span></div><div class="lbl">${d.COD_DEPTO_DESC} · ${F.pct1(d.Pct_Distribucion)} de los micronegocios</div></div>`);
   });
 
   const tbl = document.getElementById("tbl-comp");
