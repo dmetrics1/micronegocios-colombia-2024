@@ -2,8 +2,8 @@
 .Rproj.user/
 .Rhistory
 .RData
-*.Rproj
-.Rprofile
+# *.Rproj  (emicron.Rproj se versiona: es el punto de entrada en RStudio)
+# .Rprofile (lo crea renv; se versiona)
 
 # Python
 __pycache__/
@@ -54,3 +54,7 @@ package-lock.json
 # Cache
 .cache/
 *.cache
+
+# Diapositivas LatinR 2026 (Quarto revealjs, autocontenidas)
+!presentacion/index.html
+!data/reference/*.csv
