@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Economía popular en Colombia con R — LatinR 2026</title>
+<meta name="description" content="Diapositivas de la charla de Daniel Molina en LatinR 2026: minería de reglas de asociación sobre la EMICRON 2024 (DANE) con R y Quarto.">
+<!--
+  PRESENTACIÓN LatinR 2026 · 1920×1080 · hecha a mano con el sistema de diseño DM
+  (misma base que el carrusel: tokens.css + fuentes + anatomía editorial).
+  Ninguna cifra está escrita aquí: se leen de datos.js (generado por build.R
+  a partir de ../output/tablas/) y se inyectan en los <span data-v="...">.
+  Teclas: → ← espacio (navegar) · N (notas del orador) · T (tema claro/oscuro)
+          F (pantalla completa) · Inicio/Fin · Ctrl+P → PDF de respaldo
+-->
+<link rel="icon" href="assets/logo-blanco.svg">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="assets/fonts.css">
+<script src="datos.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; }
+  body {
+    background:#05070d; font-family:var(--dm-font-body); color:var(--dm-text-body);
+    overflow:hidden; -webkit-font-smoothing:antialiased;
+  }
+  [data-theme="light"] body { background:#DCE4F0; }
+
+  /* ============ ESCENARIO (escala la diapositiva al viewport) ============ */
+  .stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; }
+  .slide {
+    width:1920px; height:1080px; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(var(--s,1)); transform-origin:center;
+    display:none; overflow:hidden;
+    /* abajo se reserva una franja de 150px: línea de fuente + marca/paginación */
+    padding:90px 110px 150px;
+    grid-template-columns:minmax(0, 1fr);   /* nada puede ser más ancho que la diapositiva */
+    color:var(--dm-text-body);
+    background:
+      radial-gradient(1100px 800px at 88% -10%, rgba(37,99,235,.18), transparent 60%),
+      radial-gradient(900px 700px at -10% 110%, rgba(6,182,212,.12), transparent 55%),
+      linear-gradient(160deg, var(--dm-bg-body) 0%, var(--dm-surface-1) 100%);
+  }
+  [data-theme="light"] .slide {
+    background:
+      radial-gradient(1100px 800px at 88% -10%, rgba(37,99,235,.08), transparent 60%),
+      linear-gradient(160deg, var(--dm-bg-body) 0%, #EEF3FA 100%);
+  }
+  .slide::before {   /* rejilla de puntos sutil: nunca fondo plano */
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:radial-gradient(circle, rgba(255,255,255,.045) 1.5px, transparent 1.5px);
+    background-size:32px 32px;
+  }
+  [data-theme="light"] .slide::before { background-image:radial-gradient(circle, rgba(15,23,42,.06) 1.5px, transparent 1.5px); }
+  .slide > * { position:relative; z-index:1; min-width:0; }
+  .slide.active { display:grid; }
+  .slide:not(.active) { display:none !important; }
+
+  /* ============ ELEMENTOS PERSISTENTES ============ */
+  .wm { position:absolute; bottom:40px; left:110px; display:flex; align-items:center; gap:16px; opacity:.7; z-index:3; }
+  .wm img { width:40px; }
+  .wm span { font:600 24px var(--dm-font-heading); color:var(--dm-text-title); letter-spacing:.02em; }
+  .pg { position:absolute; bottom:44px; right:110px; font:700 24px var(--dm-font-mono); color:var(--dm-text-muted); z-index:3; }
+  /* fuente: su propia línea, alineada al margen izquierdo, encima de la marca y la paginación */
+  .src { position:absolute; bottom:96px; left:110px; right:110px; font:500 18px var(--dm-font-mono);
+         color:var(--dm-text-muted); opacity:.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+         padding-top:14px; border-top:1px solid var(--dm-line); z-index:3; }
+  .progress { position:absolute; left:0; bottom:0; height:6px; background:var(--dm-brand-gradient); z-index:4; transition:width .3s; }
+
+  /* ============ TIPOGRAFÍA ============ */
+  .eyebrow {
+    justify-self:start; align-self:start; font:600 22px var(--dm-font-body); letter-spacing:.16em; text-transform:uppercase;
+    color:var(--dm-eyebrow-text); background:var(--dm-eyebrow-bg); border:1px solid rgba(6,182,212,.25);
+    padding:12px 28px; border-radius:999px;
+  }
+  [data-theme="light"] .eyebrow { border-color:rgba(30,64,175,.16); }
+  .slide-num { font:700 120px/1 var(--dm-font-mono); color:var(--dm-ink-navy); opacity:.14; }
+  h1 { font:700 96px/1.08 var(--dm-font-heading); color:var(--dm-text-title); letter-spacing:-.025em; }
+  h2 { font:700 72px/1.1 var(--dm-font-heading); color:var(--dm-text-title); letter-spacing:-.02em; }
+  h3 { font:700 40px/1.2 var(--dm-font-heading); color:var(--dm-text-title); }
+  .lead { font:500 44px/1.32 var(--dm-font-heading); color:var(--dm-text-title); }
+  .body-xl { font:400 36px/1.45 var(--dm-font-body); color:var(--dm-text-body); }
+  .body { font:400 30px/1.45 var(--dm-font-body); color:var(--dm-text-body); }
+  .kicker { font:700 28px var(--dm-font-heading); color:var(--dm-text-muted); letter-spacing:.02em; }
+  .muted { color:var(--dm-text-muted); }
+  .hi { color:var(--dm-kpi); }
+  .amber { color:var(--dm-accent-3); }
+  .mono { font-family:var(--dm-font-mono); font-variant-numeric:tabular-nums; }
+  .grad-text { background:var(--dm-brand-gradient); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .rule { height:4px; width:140px; background:var(--dm-brand-gradient); border-radius:999px; }
+  b { color:var(--dm-text-title); font-weight:600; }
+  code { font:500 .92em var(--dm-font-mono); color:var(--dm-ink-pale); background:var(--dm-eyebrow-bg); padding:2px 12px; border-radius:8px; }
+  [data-theme="light"] code { color:var(--dm-ink-navy); }
+
+  /* ============ COMPONENTES ============ */
+  .stat-row { display:flex; gap:48px; }
+  .stat { flex:1; border-top:4px solid var(--dm-ink-navy); padding-top:28px; }
+  .stat .num { font:700 112px/1 var(--dm-font-mono); color:var(--dm-kpi); font-variant-numeric:tabular-nums; letter-spacing:-.03em; }
+  .stat .lbl { font:500 32px/1.3 var(--dm-font-body); color:var(--dm-text-title); margin-top:18px; }
+  .stat .sub { font:400 24px/1.3 var(--dm-font-body); color:var(--dm-text-muted); margin-top:8px; }
+  .stat.amber { border-top-color:var(--dm-accent-3); } .stat.amber .num { color:var(--dm-accent-3); }
+  .stat.pos { border-top-color:var(--dm-positive); } .stat.pos .num { color:var(--dm-positive); }
+
+  .kpi-big { font:700 300px/1 var(--dm-font-mono); font-variant-numeric:tabular-nums; color:var(--dm-kpi); letter-spacing:-.04em; }
+  .kpi-ctx { font:500 42px/1.4 var(--dm-font-body); color:var(--dm-text-title); max-width:1300px; }
+
+  .card {
+    background:var(--dm-card-bg); border:1px solid var(--dm-card-border); border-radius:24px;
+    padding:44px 48px; box-shadow:var(--dm-panel-shadow);
+  }
+  .card.flat { box-shadow:none; }
+  .card .top { font:600 22px var(--dm-font-body); letter-spacing:.14em; text-transform:uppercase; color:var(--dm-text-muted); margin-bottom:18px; }
+
+  .pipeline { display:flex; flex-wrap:wrap; gap:16px; }
+  .pipe-chip {
+    display:flex; align-items:center; gap:14px; padding:18px 30px;
+    border:2px solid var(--dm-card-border); border-radius:999px; background:var(--dm-surface-1);
+    font:600 28px var(--dm-font-heading); color:var(--dm-text-muted);
+  }
+  .pipe-chip .n { font:700 20px var(--dm-font-mono); color:var(--dm-kpi); }
+  .pipe-chip .arrow { color:var(--dm-text-muted); opacity:.6; font-weight:400; }
+  .pipe-chip.final { color:var(--dm-text-title); border-color:var(--dm-ink-navy); background:var(--dm-eyebrow-bg); font-weight:700; }
+
+  .codecard {
+    background:var(--dm-surface-1); border:1px solid var(--dm-card-border); border-radius:24px;
+    padding:40px 44px; font:500 29px/1.6 var(--dm-font-mono); color:var(--dm-text-body); overflow:hidden;
+    box-shadow:var(--dm-panel-shadow);
+  }
+  .codecard .c { color:var(--dm-text-muted); font-style:italic; }
+  .codecard .k { color:var(--dm-ink-pale); } [data-theme="light"] .codecard .k { color:var(--dm-ink-navy); }
+  .codecard .s { color:var(--dm-positive); }
+  .codecard .o { color:var(--dm-accent-3); }
+  .codecard .hl { background:rgba(6,182,212,.12); display:block; margin:0 -44px; padding:0 44px; border-left:5px solid var(--dm-kpi); }
+
+  .rulebox {
+    border:1px solid var(--dm-card-border); border-radius:28px; background:var(--dm-surface-1);
+    padding:48px 56px; font:600 48px/1.3 var(--dm-font-heading); color:var(--dm-text-title); box-shadow:var(--dm-panel-shadow);
+  }
+  .rulebox .lhs { color:var(--dm-ink-navy); }
+  .rulebox .arrow { color:var(--dm-kpi); padding:0 .3em; font-weight:700; }
+  .rulebox .rhs { color:var(--dm-accent-3); }
+  .rulebox .brace { color:var(--dm-text-muted); font-weight:400; }
+
+  .caveat { display:inline-flex; align-items:center; gap:12px; font:600 24px var(--dm-font-mono); color:var(--dm-text-muted);
+    border:1px solid var(--dm-line); border-radius:999px; padding:12px 26px; }
+  .chip { display:inline-block; font:600 24px var(--dm-font-mono); color:var(--dm-ink-navy); background:var(--dm-eyebrow-bg);
+    border-radius:999px; padding:12px 24px; }
+
+  .def { display:grid; grid-template-columns:260px 1fr; gap:32px; align-items:baseline; padding:30px 0; border-top:1px solid var(--dm-line); }
+  .def:last-child { border-bottom:1px solid var(--dm-line); }
+  .def .term { font:700 40px var(--dm-font-mono); color:var(--dm-kpi); }
+  .def .desc { font:400 32px/1.4 var(--dm-font-body); }
+
+  .fig { width:100%; height:100%; object-fit:contain; display:block; }
+  .figbox { min-height:0; display:flex; align-items:center; justify-content:center; }
+
+  ul.big { list-style:none; display:flex; flex-direction:column; gap:26px; }
+  ul.big li { font:400 34px/1.42 var(--dm-font-body); padding-left:44px; position:relative; }
+  ul.big li::before { content:""; position:absolute; left:0; top:.55em; width:16px; height:16px; border-radius:50%; background:var(--dm-brand-gradient); }
+
+  /* layouts */
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:72px; min-height:0; }
+  .three { display:grid; grid-template-columns:repeat(3,1fr); gap:40px; min-height:0; }
+  .head { display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-bottom:40px; }
+  .stack { display:flex; flex-direction:column; gap:28px; min-height:0; }
+  .vfill { display:grid; grid-template-rows:auto 1fr; min-height:0; }
+  .center { justify-items:center; text-align:center; align-content:center; }
+
+  /* grupos: barra apilada CSS */
+  .gbar { display:flex; height:150px; border-radius:20px; overflow:hidden; box-shadow:var(--dm-panel-shadow); }
+  .gbar div { display:flex; align-items:center; justify-content:center; color:#fff; font:700 30px/1 var(--dm-font-mono); white-space:nowrap; }
+  .gbar div small { font:600 21px var(--dm-font-mono); opacity:.9; margin-top:4px; }
+  .gbar .g1 { background:var(--dm-negative); } .gbar .g2 { background:var(--dm-accent-3); } .gbar .g3 { background:var(--dm-positive); }
+  .legend { display:flex; gap:36px; font:500 26px var(--dm-font-body); color:var(--dm-text-muted); }
+  .legend i { display:inline-block; width:18px; height:18px; border-radius:50%; margin-right:10px; vertical-align:-1px; }
+
+  /* embudo */
+  .funnel { display:grid; grid-template-columns:repeat(3,1fr); gap:56px; align-items:end; min-height:0; }
+  .f { display:flex; flex-direction:column; justify-content:flex-end; height:100%; }
+  .f .bar { width:100%; border-radius:22px 22px 10px 10px; background:var(--dm-brand-gradient); margin-bottom:34px; min-height:26px; opacity:.95; }
+  .f .num { font:700 128px/1 var(--dm-font-mono); color:var(--dm-text-title); letter-spacing:-.03em; }
+  .f .lbl { font:500 30px/1.35 var(--dm-font-body); color:var(--dm-text-muted); margin-top:16px; min-height:130px; }
+
+  /* portada */
+  .hero-net { position:absolute; top:-40px; right:-60px; width:860px; height:860px; opacity:.95; z-index:0; }
+  .qr { background:#fff; padding:18px; border-radius:20px; width:230px; height:230px; }
+  .qr img { width:100%; height:100%; display:block; }
+  .qr-lbl { font:500 22px/1.3 var(--dm-font-body); color:var(--dm-text-muted); margin-top:14px; text-align:center; }
+
+  /* tabla */
+  table.tbl { width:100%; border-collapse:collapse; font:400 24px var(--dm-font-body); align-self:start; }
+  table.tbl th { text-align:left; font:600 20px var(--dm-font-body); letter-spacing:.08em; text-transform:uppercase; color:var(--dm-text-muted); padding:0 0 12px; border-bottom:2px solid rgba(6,182,212,.4); }
+  table.tbl td { padding:11px 0; border-bottom:1px solid var(--dm-line); }
+  table.tbl td.n { font:600 25px var(--dm-font-mono); text-align:right; color:var(--dm-text-title); }
+
+  /* notas del orador */
+  .notes { display:none; }
+  #notes-panel {
+    position:fixed; left:0; right:0; bottom:0; max-height:38vh; overflow:auto; z-index:50; display:none;
+    background:rgba(10,14,26,.96); color:#E5E7EB; border-top:3px solid #06B6D4; padding:22px 36px;
+    font:400 clamp(16px, 1.5vw, 24px)/1.5 var(--dm-font-body);
+  }
+  #notes-panel.on { display:block; }
+  #notes-panel .meta { font:600 14px var(--dm-font-mono); color:#9CA3AF; margin-bottom:8px; letter-spacing:.08em; }
+  #help { position:fixed; top:12px; right:14px; font:500 12px var(--dm-font-mono); color:#9CA3AF; opacity:.6; z-index:50; }
+
+  /* ============ IMPRESIÓN (PDF de respaldo) ============ */
+  @page { size:1920px 1080px; margin:0; }
+  @media print {
+    body { overflow:visible; background:none; }
+    .stage { position:static; display:block; }
+    .slide { display:grid !important; position:relative; top:auto; left:auto; transform:none; page-break-after:always;
+             print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+    .progress, #notes-panel, #help { display:none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="help">→ ← navegar · N notas · T tema · F pantalla completa</div>
+<div class="stage" id="stage">
+
+<!-- ============ 1 · PORTADA ============ -->
+<section class="slide" style="grid-template-columns:1.15fr .85fr; gap:60px; align-content:center;">
+  <svg class="hero-net" viewBox="0 0 520 520" xmlns="http://www.w3.org/2000/svg">
+    <g stroke="#2563EB" stroke-opacity="0.35" stroke-width="1.5">
+      <line x1="100" y1="100" x2="260" y2="180"/><line x1="260" y1="180" x2="420" y2="115"/>
+      <line x1="260" y1="180" x2="230" y2="340"/><line x1="230" y1="340" x2="390" y2="390"/>
+      <line x1="230" y1="340" x2="100" y2="420"/><line x1="420" y1="115" x2="455" y2="275"/>
+      <line x1="455" y1="275" x2="390" y2="390"/><line x1="100" y1="100" x2="60" y2="260"/>
+      <line x1="60" y1="260" x2="230" y2="340"/>
+    </g>
+    <g fill="#06B6D4">
+      <circle cx="100" cy="100" r="7" opacity=".6"/><circle cx="260" cy="180" r="11" opacity=".85"/>
+      <circle cx="420" cy="115" r="6" opacity=".5"/><circle cx="230" cy="340" r="13" opacity=".95"/>
+      <circle cx="390" cy="390" r="7" opacity=".6"/><circle cx="100" cy="420" r="6" opacity=".5"/>
+      <circle cx="455" cy="275" r="8" opacity=".65"/><circle cx="60" cy="260" r="5" opacity=".45"/>
+    </g>
+  </svg>
+  <div class="stack" style="gap:34px; justify-content:center;">
+    <span class="eyebrow">LatinR 2026 · Medellín · presentación de 15 minutos</span>
+    <h1 style="font-size:82px;">Minería de reglas de asociación y caracterización de la <span class="grad-text">economía popular</span> en Colombia</h1>
+    <div class="rule"></div>
+    <p class="lead" style="font-size:40px;">Un enfoque de datos abiertos basado en R y Quarto</p>
+    <p class="body muted" style="font-size:27px;"><b>Daniel José Molina Barrios</b> · Economista &amp; Data Scientist · Santa Marta<br>Datos: Encuesta de Micronegocios (EMICRON) 2024 — DANE</p>
+  </div>
+  <div style="display:flex; flex-direction:column; align-items:flex-end; justify-content:flex-end; z-index:1;">
+    <div class="qr"><img src="assets/qr-deck.svg" alt="QR a las diapositivas"></div>
+    <div class="qr-lbl">Sigue las diapositivas<br>en tu celular</div>
+  </div>
+  <aside class="notes">Buenos días. Soy Daniel Molina, economista y científico de datos de Santa Marta. Esta charla tiene dos capas: lo que encontré sobre los micronegocios colombianos y cómo lo hice con R y datos abiertos. Todo lo que van a ver está en el repositorio; quien quiera puede escanear el QR y seguirlo en el celular.</aside>
+</section>
+
+<!-- ============ 2 · UNIVERSO ============ -->
+<section class="slide center" style="grid-template-rows:auto auto auto 1fr auto; row-gap:28px;">
+  <span class="kicker">Colombia, 2024 · EMICRON (DANE)</span>
+  <div class="kpi-big" id="counter" data-count="universo">0</div>
+  <p class="kpi-ctx">micronegocios en Colombia, según la Encuesta de Micronegocios 2024 del DANE. Tres de sus rasgos:</p>
+  <div class="stat-row" style="width:100%; align-self:end; text-align:left;">
+    <div class="stat"><div class="num" data-v="sin_rut" data-f="pct1"></div><div class="lbl">no tiene RUT</div><div class="sub">informalidad fiscal</div></div>
+    <div class="stat"><div class="num" data-v="sin_internet" data-f="pct1"></div><div class="lbl">no tiene internet</div><div class="sub">exclusión digital</div></div>
+    <div class="stat"><div class="num" data-v="credito" data-f="pct1"></div><div class="lbl">solicitó crédito el último año</div><div class="sub">restricción financiera</div></div>
+  </div>
+  <span class="src">output/tablas/boletin · F1 · G9 · H2 · ponderado por F_EXP</span>
+  <aside class="notes">Cinco millones trescientos mil micronegocios. Tres cifras para situarnos: casi cuatro de cada cinco no tienen RUT; la mitad no tiene internet; y solo uno de cada siete pidió crédito el año pasado. Son las tres fracturas que se repiten en cualquier diagnóstico de la economía popular: informalidad, exclusión digital y restricción financiera.</aside>
+</section>
+
+<!-- ============ 3 · PREGUNTA ============ -->
+<section class="slide" style="align-content:center; row-gap:60px;">
+  <div class="slide-num">01</div>
+  <h1 style="font-size:118px; max-width:1500px;">¿Son tres problemas… <span class="grad-text">o es uno solo</span> visto desde tres ángulos?</h1>
+  <p class="body-xl muted" style="max-width:1300px;">Para responderlo hacen falta dos cosas: microdatos abiertos y una técnica que mire <b>qué viene con qué</b>, no cada variable por separado.</p>
+  <aside class="notes">La pregunta que organiza el trabajo. Si las tres fracturas vienen juntas, la política pública tiene que atacarlas juntas. Para responderlo necesitaba los microdatos, que el DANE publica abiertos, y una técnica que no mida cada variable por separado sino qué viene con qué: las reglas de asociación.</aside>
+</section>
+
+<!-- ============ 4 · DATOS ============ -->
+<section class="slide two" style="grid-template-columns:1.1fr .9fr; align-content:stretch;">
+  <div class="stack" style="gap:36px;">
+    <div class="slide-num">02</div>
+    <h2>Los datos: EMICRON 2024</h2>
+    <ul class="big">
+      <li><b><span data-v="muestra" data-f="num0"></span> negocios encuestados</b> en <span data-v="n_modulos"></span> módulos: identificación, TIC, inclusión financiera, ventas, personal…</li>
+      <li>Cada registro trae un <b>factor de expansión</b> (<code>F_EXP</code>): la muestra representa <span data-v="universo" data-f="num0"></span> unidades. Sin él describiríamos la muestra, no al país.</li>
+      <li>Microdatos abiertos en <code>microdatos.dane.gov.co</code>, en CSV. Incluidos en el repositorio.</li>
+      <li><span data-v="n_apriori" data-f="num0"></span> registros completos en las 30 variables del análisis de reglas.</li>
+    </ul>
+  </div>
+  <div class="stack" style="gap:36px; justify-content:center;">
+    <div class="card"><div class="top">Muestra</div><div class="stat" style="border:none; padding:0;"><div class="num" data-v="muestra" data-f="num0"></div><div class="lbl">encuestas → <span data-v="universo" data-f="mill1"></span> millones de negocios</div></div></div>
+    <div class="card"><div class="top">Módulos</div><div class="stat" style="border:none; padding:0;"><div class="num"><span data-v="n_modulos"></span> CSV</div><div class="lbl">unidos por la llave del negocio con <code>data.table</code></div></div></div>
+  </div>
+  <span class="src">data/raw/2024 · output/tablas/11_segmentacion_grupos.csv</span>
+  <aside class="notes">La EMICRON es la encuesta de micronegocios del DANE. Setenta y ocho mil quinientas encuestas en once módulos, cada una con su factor de expansión. Ese factor es clave y va a volver a aparecer.</aside>
+</section>
+
+<!-- ============ 5 · PIPELINE ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr auto; row-gap:40px; align-content:stretch;">
+  <h2>El pipeline: de <span data-v="n_modulos"></span> CSV a un reporte</h2>
+  <div class="pipeline">
+    <span class="pipe-chip"><span class="n">01</span> Consolidar <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">02</span> Depurar <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">03</span> <span data-v="n_cuadros"></span> cuadros <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">04</span> EDA <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">05</span> Apriori <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">06</span> Segmentar <span class="arrow">→</span></span>
+    <span class="pipe-chip"><span class="n">07</span> Robustez <span class="arrow">→</span></span>
+    <span class="pipe-chip final">Quarto</span>
+  </div>
+  <div class="three" style="gap:32px;">
+    <div class="card flat" style="padding:30px 36px;"><div class="top">01 · 02</div><h3>Unir y depurar</h3><p class="body muted" style="margin-top:10px; font-size:26px;"><code>data.table</code> une los módulos; 98/99 → <code>NA</code>; etiquetas DANE e índices.</p></div>
+    <div class="card flat" style="padding:30px 36px;"><div class="top">03 · 05</div><h3>Ponderar y minar</h3><p class="body muted" style="margin-top:10px; font-size:26px;">Cuadros con <code>F_EXP</code>; Apriori con <code>arules</code> y medidas ponderadas.</p></div>
+    <div class="card flat" style="padding:30px 36px;"><div class="top">06 · 07 · Quarto</div><h3>Segmentar, probar, contar</h3><p class="body muted" style="margin-top:10px; font-size:26px;">Tres grupos, rejilla de umbrales y un reporte que lee las tablas.</p></div>
+  </div>
+  <div class="codecard" style="font-size:25px; padding:24px 40px; line-height:1.55; white-space:pre;"><span class="k">renv</span>::restore()                           <span class="c"># mismas versiones de paquetes (renv.lock)</span><br><span class="k">source</span>(<span class="s">"main.R"</span>)                          <span class="c"># 01 → 07 en ~2 minutos</span><br>quarto render REPORTE_WIDE_PRO_2024.qmd   <span class="c"># reporte</span></div>
+  <aside class="notes">Siete scripts y un main. Consolidar los once módulos con data.table; depurar con el diccionario del DANE; producir los cuadros ponderados; correr Apriori; segmentar y probar robustez; y renderizar con Quarto. Dos minutos de ejecución. Las versiones de los paquetes están fijadas con renv. Ningún número de esta charla está escrito a mano: se calculan a partir de las tablas de salida.</aside>
+</section>
+
+<!-- ============ 6 · VALIDACIÓN ============ -->
+<section class="slide two" style="grid-template-columns:.85fr 1.15fr; align-content:stretch;">
+  <div class="stack" style="gap:40px; justify-content:center;">
+    <div class="slide-num">03</div>
+    <h2>Primero, empatar con el DANE</h2>
+    <p class="body-xl">Comparé <span data-v="val_total"></span> indicadores clave contra el boletín técnico oficial. <b><span data-v="val_ok"></span> coinciden con menos de 0,1 puntos</b> de diferencia.</p>
+    <p class="body muted">El único que se aleja es la participación de la <b><span data-v="val_max_ind"></span></b>: <span class="amber mono" data-v="val_max_dif" data-f="pp2"></span> p.p. por encima. Lo dejo visible: la credibilidad se construye mostrando también lo que no cuadra.</p>
+    <span class="caveat">banda verde = ±0,1 p.p.</span>
+  </div>
+  <div class="figbox"><img class="fig" data-fig="validacion" alt="Diferencia entre el pipeline y el DANE por indicador"></div>
+  <span class="src">boletín técnico EMICRON 2024 (DANE) vs. output/tablas/boletin · presentacion/data/validacion_dane.csv</span>
+  <aside class="notes">Antes de buscar patrones, hay que demostrar que los cuadros están bien hechos. Comparé diez indicadores clave contra el boletín oficial: nueve coinciden con menos de una décima de punto. El único que se aleja es la agricultura, un punto por encima, y lo dejo visible. Esto es lo que me permite confiar en lo que viene.</aside>
+</section>
+
+<!-- ============ 7 · APRIORI ============ -->
+<section class="slide two" style="grid-template-columns:1fr 1.05fr; align-content:stretch;">
+  <div class="stack" style="gap:30px; justify-content:center;">
+    <h2>Apriori en 60 segundos</h2>
+    <p class="body-xl">Cada negocio es una <b>canasta</b> de características: <span class="hi">sin RUT</span>, <span class="hi">usa celular</span>, <span class="hi">acepta transferencias</span>… Una regla <b>{A} ⇒ {B}</b> se mide con:</p>
+    <div>
+      <div class="def"><span class="term">soporte</span><span class="desc">¿qué tan común es ver A y B juntos?</span></div>
+      <div class="def"><span class="term">confianza</span><span class="desc">entre los que tienen A, ¿cuántos tienen B?</span></div>
+      <div class="def"><span class="term">lift</span><span class="desc">¿cuántas veces más frecuente es B entre los que tienen A que en el total? <b>1 = independencia</b></span></div>
+    </div>
+  </div>
+  <div class="codecard" style="align-self:center; font-size:25px; line-height:1.65;">
+trans <span class="o">&lt;-</span> <span class="k">as</span>(as.data.frame(base_apr), <span class="s">"transactions"</span>)<br>
+<span class="hl">transactionInfo(trans)$weight <span class="o">&lt;-</span> pesos  <span class="c"># F_EXP</span></span>
+<br>
+reglas <span class="o">&lt;-</span> <span class="k">apriori</span>(trans, parameter = list(<br>
+&nbsp;&nbsp;supp = <span class="o">0.15</span>, conf = <span class="o">0.70</span>, minlen = 2, maxlen = 4))<br>
+<br>
+reglas <span class="o">&lt;-</span> reglas[!<span class="k">is.redundant</span>(reglas)]<br>
+<br>
+<span class="hl">s_xy <span class="o">&lt;-</span> <span class="k">support</span>(items(reglas), trans, weighted = <span class="o">TRUE</span>)</span>
+s_x&nbsp; <span class="o">&lt;-</span> <span class="k">support</span>(lhs(reglas),&nbsp;&nbsp; trans, weighted = <span class="o">TRUE</span>)<br>
+s_y&nbsp; <span class="o">&lt;-</span> <span class="k">support</span>(rhs(reglas),&nbsp;&nbsp; trans, weighted = <span class="o">TRUE</span>)<br>
+lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
+  </div>
+  <span class="src">código real: scripts/05_apriori.R · scripts/00_config.R</span>
+  <aside class="notes">Apriori viene del análisis de canastas de supermercado. Aquí cada negocio es una canasta de características. Tres medidas: soporte, confianza y lift. Lift uno es independencia. En código son cinco líneas con arules. Y la parte que un revisor me pidió con razón, resaltada: asignar el factor de expansión como peso de cada transacción y recalcular las medidas ponderadas. Apriori, de fábrica, trata cada encuesta igual.</aside>
+</section>
+
+<!-- ============ 8 · EMBUDO ============ -->
+<section class="slide vfill" style="row-gap:40px;">
+  <div class="head"><h2><span data-v="n_generadas" data-f="num0"></span> reglas → <span data-v="n_39"></span> para contar la historia</h2><span class="chip">soporte ≥ 15 % · confianza ≥ 70 % · hasta 3 antecedentes</span></div>
+  <div class="funnel">
+    <div class="f"><div class="bar" style="height:62%;"></div><div class="num" data-v="n_generadas" data-f="num0"></div><div class="lbl">reglas generadas por <code>apriori()</code></div></div>
+    <div class="f"><div class="bar" style="height:29%;"></div><div class="num" data-v="n_no_redund" data-f="num0"></div><div class="lbl">no redundantes: se quita una regla si otra más general ya tiene igual o mayor confianza (<code>is.redundant()</code>)</div></div>
+    <div class="f"><div class="bar" style="height:4%;"></div><div class="num" data-v="n_39"></div><div class="lbl">con soporte &gt; 20 % en los análisis dirigidos: las que sostienen el relato</div></div>
+  </div>
+  <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 10_TABLA_RESUMEN_FILTRADA_20PCT.csv</span>
+  <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y trabajo con las treinta y nueve que tienen soporte mayor al veinte por ciento en los análisis dirigidos. Tres de ellas son las que les voy a contar.</aside>
+</section>
+
+<!-- ============ 9 · REGLA MÁS FUERTE ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr auto; row-gap:44px; align-content:stretch;">
+  <span class="kicker">La regla más fuerte</span>
+  <div class="rulebox"><span class="brace">{</span><span class="lhs" data-v="regla_excl.lhs" data-f="lhs"></span><span class="brace">}</span><span class="arrow">⇒</span><span class="brace">{</span><span class="rhs" data-v="regla_excl.rhs"></span><span class="brace">}</span></div>
+  <div class="stat-row" style="align-self:center;">
+    <div class="stat"><div class="num" data-v="regla_excl.conf" data-f="pct1"></div><div class="lbl">confianza</div><div class="sub">de los que no tienen nada de eso, casi ninguno tiene internet</div></div>
+    <div class="stat"><div class="num" data-v="regla_excl.sop" data-f="pct1"></div><div class="lbl">soporte ponderado</div><div class="sub">≈ <span data-v="regla_excl.negocios" data-f="mill2"></span> millones de negocios</div></div>
+    <div class="stat amber"><div class="num" data-v="regla_excl.lift" data-f="num2"></div><div class="lbl">lift ponderado</div><div class="sub"><span data-v="regla_excl.lift_m" data-f="num2"></span> sin ponderar</div></div>
+  </div>
+  <p class="lead">La exclusión digital es <span class="grad-text">acumulada</span>: cuando falta una herramienta, faltan todas.</p>
+  <span class="src">output/tablas/12a_reglas_clave.csv</span>
+  <aside class="notes">La regla más fuerte: sin computador, sin celular de negocio y sin transferencias, implica sin internet en el local. Confianza del noventa y nueve coma seis por ciento. Y no es un nicho: con el factor de expansión abarca más de la cuarta parte del universo, casi un millón y medio de negocios. La exclusión digital no llega de a una herramienta: llega en paquete.</aside>
+</section>
+
+<!-- ============ 10 · RED ============ -->
+<section class="slide two" style="grid-template-columns:.75fr 1.25fr; align-content:stretch;">
+  <div class="stack" style="gap:26px; justify-content:center;">
+    <div class="slide-num">04</div>
+    <h2>El sistema acoplado</h2>
+    <p class="body" style="font-size:31px;">Las reglas de mayor lift dibujan <b>un solo bloque digital</b>: sin computador, sin celular, sin registro… todo apunta a <span class="hi">sin internet</span>.</p>
+    <p class="body" style="font-size:31px;">Y un bloque positivo: celular, internet y <span class="amber">RUT</span> apuntando a <span class="hi">transferencias</span>.</p>
+    <span class="caveat" style="align-self:flex-start;">asociación ≠ causalidad</span>
+  </div>
+  <div class="figbox"><img class="fig" data-fig="red" alt="Red de las reglas con mayor lift"></div>
+  <span class="src">40 reglas con mayor lift ponderado + 6 mejores hacia transferencias · ancho = n.º de reglas · output/tablas/06b_reglas_ponderadas.csv</span>
+  <aside class="notes">Si dibujamos las reglas con mayor lift como una red, los ítems digitales forman un solo bloque. Y a la izquierda abajo, el bloque positivo: celular, internet y RUT apuntando a transferencias. No son variables sueltas: es un sistema acoplado. Una política que ataque un solo eslabón está trabajando contra la estructura.</aside>
+</section>
+
+<!-- ============ 11 · ¿Y EL RUT? ============ -->
+<section class="slide" style="grid-template-rows:auto 1fr; row-gap:40px; align-content:stretch;">
+  <h2>¿Y el RUT?</h2>
+  <div class="two" style="gap:48px;">
+    <div class="card stack" style="gap:24px; justify-content:center;">
+      <div class="top">con soporte ≥ 15 %</div>
+      <div class="kpi-big" style="font-size:260px; color:var(--dm-text-muted);" data-v="n_rut_15"></div>
+      <p class="lead">reglas terminan en <b>tiene RUT</b>.</p>
+      <p class="body muted">En el resumen lo llamé <i>"factor exógeno"</i>. Un revisor objetó: <b>la ausencia de reglas no prueba exogeneidad</b>. Tenía razón: los negocios con RUT son el <span data-v="rut_pct" data-f="pct1"></span> del universo y sus combinaciones no alcanzan el umbral.</p>
+    </div>
+    <div class="card stack" style="gap:28px; justify-content:center; border-color:rgba(245,158,11,.35);">
+      <div class="top amber">con soporte ≥ 5 %, sin otras variables de formalización en el antecedente</div>
+      <div class="rulebox" style="font-size:40px; padding:36px 40px;"><span class="brace">{</span><span class="lhs" data-v="regla_rut.lhs" data-f="lhs"></span><span class="brace">}</span><span class="arrow">⇒</span><span class="brace">{</span><span class="rhs" data-v="regla_rut.rhs"></span><span class="brace">}</span></div>
+      <div class="stat-row" style="gap:36px;">
+        <div class="stat amber"><div class="num" style="font-size:96px;" data-v="regla_rut.lift" data-f="num2"></div><div class="lbl">lift ponderado</div></div>
+        <div class="stat"><div class="num" style="font-size:96px;" data-v="regla_rut.conf" data-f="pct1"></div><div class="lbl">confianza</div></div>
+      </div>
+      <p class="body muted">Y la regla con <b>el lift más alto de todo el análisis</b> (<span class="mono amber" data-v="regla_max.lift" data-f="num2"></span>) es {<span data-v="regla_max.lhs" data-f="lhs"></span>} ⇒ {<span data-v="regla_max.rhs"></span>}. El silencio era del umbral, no del RUT.</p>
+    </div>
+  </div>
+  <span class="src">output/tablas/12d_reglas_rut_sin_formalizacion.csv · 06b_reglas_ponderadas.csv</span>
+  <aside class="notes">Y el RUT. Con los umbrales principales, ninguna regla termina en "tiene RUT". En el resumen lo llamé exógeno. Un revisor me corrigió y tenía razón: que Apriori no encuentre reglas con soporte del quince por ciento solo dice que los negocios con RUT son pocos. Bajé el soporte al cinco y saqué las variables de formalización del antecedente. Resultado: internet, transferencias y local fijo predicen el RUT con setenta y siete por ciento de confianza y lift de tres coma cuatro. Y la regla con el lift más alto de todo el análisis es RUT más celular, implica transferencias. El silencio era del umbral, no del RUT.</aside>
+</section>
+
+<!-- ============ 12 · GRUPOS ============ -->
+<section class="slide two" style="grid-template-columns:.95fr 1.05fr; align-content:stretch;">
+  <div class="stack" style="gap:34px; justify-content:center;">
+    <h2>Tres grupos, dos variables</h2>
+    <p class="body-xl">Cruzo <b>internet</b> × <b>RUT</b>. Los grupos no se solapan y cubren a todos.</p>
+    <div class="gbar" id="gbar"></div>
+    <div class="legend" style="flex-direction:column; gap:12px;"><span><i style="background:var(--dm-negative)"></i><b>Excluidos</b> · sin internet ni RUT</span><span><i style="background:var(--dm-accent-3)"></i><b>En transición</b> · solo uno de los dos</span><span><i style="background:var(--dm-positive)"></i><b>Integrados</b> · internet y RUT</span></div>
+    <p class="body muted">El resumen que envié decía <span class="mono">65 / 8 / 27</span>. Esas cifras no salían de ningún script. <b>Estas sí</b>, y la lectura se mantiene: una mayoría excluida, un grupo en transición y una minoría integrada.</p>
+  </div>
+  <div class="stack" style="gap:16px; min-height:0;">
+    <div class="kicker" style="text-align:center;">Perfil con variables que <b>no</b> definen los grupos (ponderado)</div>
+    <div class="figbox"><img class="fig" data-fig="perfil" alt="Perfil de los grupos"></div>
+  </div>
+  <span class="src">output/tablas/11_segmentacion_grupos.csv · 11b_perfil_grupos.csv · scripts/06_segmentacion.R</span>
+  <aside class="notes">Con esas dos variables armo tres grupos que no se solapan y cubren a todos. Aquí hay una confesión: el resumen decía sesenta y cinco, ocho y veintisiete, y esas cifras no salían de ningún script. Al hacerlo reproducible, cambiaron. Lo importante es la derecha: los grupos se separan en variables que no usé para definirlos. Transferencias: del seis al ochenta y siete por ciento. Son co-ocurrencias, no efectos, pero el paquete es consistente.</aside>
+</section>
+
+<!-- ============ 13 · MAPA ============ -->
+<section class="slide" style="grid-template-rows:auto 1fr auto; row-gap:30px; align-content:stretch;">
+  <div class="head"><h2>El mapa de la brecha</h2><span class="chip">gris = sin cobertura EMICRON</span></div>
+  <div class="figbox"><img class="fig" data-fig="mapas" alt="Mapas de internet y RUT por departamento"></div>
+  <div class="stat-row" id="deptos"></div>
+  <span class="src">output/tablas/boletin/J2_Indicadores_por_Departamento.csv · geometría simplificada</span>
+  <aside class="notes">La brecha también es territorial. A la izquierda, internet; a la derecha, RUT. Bogotá en la punta en ambos; la Costa Caribe y el suroccidente rezagados. Donde hay menos internet hay menos RUT. Cruzar la densidad de micronegocios con las tasas de desconexión dice dónde rinde más cada peso.</aside>
+</section>
+
+<!-- ============ 14 · ROBUSTEZ ============ -->
+<section class="slide" style="grid-template-rows:auto 1fr auto; row-gap:30px; align-content:stretch;">
+  <h2>¿Cambia con los umbrales o con la ponderación?</h2>
+  <div class="two" style="gap:56px;">
+    <div class="stack" style="gap:18px;">
+      <div class="figbox"><img class="fig" data-fig="sensibilidad" alt="Reglas no redundantes por combinación de umbrales"></div>
+      <p class="body"><b><span data-v="n_combos"></span> combinaciones</b> de soporte y confianza. Las dos reglas de exclusión digital aparecen en todas; la de TIC acopladas solo sale al exigir 90 % (tiene <span class="mono" data-v="regla_tic.conf_m" data-f="pct1"></span>).</p>
+    </div>
+    <div class="stack" style="gap:18px;">
+      <div class="figbox"><img class="fig" data-fig="ponderado" alt="Lift muestral vs ponderado"></div>
+      <p class="body"><b><span data-v="en_ambos" data-f="num0"></span> de <span data-v="n_muestral" data-f="num0"></span> reglas</b> sobreviven al ponderar por <code>F_EXP</code>; correlación de lifts <span class="mono hi" data-v="cor_lift" data-f="num3"></span>. Cambia el orden fino del top 30, no los patrones.</p>
+    </div>
+  </div>
+  <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 12b_ponderado_vs_muestral.csv · scripts/07_sensibilidad_apriori.R</span>
+  <aside class="notes">Las dos preguntas que me hicieron los revisores. ¿Dependen los resultados de los umbrales? Dieciséis combinaciones: el número de reglas cambia, los patrones no. ¿Y de la ponderación? El noventa y nueve por ciento de las reglas sobrevive y la correlación de los lifts es cero noventa y nueve seis. Lo que sí cambia es el orden fino, porque los lifts están casi empatados. Por eso cuento patrones, no rankings.</aside>
+</section>
+
+<!-- ============ 15 · QUÉ HACER ============ -->
+<section class="slide" style="grid-template-rows:auto 1fr auto; row-gap:36px; align-content:stretch;">
+  <h2>Qué hacer con esto</h2>
+  <div class="three">
+    <div class="card stack" style="gap:16px; padding:36px 40px;">
+      <div class="num mono" style="font:700 92px/1 var(--dm-font-mono); color:var(--dm-kpi);"><span data-v="cel_sin_net[0].Universo" data-f="mill2"></span> M</div>
+      <h3 style="font-size:34px;">negocios usan celular pero no tienen internet</h3>
+      <p class="body muted" style="font-size:26px;">Un <b>paquete digital</b> (conectividad + dispositivo + pagos), no un indicador a la vez. Este grupo (<span data-v="cel_sin_net[0].Porcentaje" data-f="pct1"></span> del universo) es el punto de entrada más barato.</p>
+      <p class="body muted" style="margin-top:auto; font-size:20px;">Evidencia: regla de exclusión acumulada · 11c_celular_x_internet.csv</p>
+    </div>
+    <div class="card stack" style="gap:16px; padding:36px 40px;">
+      <div class="num mono" style="font:700 92px/1 var(--dm-font-mono); color:var(--dm-accent-3);" data-v="regla_max.lift" data-f="num2"></div>
+      <h3 style="font-size:34px;">lift de RUT + celular ⇒ transferencias</h3>
+      <p class="body muted" style="font-size:26px;">La formalización co-ocurre con pagos digitales, internet y local fijo. Un <b>RUT desde el celular</b>, atado a pagos y registros simples, trabaja a favor de la estructura.</p>
+      <p class="body muted" style="margin-top:auto; font-size:20px;">Evidencia: 06b_reglas_ponderadas.csv · 12d_reglas_rut_sin_formalizacion.csv</p>
+    </div>
+    <div class="card stack" style="gap:16px; padding:36px 40px;">
+      <div class="num mono" style="font:700 92px/1 var(--dm-font-mono); color:var(--dm-negative);" data-v="grupos[0].Porcentaje" data-f="pct1"></div>
+      <h3 style="font-size:34px;">excluidos, la mitad en zona rural</h3>
+      <p class="body muted" style="font-size:26px;">Cruzar el mapa con los grupos dice <b>dónde rinde más cada peso</b>: <span data-v="perfil_rural_excl" data-f="pct1"></span> de los excluidos son rurales, frente a <span data-v="perfil_rural_int" data-f="pct1"></span> de los integrados.</p>
+      <p class="body muted" style="margin-top:auto; font-size:20px;">Evidencia: 11b_perfil_grupos.csv · J2_Indicadores_por_Departamento.csv</p>
+    </div>
+  </div>
+  <span class="caveat" style="justify-self:center;">son asociaciones de corte transversal: orientan la focalización y las hipótesis, no estiman efectos causales</span>
+  <aside class="notes">Tres implicaciones, con cuidado de no venderlas como causalidad. Uno: la política digital tiene que ser un paquete, y el punto de entrada más barato es el millón largo de negocios que ya usan celular pero no tienen internet. Dos: el RUT no debería llegar solo; debería llegar con pagos digitales y registros simples, porque así aparece en los datos. Tres: focalizar con el mapa y con los grupos. Son asociaciones: sirven para apuntar y para formular hipótesis, no para estimar impactos.</aside>
+</section>
+
+<!-- ============ 16 · ABIERTO ============ -->
+<section class="slide two" style="grid-template-columns:1.05fr .95fr; align-content:stretch;">
+  <div class="stack" style="gap:26px; justify-content:center;">
+    <h2 style="font-size:62px;">Todo es abierto. Y se vuelve a calcular solo.</h2>
+    <ul class="big" style="gap:18px;">
+      <li style="font-size:29px;"><b>Repositorio</b> con datos, scripts, <code>renv.lock</code> y el reporte: <code>github.com/dmetrics1/micronegocios-colombia-2024</code></li>
+      <li style="font-size:29px;"><b>Reporte</b> en GitHub Pages, generado con Quarto: sus tablas de resultados se leen de las mismas salidas.</li>
+      <li style="font-size:29px;"><b>Estas diapositivas</b> no tienen ninguna cifra escrita a mano: <code>build.R</code> las lee de <code>output/tablas/</code> y las inyecta.</li>
+    </ul>
+    <p class="lead" style="font-size:36px;">Si el DANE publica la EMICRON 2025: cambio la carpeta de datos, corro <code>main.R</code>, corro <code>build.R</code>… y esta charla se actualiza sola.</p>
+  </div>
+  <div class="codecard" style="align-self:center; font-size:31px;">
+<span class="c"># presentacion/build.R</span><br>
+seg <span class="o">&lt;-</span> leer(<span class="s">"11_segmentacion_grupos.csv"</span>)<br>
+UNIVERSO <span class="o">&lt;-</span> sum(seg$Universo)<br>
+<span class="c">#&gt; <span data-v="universo" data-f="num0"></span></span><br>
+<br>
+clave <span class="o">&lt;-</span> leer(<span class="s">"12a_reglas_clave.csv"</span>)<br>
+clave[1, confidence_pond]<br>
+<span class="c">#&gt; <span data-v="regla_excl.conf" data-f="frac4"></span></span><br>
+<br>
+<span class="c"># datos.js generado el <span data-v="generado_en"></span></span>
+  </div>
+  <aside class="notes">Todo está abierto: datos, código, versiones de paquetes, reporte y estas diapositivas. Y aquí está la tesis aplicada a la propia charla: ninguna cifra está escrita a mano. Si mañana sale la EMICRON 2025, cambio la carpeta de datos y la charla se actualiza sola.</aside>
+</section>
+
+<!-- ============ 17 · CIERRE ============ -->
+<section class="slide center" style="row-gap:44px; padding-bottom:120px;">
+  <span class="eyebrow">Economía popular · R · datos abiertos</span>
+  <h1 style="font-size:68px; max-width:1480px;">Las brechas de la economía popular <span class="grad-text">no vienen solas: vienen en paquete.</span><br>Con R y datos abiertos, cualquiera puede comprobarlo.</h1>
+  <div style="display:flex; gap:80px; align-items:flex-start;">
+    <div><div class="qr" style="width:200px; height:200px;"><img src="assets/qr-repo.svg" alt="QR al repositorio"></div><div class="qr-lbl">Repositorio</div></div>
+    <div><div class="qr" style="width:200px; height:200px;"><img src="assets/qr-deck.svg" alt="QR a las diapositivas"></div><div class="qr-lbl">Estas diapositivas</div></div>
+  </div>
+  <p class="body" style="font-size:27px;"><b>Daniel José Molina Barrios</b> · <span class="mono">github.com/dmetrics1</span> · <span class="mono">linkedin.com/in/danieljmolina</span> · <span class="mono">dm0025900@gmail.com</span></p>
+  <aside class="notes">Las brechas no vienen solas: vienen en paquete. Y con R y datos abiertos cualquiera puede comprobarlo. Gracias. Quedo atento a sus preguntas.</aside>
+</section>
+
+<!-- ============ R1 · UMBRALES ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr; row-gap:36px; align-content:stretch;">
+  <span class="eyebrow" style="color:var(--dm-accent-3); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3);">Respaldo</span>
+  <h2>¿Por qué 15 % y 70 %?</h2>
+  <ul class="big" style="gap:30px;">
+    <li><b>Soporte 15 %</b>: el patrón aparece en ≈ <span data-v="sop15_registros" data-f="num0"></span> registros de la muestra, más de <span data-v="sop15_negocios" data-f="num0"></span> negocios en el universo. Prioriza patrones con peso poblacional; evita reglas de nicho.</li>
+    <li><b>Confianza 70 %</b>: la regla se cumple en 7 de cada 10 casos con el antecedente.</li>
+    <li><b><code>maxlen = 4</code></b>: hasta 3 ítems en el antecedente, para que las reglas sean legibles.</li>
+    <li><b>Redundancia</b> (<code>arules::is.redundant</code>): se elimina una regla si existe otra más general —subconjunto del antecedente, mismo consecuente— con igual o mayor confianza. <span class="mono" data-v="n_generadas" data-f="num0"></span> → <span class="mono" data-v="n_no_redund" data-f="num0"></span>.</li>
+    <li><b>Rejilla de robustez</b>: soporte {10, 15, 20, 25 %} × confianza {60, 70, 80, 90 %}. Se minera una vez con soporte 8 % y se filtra; bajar el piso a 6 % no agrega reglas al conjunto ponderado.</li>
+  </ul>
+</section>
+
+<!-- ============ R2 · F_EXP ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr; row-gap:30px; align-content:stretch;">
+  <span class="eyebrow" style="color:var(--dm-accent-3); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3);">Respaldo</span>
+  <h2>¿Apriori usa el factor de expansión?</h2>
+  <div class="two" style="grid-template-columns:.9fr 1.1fr;">
+    <div class="stack" style="gap:20px;">
+      <p class="body" style="font-size:31px;"><b>La minería, no.</b> <code>apriori()</code> cuenta registros: cada encuesta pesa igual.</p>
+      <p class="body" style="font-size:31px;"><b>Las medidas, sí.</b> <code>F_EXP</code> se asigna como <code>transactionInfo(trans)$weight</code> y se recalculan:</p>
+      <ul class="big" style="gap:12px;">
+        <li>soporte = <code>support(items, trans, weighted = TRUE)</code></li>
+        <li>confianza = sop(X∪Y) / sop(X)</li>
+        <li>lift = sop(X∪Y) / (sop(X) · sop(Y))</li>
+      </ul>
+      <p class="body muted">Límite: no se calculan errores estándar con el diseño muestral complejo (estratos y conglomerados). Trabajo pendiente.</p>
+    </div>
+    <table class="tbl" id="tbl-comp"></table>
+  </div>
+</section>
+
+<!-- ============ R3 · ÍNDICES ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr; row-gap:30px; align-content:stretch;">
+  <span class="eyebrow" style="color:var(--dm-accent-3); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3);">Respaldo</span>
+  <h2>Índices sintéticos</h2>
+  <div class="two" style="grid-template-columns:.9fr 1.1fr;">
+    <div class="stack" style="gap:30px; justify-content:center;">
+      <p class="body-xl"><b>Formalización (0–5)</b>: tiene RUT · Cámara de Comercio · algún registro contable · paga salud y pensión · declara renta. Promedio ponderado <span class="mono hi" data-v="idx_form_prom" data-f="num2"></span>.</p>
+      <p class="body-xl"><b>Digital (0–4)</b>: usa internet · redes sociales · página web · celular para el negocio. Promedio ponderado <span class="mono hi" data-v="idx_dig_prom" data-f="num2"></span>.</p>
+      <p class="body muted">El <span class="mono" data-v="idx_form_0" data-f="pct1"></span> no cumple ningún criterio de formalización; solo el <span class="mono" data-v="idx_form_5" data-f="pct1"></span> cumple los cinco.</p>
+    </div>
+    <div class="figbox"><img class="fig" data-fig="indices" alt="Distribución de los índices"></div>
+  </div>
+  <span class="src">scripts/02_limpiar.R · output/tablas/03_indices_distribucion.csv</span>
+</section>
+
+<!-- ============ R4 · LIMITACIONES ============ -->
+<section class="slide" style="grid-template-rows:auto auto 1fr; row-gap:36px; align-content:stretch;">
+  <span class="eyebrow" style="color:var(--dm-accent-3); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3);">Respaldo</span>
+  <h2>Limitaciones</h2>
+  <div class="two" style="gap:60px;">
+    <ul class="big">
+      <li><b>Asociación ≠ causalidad.</b> Datos de corte transversal; las reglas describen co-ocurrencias.</li>
+      <li><b>Sin errores estándar de diseño.</b> Apriori corre sobre la muestra y se pondera después; no se incorporan estratos ni conglomerados.</li>
+      <li><b>No respuesta en selección múltiple</b> (formas de pago, TIC) interpretada como "No".</li>
+    </ul>
+    <ul class="big">
+      <li><b>Segmentación con dos variables</b> por transparencia; con los índices sintéticos los grupos tendrían otro tamaño.</li>
+      <li><b>Sesgo de supervivencia</b> en la antigüedad: la encuesta ve a los negocios que sobrevivieron.</li>
+      <li><b>Validación DANE</b>: <span data-v="val_total"></span> indicadores clave; el resto de los <span data-v="n_cuadros"></span> cuadros sigue la misma función ponderada pero no se contrastó uno a uno.</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+<div class="progress" id="progress"></div>
+<div id="notes-panel"><div class="meta" id="notes-meta"></div><div id="notes-text"></div></div>
+
+<script>
+(function () {
+  const D = window.DATOS;
+
+  // ---------- derivados que no vienen directos de datos.js ----------
+  D.rut_pct = 100 - D.sin_rut;
+  D.perfil_rural_excl = D.perfil.find(p => p.grupo === "Excluidos").Rural_pct;
+  D.perfil_rural_int  = D.perfil.find(p => p.grupo === "Integrados").Rural_pct;
+  D.sop15_registros = 0.15 * D.n_apriori;
+  D.sop15_negocios  = 0.15 * D.universo;
+
+  // ---------- formato es-CO ----------
+  const nf = (d) => new Intl.NumberFormat("es-CO", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const F = {
+    raw:  v => String(v),
+    num0: v => nf(0).format(v),
+    num1: v => nf(1).format(v),
+    num2: v => nf(2).format(v),
+    num3: v => nf(3).format(v),
+    pct1: v => nf(1).format(v) + "%",
+    pp2:  v => "+" + nf(2).format(v),
+    mill1: v => nf(1).format(v / 1e6),
+    mill2: v => nf(2).format(v / 1e6),
+    frac4: v => nf(4).format(v / 100),
+    lhs:  v => Array.isArray(v) ? v.join(" + ") : String(v)
+  };
+  const get = (path) => path.split(/\.|\[|\]/).filter(Boolean).reduce((o, k) => (o == null ? o : o[k]), D);
+
+  document.querySelectorAll("[data-v]").forEach(el => {
+    const val = get(el.dataset.v);
+    if (val === undefined || val === null) { el.textContent = "—"; console.warn("sin dato:", el.dataset.v); return; }
+    el.textContent = F[el.dataset.f || "raw"](val);
+  });
+
+  // ---------- componentes construidos desde datos ----------
+  const gbar = document.getElementById("gbar");
+  D.grupos.forEach((g, i) => {
+    const d = document.createElement("div");
+    d.className = "g" + (i + 1); d.style.width = g.Porcentaje + "%";
+    // dentro de la barra solo el porcentaje (el nombre del grupo va en la leyenda: en 18 % no cabe)
+    d.innerHTML = F.pct1(g.Porcentaje);
+    d.title = g.grupo;
+    gbar.appendChild(d);
+  });
+
+  const deptos = document.getElementById("deptos");
+  D.top3_deptos.forEach(d => {
+    deptos.insertAdjacentHTML("beforeend",
+      `<div class="stat" style="padding-top:18px;"><div class="num" style="font-size:64px;">${F.pct1(d.Pct_Con_Internet)} <span class="muted" style="font-size:30px;">internet</span> · ${F.pct1(d.Pct_Con_RUT)} <span class="muted" style="font-size:30px;">RUT</span></div><div class="lbl">${d.COD_DEPTO_DESC} · ${F.pct1(d.Pct_Distribucion)} de los micronegocios</div></div>`);
+  });
+
+  const tbl = document.getElementById("tbl-comp");
+  tbl.innerHTML = "<tr><th>Medida</th><th style='text-align:right'>Valor</th></tr>" +
+    D.comparacion.map(r => `<tr><td>${r.medida}</td><td class="n">${Number.isInteger(r.valor) ? F.num0(r.valor) : F.num3(r.valor)}</td></tr>`).join("");
+
+  // ---------- figuras según tema ----------
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    document.querySelectorAll("img[data-fig]").forEach(img => img.src = `figs/${t}/${img.dataset.fig}.png`);
+    try { localStorage.setItem("dm-deck-theme", t); } catch (e) {}
+  }
+  let theme = "dark";
+  try { theme = localStorage.getItem("dm-deck-theme") || "dark"; } catch (e) {}
+  setTheme(theme);
+
+  // ---------- navegación ----------
+  const slides = Array.from(document.querySelectorAll(".slide"));
+  const total = slides.length;
+  slides.forEach((s, i) => {
+    s.insertAdjacentHTML("beforeend", `<div class="wm"><img src="assets/logo-blanco.svg" alt="DM" data-logo><span>Daniel Molina</span></div><span class="pg">${i + 1}/${total}</span>`);
+  });
+  function logos() {
+    const src = document.documentElement.dataset.theme === "light" ? "assets/logo-principal.svg" : "assets/logo-blanco.svg";
+    document.querySelectorAll("[data-logo]").forEach(l => l.src = src);
+  }
+  logos();
+
+  let cur = 0, counted = false;
+  function fit() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    document.documentElement.style.setProperty("--s", s);
+  }
+  function count(el) {
+    const target = get(el.dataset.count), dur = 1800; let start = null;
+    const step = ts => { if (!start) start = ts; const p = Math.min((ts - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = nf(0).format(Math.round(target * e)); if (p < 1) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  function show(n) {
+    cur = Math.max(0, Math.min(total - 1, n));
+    slides.forEach((s, i) => s.classList.toggle("active", i === cur));
+    location.hash = "#" + (cur + 1);
+    document.getElementById("progress").style.width = ((cur + 1) / total * 100) + "%";
+    const c = slides[cur].querySelector("[data-count]");
+    if (c && !c.dataset.done) { c.dataset.done = 1; count(c); }
+    const notes = slides[cur].querySelector(".notes");
+    document.getElementById("notes-meta").textContent = `NOTAS · diapositiva ${cur + 1}/${total}`;
+    document.getElementById("notes-text").textContent = notes ? notes.textContent : "(sin notas)";
+  }
+  window.addEventListener("resize", fit); fit();
+  show((parseInt(location.hash.slice(1), 10) || 1) - 1);
+  window.addEventListener("hashchange", () => { const n = (parseInt(location.hash.slice(1), 10) || 1) - 1; if (n !== cur) show(n); });
+
+  document.addEventListener("keydown", e => {
+    if (["ArrowRight", " ", "PageDown"].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+    else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+    else if (e.key === "Home") show(0);
+    else if (e.key === "End") show(total - 1);
+    else if (e.key.toLowerCase() === "n") document.getElementById("notes-panel").classList.toggle("on");
+    else if (e.key.toLowerCase() === "t") { setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"); logos(); }
+    else if (e.key.toLowerCase() === "f") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+  });
+  document.getElementById("stage").addEventListener("click", e => { if (e.clientX > window.innerWidth * 0.7) show(cur + 1); else if (e.clientX < window.innerWidth * 0.3) show(cur - 1); });
+  window.addEventListener("beforeprint", () => slides.forEach(s => s.classList.add("active")));
+  window.addEventListener("afterprint", () => show(cur));
+})();
+</script>
+</body>
+</html>
