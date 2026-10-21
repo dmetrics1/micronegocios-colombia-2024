@@ -19,7 +19,7 @@
 
 1. [Qué hace y por qué importa](#-qué-hace-y-por-qué-importa)
 2. [Hallazgos clave](#-hallazgos-clave)
-3. [Capturas](#-capturas-del-reporte)
+3. [Capturas](#-capturas-del-reporte-y-la-charla)
 4. [Datos](#-datos)
 5. [Metodología](#-metodología)
 6. [Requisitos e instalación](#-requisitos-e-instalación)
@@ -67,17 +67,22 @@ Lo que puedes reutilizar:
 
 > Son asociaciones en datos de corte transversal: describen co-ocurrencias, no efectos causales.
 
-## 📸 Capturas del reporte
+## 📸 Capturas del reporte y la charla
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/01-portada-reporte.png" alt="Portada del reporte EMICRON 2024" /></td>
-    <td width="50%"><img src="docs/screenshots/03-empleo-propietario.png" alt="Situación en el empleo del propietario — cuenta propia vs. empleador" /></td>
+    <td colspan="2"><img src="docs/screenshots/01-portada-reporte.png" alt="Portada del reporte: Economía popular en Colombia, ¿tres problemas o uno solo? Cifras clave: 5.297.252 micronegocios, 77,6 % sin RUT, 50,4 % sin internet, 14,2 % solicitó crédito" /></td>
   </tr>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/02-apriori-scatter.png" alt="Soporte vs. confianza de las reglas de asociación no redundantes (Apriori)" /></td>
+    <td width="50%"><img src="docs/screenshots/02-apriori-red-reglas.png" alt="Red de las 20 reglas de asociación con mayor lift: los ítems de ausencia digital convergen en 'sin internet en el local'" /><br><sub><b>Reglas de asociación:</b> la exclusión digital es acumulada.</sub></td>
+    <td width="50%"><img src="docs/screenshots/03-segmentacion-grupos.png" alt="Segmentación por internet y RUT: excluidos 46,2 %, en transición 35,7 %, integrados 18,2 %" /><br><sub><b>Segmentación reproducible:</b> internet × RUT, ponderada por F_EXP.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2"><img src="docs/screenshots/04-diapositiva-regla.png" alt="Diapositiva de la charla LatinR 2026: la regla más fuerte, confianza 99,6 %, soporte ponderado 27,6 %, lift ponderado 1,90" /><br><sub><b>Diapositivas de la charla</b> (LatinR 2026): cada cifra se lee de <code>output/tablas/</code>.</sub></td>
   </tr>
 </table>
+
+<sub>Capturas tomadas del sitio publicado con <a href="docs/screenshots/capturar.py"><code>docs/screenshots/capturar.py</code></a>.</sub>
 
 ## 📊 Datos
 

@@ -26,7 +26,7 @@ Los documentos de `docs/` se escribieron en etapas distintas del proyecto y no s
 - [ ] Revisar la metodología, los supuestos, las decisiones técnicas y las referencias bibliográficas.
 - [ ] Determinar qué documentos se conservan, se actualizan, se fusionan o se eliminan.
 - [ ] Verificar que la documentación consolidada coincida con la versión pública definitiva.
-- [ ] Actualizar las capturas de `docs/screenshots/` con el reporte regenerado (muestran la versión de junio de 2026).
+- [x] Actualizar las capturas de `docs/screenshots/` con el reporte y las diapositivas actuales (hecho el 2026-10-21).
 
 ## C. Mejoras técnicas conocidas
 
