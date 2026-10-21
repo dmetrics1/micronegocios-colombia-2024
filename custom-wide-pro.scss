@@ -1,12 +1,53 @@
 /*-- scss:defaults --*/
-$font-family-sans-serif: "Segoe UI", -apple-system, sans-serif;
-$headings-font-family: "Segoe UI", sans-serif;
-$body-bg: #FAFAF8;
-$body-color: #1a1a1a;
-$link-color: #0072B2;
-$primary: #0072B2;
+// Tema del reporte con el sistema de diseño DM (tema claro, tipo "C · Narrativo").
+// Valores tomados de assets/dm/tokens.R / dm-design-system/tokens/tokens.json.
+
+$dm-bg:          #F3F6FB;
+$dm-panel:       #FFFFFF;
+$dm-title:       #0B1220;
+$dm-body:        #1E293B;
+$dm-muted:       #64748B;
+$dm-accent:      #2563EB;
+$dm-kpi:         #1D4ED8;
+$dm-navy:        #1E40AF;
+$dm-teal:        #0891B2;
+$dm-amber:       #D97706;
+$dm-positive:    #059669;
+$dm-negative:    #E11D48;
+$dm-line:        rgba(15, 23, 42, 0.10);
+$dm-dark:        #0A0E1A;
+$dm-dark-2:      #131C31;
+$dm-gradient:    linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #06B6D4 100%);
+
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+$headings-font-family:   "Space Grotesk", "Inter", system-ui, sans-serif;
+$font-family-monospace:  "JetBrains Mono", ui-monospace, monospace;
+$headings-font-weight:   700;
+$body-bg:    $dm-bg;
+$body-color: $dm-body;
+$link-color: $dm-kpi;
+$primary:    $dm-accent;
+$code-color: $dm-navy;
+$code-bg:    rgba(37, 99, 235, 0.06);
+
+$callout-color-note:      $dm-accent;
+$callout-color-tip:       $dm-positive;
+$callout-color-warning:   $dm-amber;
+$callout-color-important: $dm-negative;
+$callout-color-caution:   $dm-amber;
 
 /*-- scss:rules --*/
+
+/* 0. FUENTES DE MARCA (se incrustan en el HTML con embed-resources) */
+@font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("assets/dm/fonts-web/inter-400.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("assets/dm/fonts-web/inter-600.woff2") format("woff2"); }
+@font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("assets/dm/fonts-web/inter-700.woff2") format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 600; font-display: swap; src: url("assets/dm/fonts-web/space-grotesk-600.woff2") format("woff2"); }
+@font-face { font-family: "Space Grotesk"; font-weight: 700; font-display: swap; src: url("assets/dm/fonts-web/space-grotesk-700.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 500; font-display: swap; src: url("assets/dm/fonts-web/jetbrains-mono-500.woff2") format("woff2"); }
+@font-face { font-family: "JetBrains Mono"; font-weight: 700; font-display: swap; src: url("assets/dm/fonts-web/jetbrains-mono-700.woff2") format("woff2"); }
+
+body { -webkit-font-smoothing: antialiased; line-height: 1.65; }
 
 /* 1. RESET Y ESTRUCTURA BASE */
 html, body {
@@ -18,16 +59,16 @@ html, body {
   padding: 0 !important;
 }
 
-.quarto-container, 
-.quarto-content, 
-.page-columns, 
+.quarto-container,
+.quarto-content,
+.page-columns,
 main.content {
   overflow: visible !important;
   max-width: 100% !important;
   width: 100% !important;
 }
 
-/* 2. GRID SYSTEM - SIDEBAR FIJO + CONTENIDO EXPANDIDO */
+/* 2. GRID: ÍNDICE LATERAL FIJO + CONTENIDO */
 .page-columns {
   display: grid !important;
   grid-template-columns: 320px 1fr !important;
@@ -37,7 +78,6 @@ main.content {
   align-items: stretch !important;
 }
 
-/* 3. SIDEBAR (CONTENEDOR) */
 #quarto-sidebar, .sidebar {
   grid-column: 1 !important;
   width: 320px !important;
@@ -50,64 +90,60 @@ main.content {
   overflow: visible !important;
 }
 
-/* 4. TABLA DE CONTENIDOS (TOC) - SIGUE AL USUARIO */
-
-/* Estilos comunes del TOC */
+/* 3. ÍNDICE (TOC) — tarjeta DM */
 #TOC {
-  background: white !important;
-  border-left: 6px solid #0072B2 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.12) !important;
-  padding: 2rem 1.5rem !important;
+  background: $dm-panel !important;
+  border: 1px solid $dm-line !important;
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06) !important;
+  padding: 1.6rem 1.3rem !important;
   z-index: 9999 !important;
   overflow-x: hidden !important;
 
-  ul {
-    list-style: none !important;
-    padding-left: 0.5rem !important;
-    margin: 0 !important;
+  h2, #toc-title {
+    font-family: $headings-font-family !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+    color: $dm-muted !important;
+    border: none !important;
+    margin: 0 0 0.8rem !important;
+    padding: 0 !important;
   }
 
-  li {
-    margin: 0.6rem 0 !important;
-    padding-left: 1.2rem !important;
-    position: relative !important;
-    
-    &:before {
-      content: "▶" !important;
-      position: absolute !important;
-      left: 0 !important;
-      color: #0072B2 !important;
-      font-size: 0.7rem !important;
-      top: 0.2rem !important;
-    }
-  }
+  ul { list-style: none !important; padding-left: 0 !important; margin: 0 !important; }
+  ul ul { padding-left: 0.9rem !important; border-left: 1px solid $dm-line; margin: 0.2rem 0 0.4rem 0.3rem !important; }
+  li { margin: 0.15rem 0 !important; padding-left: 0 !important; }
 
   a {
-    color: #0072B2 !important;
+    color: $dm-body !important;
     text-decoration: none !important;
-    text-transform: uppercase !important;
-    font-weight: 600 !important;
-    font-size: 0.8rem !important;
-    line-height: 1.2 !important;
+    font-weight: 500 !important;
+    font-size: 0.86rem !important;
+    line-height: 1.35 !important;
     display: block !important;
-    word-wrap: break-word !important;
+    padding: 0.28rem 0.6rem !important;
+    border-radius: 8px !important;
+    border-left: none !important;
 
-    &:hover {
-      color: #004B87 !important;
-      text-decoration: none !important;
+    &:hover { background: rgba(37, 99, 235, 0.06) !important; color: $dm-kpi !important; }
+    &.active {
+      background: rgba(37, 99, 235, 0.10) !important;
+      color: $dm-kpi !important;
+      font-weight: 600 !important;
     }
   }
+  ul ul a { font-size: 0.8rem !important; color: $dm-muted !important; }
+  .header-section-number { color: $dm-accent !important; font-family: $font-family-monospace; font-size: 0.78em; margin-right: 0.4rem !important; }
 }
 
-/* Comportamiento según tamaño de pantalla */
 @media (min-width: 1200px) {
   #TOC {
     position: fixed !important;
-    top: 2rem !important;
+    top: 1.5rem !important;
     left: 20px !important;
     width: 280px !important;
-    max-height: calc(100vh - 4rem) !important;
+    max-height: calc(100vh - 3rem) !important;
     overflow-y: auto !important;
   }
 }
@@ -118,95 +154,251 @@ main.content {
     margin: 0 1rem 2rem 1rem !important;
     width: auto !important;
   }
+  .page-columns { grid-template-columns: 1fr !important; }
+  #quarto-sidebar, .sidebar { width: 100% !important; max-width: 100% !important; }
+  main.content { grid-column: 1 !important; padding: 0 1.2rem 4rem !important; }
 }
 
-/* 5. CONTENIDO PRINCIPAL */
+/* 4. CONTENIDO PRINCIPAL */
 main.content {
   grid-column: 2 !important;
   width: 100% !important;
-  max-width: 100% !important;
-  padding: 0 4rem 5rem 4rem !important;
+  max-width: 1180px !important;
+  padding: 0 4rem 5rem 3rem !important;
   margin: 0 !important;
   box-sizing: border-box !important;
 }
 
-/* 6. PORTADA (BANNER) */
-.quarto-title-block {
-  width: 100% !important;
-  max-width: 100% !important;
-  margin: 1.5rem 0 3rem 0 !important;
-  padding: 3.5rem 2.5rem !important;
-  background: linear-gradient(135deg, #0072B2 0%, #004B87 100%);
-  color: white;
-  border-radius: 15px !important;
-  box-shadow: 0 8px 25px rgba(0, 75, 135, 0.2) !important;
-  border: 1px solid rgba(255,255,255,0.1) !important;
-  
-  .title {
-    font-size: 3rem !important;
-    font-weight: 800;
-    line-height: 1.1;
-    color: white !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
+/* 5. CABECERA DE QUARTO: oculta; la reemplaza la portada editorial (chunk "portada") */
+header#title-block-header { display: none !important; }
+
+/* 5b. PORTADA EDITORIAL (chunk "portada" del .qmd) */
+.dm-hero {
+  position: relative;
+  overflow: hidden;
+  margin: 1.5rem 0 3.2rem;
+  padding: 2.6rem 3rem 2.4rem;
+  border-radius: 22px;
+  color: #E5E7EB;
+  // Azules de la página personal (personal_landing/next-app/app/globals.css):
+  // superficies #0F1729 → #18233C → #202D4E + brillo del azul de marca #2563EB
+  background:
+    radial-gradient(900px 560px at 85% -20%, rgba(37, 99, 235, 0.55), transparent 62%),
+    radial-gradient(700px 520px at 10% 115%, rgba(6, 182, 212, 0.22), transparent 58%),
+    radial-gradient(60% 70% at 30% 40%, rgba(37, 99, 235, 0.16), transparent 72%),
+    linear-gradient(150deg, #0F1729 0%, #18233C 55%, #202D4E 100%);
+  box-shadow: 0 22px 48px rgba(15, 23, 41, 0.30);
+
+  &::before {   /* rejilla de puntos, como en el carrusel y las diapositivas */
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1.2px, transparent 1.2px);
+    background-size: 24px 24px;
+  }
+  > * { position: relative; }
+
+  .dm-hero-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    margin-bottom: 1.8rem;
+  }
+  .dm-eyebrow {
+    display: inline-block;
+    font: 600 0.72rem/1 $font-family-sans-serif;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: #22D3EE;
+    background: rgba(6, 182, 212, 0.14);
+    border: 1px solid rgba(6, 182, 212, 0.30);
+    padding: 0.55rem 1rem; border-radius: 999px;
+  }
+  .dm-hero-logo { width: 54px !important; height: auto !important; opacity: 0.9; border-radius: 0 !important; }
+
+  .dm-hero-title {
+    font-family: $headings-font-family;
+    font-weight: 700;
+    font-size: clamp(2rem, 1.2rem + 2.6vw, 3.3rem);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    color: #F9FAFB;
+    max-width: 22ch;
+    margin: 0 0 1.1rem;
+  }
+  .dm-grad {
+    background: linear-gradient(135deg, #60A5FA 0%, #22D3EE 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .dm-hero-lead {
+    font-size: 1.08rem; line-height: 1.6; color: #CBD5E1;
+    max-width: 68ch; margin: 0 0 2.2rem;
+  }
+
+  .dm-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.6rem;
+    margin-bottom: 2.2rem;
+  }
+  .dm-kpi { border-top: 3px solid rgba(96, 165, 250, 0.55); padding-top: 1rem; }
+  .dm-kpi:first-child { border-top-color: #22D3EE; }
+  .dm-kpi-valor {
+    font-family: $font-family-monospace; font-weight: 700;
+    font-size: clamp(1.5rem, 1rem + 1.4vw, 2.3rem); line-height: 1.05;
+    letter-spacing: -0.02em; color: #22D3EE;
+    font-variant-numeric: tabular-nums;
+  }
+  .dm-kpi:first-child .dm-kpi-valor { color: #F9FAFB; }
+  .dm-kpi-etiqueta { margin-top: 0.45rem; font-weight: 600; color: #F9FAFB; font-size: 0.95rem; }
+  .dm-kpi-nota { margin-top: 0.15rem; color: #94A3B8; font-size: 0.8rem; }
+
+  .dm-hero-foot {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;
+    padding-top: 1.4rem; border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .dm-hero-meta { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.88rem; color: #94A3B8; }
+  .dm-hero-meta b { color: #F9FAFB; font-weight: 600; }
+  .dm-hero-links { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+  .dm-btn {
+    display: inline-block;
+    font: 600 0.88rem/1 $font-family-sans-serif;
+    padding: 0.75rem 1.15rem; border-radius: 10px;
+    color: #E5E7EB !important; text-decoration: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition: background 0.15s ease, border-color 0.15s ease;
+    &:hover { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.32); }
+  }
+  .dm-btn-primary {
+    background: linear-gradient(135deg, #1E40AF 0%, #2563EB 55%, #0891B2 100%);
+    border-color: transparent;
+    &:hover { filter: brightness(1.1); background: linear-gradient(135deg, #1E40AF 0%, #2563EB 55%, #0891B2 100%); }
   }
 }
 
-/* 7. TIPOGRAFÍA DE TÍTULOS (ESTILO SOLICITADO) */
-main.content h1, 
-main.content h2, 
-main.content h3 {
-  border-left: 6px solid #0072B2 !important;
-  border-bottom: 1px solid #E2E8F0 !important;
-  padding-left: 1.2rem !important;
-  padding-bottom: 0.6rem !important;
-  margin-top: 3.5rem !important;
-  color: #0072B2 !important;
-  font-weight: 700 !important;
+@media (max-width: 900px) {
+  .dm-hero { padding: 2rem 1.4rem 1.8rem; }
+  .dm-hero .dm-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
 }
 
-main.content h1 { font-size: 2.4rem !important; }
-main.content h2 { font-size: 1.8rem !important; margin-top: 2.5rem !important; }
-main.content h3 { font-size: 1.4rem !important; border-left-width: 4px !important; }
+/* 6. TÍTULOS */
+main.content h1,
+main.content h2,
+main.content h3 {
+  font-family: $headings-font-family !important;
+  color: $dm-title !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em;
+  border: none !important;
+  padding: 0 !important;
+}
+
+main.content h1 {
+  font-size: 2.1rem !important;
+  margin-top: 4rem !important;
+  padding-bottom: 0.7rem !important;
+  border-bottom: 1px solid $dm-line !important;
+  position: relative;
+}
+main.content h1::after {
+  content: ""; position: absolute; left: 0; bottom: -2px;
+  width: 96px; height: 3px; border-radius: 999px; background: $dm-gradient;
+}
+main.content h2 { font-size: 1.5rem !important; margin-top: 2.6rem !important; }
+main.content h3 { font-size: 1.15rem !important; margin-top: 2rem !important; color: $dm-body !important; }
 
 .header-section-number {
-  color: #64748B !important;
+  font-family: $font-family-monospace;
+  color: $dm-accent !important;
   margin-right: 0.6rem !important;
-  font-weight: 500 !important;
+  font-weight: 700 !important;
+  font-size: 0.8em;
 }
 
-/* 8. ELEMENTOS MULTIMEDIA Y TABLAS */
+main.content strong { color: $dm-title; }
+
+/* Guía metodológica (blockquote) */
+main.content blockquote {
+  background: $dm-panel;
+  border-left: 4px solid $dm-teal !important;
+  border-radius: 0 12px 12px 0;
+  padding: 1rem 1.3rem !important;
+  color: $dm-body;
+  font-size: 0.97rem;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+/* 7. FIGURAS — tarjeta blanca */
 figure, .quarto-figure, .quarto-layout-panel {
   width: 100% !important;
   max-width: 100% !important;
-  margin: 2.5rem 0 !important;
-}
-
-img {
-  width: 100% !important;
-  height: auto !important;
-  border-radius: 8px;
-}
-
-table {
-  width: 100% !important;
   margin: 2rem 0 !important;
-  font-size: 0.95rem;
-  thead { background: #E8ECF1; color: #0072B2; border-bottom: 2px solid #0072B2; }
-  th, td { padding: 0.8rem 1rem; border: 1px solid #E2E8F0; }
-  tbody tr:nth-child(even) { background: #F8FAFC; }
+}
+.quarto-figure {
+  background: $dm-panel;
+  border: 1px solid $dm-line;
+  border-radius: 14px;
+  padding: 1.2rem 1.4rem 0.8rem;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+}
+img { width: 100% !important; height: auto !important; border-radius: 6px; }
+figcaption, .figure-caption {
+  color: $dm-muted !important;
+  font-size: 0.85rem !important;
+  margin-top: 0.6rem !important;
+  strong { color: $dm-body; }
 }
 
-/* 9. CALLOUTS */
+/* 8. TABLAS */
+main.content table {
+  width: 100% !important;
+  margin: 1.6rem 0 !important;
+  font-size: 0.92rem;
+  background: $dm-panel;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid $dm-line !important;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+
+  caption { color: $dm-muted; font-size: 0.82rem; caption-side: top; padding: 0 0 0.6rem; }
+  thead { background: #F8FAFC; }
+  th {
+    color: $dm-muted !important;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600 !important;
+    border-bottom: 2px solid rgba(37, 99, 235, 0.35) !important;
+  }
+  th, td { padding: 0.7rem 1rem !important; border: none; border-bottom: 1px solid $dm-line; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(37, 99, 235, 0.03); }
+}
+
+/* 9. CALLOUTS — colores semánticos DM */
 .callout {
-  border-radius: 12px !important;
-  border-left-width: 6px !important;
-  margin: 2rem 0 !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+  border-radius: 14px !important;
+  border: 1px solid $dm-line !important;
+  border-left-width: 5px !important;
+  margin: 1.8rem 0 !important;
+  background: $dm-panel !important;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05) !important;
+  .callout-header { background: transparent !important; font-family: $headings-font-family; font-weight: 700; }
 }
+.callout-warning   { border-left-color: $dm-amber !important; }
+.callout-important { border-left-color: $dm-negative !important; }
+.callout-tip       { border-left-color: $dm-positive !important; }
+.callout-note      { border-left-color: $dm-accent !important; }
 
-/* 10. LIMPIEZA FINAL */
+/* 10. CÓDIGO */
+div.sourceCode, pre {
+  background: #F8FAFC !important;
+  border: 1px solid $dm-line !important;
+  border-radius: 12px !important;
+}
+code { font-size: 0.86em; }
+details > summary { color: $dm-kpi; font-weight: 600; }
+
+/* 11. LIMPIEZA FINAL */
+hr { border-color: $dm-line; opacity: 1; }
 #quarto-margin-sidebar { display: none !important; }
 .quarto-secondary-nav { display: none !important; }
 .sidebar nav, .quarto-sidebar-toggle { border: none !important; }

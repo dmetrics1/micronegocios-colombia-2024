@@ -1,14 +1,16 @@
 ---
-title: "Análisis Integral EMICRON 2024"
-subtitle: "85 Cuadros DANE + Minería de Reglas | Micronegocios Colombianos"
+title: "Economía popular en Colombia: EMICRON 2024"
+subtitle: "70 cuadros ponderados · minería de reglas de asociación · R + Quarto"
 author:
   - name: "Daniel Molina Barrios"
     affiliation: "Economista & Data Scientist"
     url: "https://github.com/dmetrics1"
-date: "2026-05-15"
+date: last-modified
 date-format: "D [de] MMMM [de] YYYY"
 lang: es
 page-layout: full
+# La portada se construye en el chunk "portada" (más abajo) con cifras leídas de output/tablas/
+title-block-style: none
 
 format:
   html:
@@ -18,7 +20,7 @@ format:
     toc-location: left
     number-sections: true
     code-fold: true
-    code-tools: true
+    code-tools: false
     smooth-scroll: true
     embed-resources: true
     fig-width: 17
@@ -45,92 +47,148 @@ knitr::opts_chunk$set(
   fig.align = 'center',
   dpi = 300
 )
+
+# Las tablas de las secciones de Apriori, robustez y segmentación se leen
+# directamente de output/tablas/ (generadas por main.R): ninguna cifra de
+# esas tablas está escrita a mano.
+leer <- function(archivo) read.csv(file.path("output", "tablas", archivo),
+                                   encoding = "UTF-8", check.names = FALSE)
+# Etiquetas legibles de las reglas (mismo diccionario del pipeline y las diapositivas)
+source(file.path("scripts", "tema_dm.R"))
+num <- function(x, d = 0) formatC(x, format = "f", digits = d, big.mark = ".", decimal.mark = ",")
+pct <- function(x, d = 1) paste0(num(x, d), "%")
+```
+
+```{r portada, results='asis'}
+# Portada: todas las cifras se leen de output/tablas/ (nada escrito a mano)
+bol <- function(f, fila) {
+  d <- read.csv(file.path("output", "tablas", "boletin", f), encoding = "UTF-8", check.names = FALSE)
+  d$Distribucion_Pct[d[[1]] == fila]
+}
+seg      <- leer("11_segmentacion_grupos.csv")
+universo <- sum(seg$Universo)
+muestra  <- sum(seg$Muestra)
+meses <- c("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
+           "agosto", "septiembre", "octubre", "noviembre", "diciembre")
+hoy   <- Sys.Date()
+fecha <- sprintf("%d de %s de %s", as.integer(format(hoy, "%d")), meses[as.integer(format(hoy, "%m"))], format(hoy, "%Y"))
+
+kpi <- function(valor, etiqueta, nota) {
+  sprintf('<div class="dm-kpi"><div class="dm-kpi-valor">%s</div><div class="dm-kpi-etiqueta">%s</div><div class="dm-kpi-nota">%s</div></div>',
+          valor, etiqueta, nota)
+}
+
+cat('```{=html}\n')
+cat('<section class="dm-hero">',
+    '<div class="dm-hero-top">',
+    '<span class="dm-eyebrow">LatinR 2026 · Medellín · trabajo aceptado</span>',
+    '<img class="dm-hero-logo" src="assets/dm/logo-blanco.svg" alt="DM">',
+    '</div>',
+    '<div class="dm-hero-title" role="heading" aria-level="1">Economía popular en Colombia: <span class="dm-grad">¿tres problemas o uno solo?</span></div>',
+    sprintf('<p class="dm-hero-lead">Informalidad fiscal, exclusión digital y restricción al crédito en %s micronegocios, analizadas con estadística ponderada y minería de reglas de asociación sobre los microdatos abiertos de la EMICRON 2024 del DANE.</p>',
+            num(universo)),
+    '<div class="dm-kpis">',
+    kpi(num(universo), "micronegocios", sprintf("representados por %s encuestas", num(muestra))),
+    kpi(pct(bol("F1_RUT.csv", "No")), "no tiene RUT", "informalidad fiscal"),
+    kpi(pct(bol("G9_Uso_Internet.csv", "No")), "no tiene internet", "exclusión digital"),
+    kpi(pct(bol("H2_Solicito_Credito.csv", "Sí")), "solicitó crédito el último año", "restricción financiera"),
+    '</div>',
+    '<div class="dm-hero-foot">',
+    '<div class="dm-hero-meta">',
+    '<span><b>Daniel José Molina Barrios</b> · Economista &amp; Data Scientist</span>',
+    sprintf('<span>Datos: EMICRON 2024 — DANE · Actualizado el %s</span>', fecha),
+    '</div>',
+    '<div class="dm-hero-links">',
+    '<a class="dm-btn dm-btn-primary" href="https://github.com/dmetrics1/micronegocios-colombia-2024">Repositorio y código</a>',
+    '<a class="dm-btn" href="presentacion/">Diapositivas</a>',
+    '</div>',
+    '</div>',
+    '</section>', sep = "\n")
+cat('\n```\n')
 ```
 
 # Resumen ejecutivo
 
-Colombia tiene 5,3 millones de micronegocios. Cuatro de cada cinco operan sin registro tributario, la mitad no tiene internet, y solo 1 de cada 7 ha podido acceder a crédito formal. No es falta de emprendimiento — es falta de infraestructura institucional.
+Colombia tiene 5,3 millones de micronegocios. Cuatro de cada cinco operan sin registro tributario, la mitad no tiene internet y solo 1 de cada 7 solicitó crédito en el último año. El reto no es la falta de emprendimiento sino la débil conexión de estos negocios con la infraestructura institucional, digital y financiera.
 
 ## Indicadores clave
 
-La Encuesta de Micronegocios 2024 del DANE (EMICRON) ofrece la radiografía más completa disponible sobre el tejido empresarial de base en Colombia. Con una muestra de 77.202 negocios que representa a más de 5,3 millones de unidades económicas en todo el país, este análisis busca responder una pregunta fundamental: ¿cuáles son las condiciones reales bajo las que operan los micronegocios colombianos, y qué palancas de política pública tienen mayor capacidad de transformarlas?
+La Encuesta de Micronegocios 2024 del DANE (EMICRON) ofrece la radiografía más completa disponible sobre el tejido empresarial de base en Colombia. Con una muestra de 78.501 negocios que, mediante factores de expansión, representa a 5.297.252 unidades económicas, este análisis busca responder una pregunta fundamental: ¿bajo qué condiciones operan los micronegocios colombianos y qué características tienden a presentarse juntas?
 
-Los datos revelan un ecosistema con una vitalidad innegable —millones de colombianos que han optado por el autoempleo como estrategia de vida— pero atravesado por tres fracturas estructurales que se refuerzan mutuamente: informalidad fiscal, exclusión digital y restricción crediticia. Estas no son dimensiones independientes; como se demostrará en la sección de minería de datos, constituyen un sistema de trampas interdependientes.
+Los datos describen un ecosistema con una vitalidad innegable —millones de colombianos que han optado por el autoempleo como estrategia de vida— atravesado por tres fracturas estructurales: informalidad fiscal, exclusión digital y restricción crediticia. La minería de reglas de asociación muestra que estas dimensiones **co-ocurren** de forma sistemática; al ser un análisis de asociación con datos de corte transversal, no permite afirmar relaciones de causalidad entre ellas.
 
 | Indicador | Valor | Interpretación |
 |---|---|---|
 | Universo expandido | 5,3 millones de negocios | Mercado amplio pero muy informal |
-| Informalidad fiscal | 77,6% sin RUT | Crisis estructural de formalización |
-| Brecha digital | 50,4% sin internet | Polarización tecnológica en punto crítico |
-| Acceso crediticio | 14,2% solicitó crédito | Bajísimo financiamiento formal |
-| Madurez empresarial | 47,4% con 10+ años | Mercado consolidado pero estancado |
-| Tecnología móvil | 70,9% con celular | Puerta de entrada digital principal |
+| Informalidad fiscal | 77,6% sin RUT | Formalización tributaria minoritaria |
+| Brecha digital | 50,4% sin internet | El universo está partido en dos mitades |
+| Acceso crediticio | 14,2% solicitó crédito | Bajísimo uso del financiamiento |
+| Madurez empresarial | 47,4% con 10+ años | Mercado persistente con poca renovación |
+| Tecnología móvil | 70,9% usa celular en el negocio | Puerta de entrada digital principal |
 
 ## Hallazgos críticos
 
 ::: {.callout-warning}
 ## ⚠️ Informalidad dual y reforzada
 
-El 77,6% de los micronegocios opera sin RUT y el 89,5% lo hace sin registro en Cámara de Comercio. Ambas cifras no son independientes: se trata del mismo problema visto desde dos ángulos distintos. La informalidad en Colombia no es un fenómeno marginal ni transitorio; es la norma estructural del tejido microempresarial. Lo más revelador, sin embargo, no es la magnitud del fenómeno sino su naturaleza: la evidencia sugiere que la barrera no es la falta de voluntad del empresario, sino el costo administrativo y la complejidad del proceso de registro. Simplificar no es suficiente; hay que eliminar las fricciones de raíz.
+El 77,6% de los micronegocios opera sin RUT y el 89,7% lo hace sin registro en Cámara de Comercio. Ambas cifras están estrechamente relacionadas: prácticamente ningún negocio sin RUT (0,04%) tiene registro mercantil. La informalidad en Colombia no es un fenómeno marginal ni transitorio; es la norma del tejido microempresarial, y es especialmente aguda en zonas rurales (94,0% sin RUT frente a 70,4% en cabeceras, según el boletín DANE).
 :::
 
 ::: {.callout-important}
 ## 🔴 Brecha digital en punto crítico
 
-El 50,4% de los micronegocios está completamente desconectado de internet. Esta cifra, tomada en aislamiento, ya sería preocupante. Pero lo que la convierte en una emergencia de política pública es la brecha entre el acceso al celular (70,9%) y el acceso a internet (49,6%): hay una diferencia de 21,3 puntos porcentuales entre quienes tienen el dispositivo y quienes tienen la conectividad. El cruce de ambas variables revela que el 27% de los micronegocios —aproximadamente 1,4 millones— tiene un teléfono inteligente en la mano pero no puede aprovecharlo para conectarse, vender en línea, o acceder a servicios financieros digitales. Este grupo —denominado Grupo C en la segmentación— es el objetivo prioritario de política pública, porque el costo marginal de incorporarlo es el más bajo del sistema.
+El 50,4% de los micronegocios no tiene acceso a internet. La brecha entre el uso del celular (70,9%) y el acceso a internet (49,6%) es de 21,3 puntos porcentuales. El cruce de ambas variables muestra que el **21,6% de los micronegocios —1,15 millones— usa el celular para el negocio pero no tiene internet**: tienen el dispositivo pero no la conectividad, un grupo donde el costo marginal de completar la digitalización es presumiblemente menor.
 :::
 
 ::: {.callout-tip}
-## 💡 Las TIC funcionan como sistema acoplado, no como elementos independientes
+## 💡 Las TIC co-ocurren como sistema acoplado
 
-Uno de los hallazgos más importantes del análisis de minería de datos es que las tecnologías no se adoptan una por una. Cuando un micronegocio ya usa el celular y realiza transferencias digitales, la probabilidad de que también tenga internet es un 81% mayor de lo que se esperaría por azar. Este fenómeno —denominado técnicamente \"lift\" en el análisis Apriori— tiene una implicación práctica directa: las intervenciones de política que se diseñen de forma aislada (solo celular, solo internet, solo pagos) tendrán un impacto marginal menor al de una intervención integral que ataque simultáneamente los tres eslabones de la cadena digital.
+Las tecnologías no aparecen de forma aislada. Entre los negocios que usan el celular y aceptan transferencias, la proporción que tiene internet en el local es 1,81 veces la que se observa en el conjunto (lift = 1,81; 1,87 al ponderar por el factor de expansión). Esto es coherente con una adopción conjunta de herramientas digitales y sugiere que las intervenciones integrales podrían ser más pertinentes que las aisladas, aunque las reglas de asociación por sí solas no permiten estimar ese efecto.
 :::
 
 ::: {.callout-note}
-## 📌 El mercado está polarizado en tres grupos
+## 📌 Tres grupos estructurales
 
-El análisis de segmentación revela que el universo de micronegocios no es un continuo gradual sino una estructura de tres grupos con dinámicas propias: un 65% de negocios completamente excluidos del ecosistema digital y financiero formal (Grupo A), un 8% plenamente integrado (Grupo B), y un 27% en posición de transición —con celular pero sin internet— que constituye el puente entre ambos extremos (Grupo C). Las implicaciones para la política pública son cruciales: no existe un único tipo de micronegocio colombiano, y por tanto no puede existir una única política de apoyo.
+Cruzando conectividad (internet) y formalización fiscal (RUT) se obtienen tres grupos mutuamente excluyentes: **Excluidos** (sin internet ni RUT, 46,2%), **En transición** (solo una de las dos, 35,7%) e **Integrados** (ambas, 18,2%). Los grupos difieren de forma marcada en variables que no intervienen en su definición —uso de pagos digitales, registros contables, ahorro y crédito—, lo que refuerza su pertinencia descriptiva (ver sección de segmentación).
 :::
 
 ## Metodología y fuentes
 
 Este análisis integra dos niveles metodológicos complementarios:
 
-**Estadística descriptiva ponderada.** Se produjeron 85 cuadros estadísticos, de los cuales 70 fueron validados contra el Boletín Técnico oficial del DANE con una precisión de ±0,1% en todos los indicadores. Para cada variable se aplicó el factor de expansión F_EXP proporcionado por DANE, lo que permite que los resultados de muestra sean representativos del universo nacional de 5,3 millones de micronegocios.
+**Estadística descriptiva ponderada.** Se produjeron 70 cuadros estadísticos aplicando el factor de expansión F_EXP del DANE, lo que permite que los resultados de la muestra representen al universo nacional de 5,3 millones de micronegocios. Diez indicadores clave de nueve cuadros se contrastaron con el Boletín Técnico oficial: nueve coinciden con diferencias inferiores a 0,1 puntos porcentuales y uno (participación de la agricultura) difiere en 1,06 puntos. La comprobación está automatizada en `tests/validar_resultados.R`.
 
-**Minería de reglas de asociación (algoritmo Apriori).** Esta técnica, proveniente del campo de la inteligencia artificial aplicada, permite detectar patrones de co-ocurrencia entre variables que la estadística descriptiva no puede revelar. En términos simples: mientras la estadística descriptiva dice \"el 70,9% tiene celular\", el análisis Apriori responde \"cuando alguien tiene celular y además usa transferencias, hay un 81% más de probabilidad de que también tenga internet\". Es la diferencia entre fotografiar el presente y entender las reglas que lo gobiernan.
+**Minería de reglas de asociación (algoritmo Apriori).** Esta técnica detecta combinaciones de características que aparecen juntas con mayor frecuencia de la esperada si fueran independientes. Mientras la estadística descriptiva dice "el 70,9% usa celular", el análisis Apriori responde "entre quienes usan celular y aceptan transferencias, tener internet es 1,81 veces más frecuente que en el total". Apriori se ejecutó sobre la muestra (77.202 registros completos, 30 variables) y luego se recalcularon soporte, confianza y lift **ponderados por F_EXP** para reportar valores representativos del universo.
 
-Los umbrales metodológicos utilizados fueron: soporte mínimo del 15% (el patrón debe estar presente en al menos 1 de cada 7 negocios) y confianza mínima del 70% (la regla debe cumplirse en al menos 7 de cada 10 casos donde se presenta el antecedente). De las 55.906 reglas inicialmente generadas, se filtraron 39 de alta relevancia con soporte superior al 20%.
+Los umbrales principales fueron soporte mínimo del 15% y confianza mínima del 70%, con antecedentes de hasta tres ítems. Se generaron 119.456 reglas, de las cuales 55.906 son no redundantes. La estabilidad de los resultados se evaluó en una rejilla de 16 combinaciones de umbrales (sección de robustez).
 
 ---
 
-# Grupo A — Resultados generales
+# Módulo A — Resultados generales
 
-> **Guía metodológica:** El Grupo A corresponde a las características más básicas e identitarias del propietario del micronegocio. Su función dentro del análisis es establecer el perfil demográfico y laboral de base sobre el cual se leerán todos los demás hallazgos. Los indicadores de este grupo responden la pregunta: ¿quién es el microempresario colombiano?
+> **Guía metodológica:** El Módulo A corresponde a las características más básicas e identitarias del propietario del micronegocio. Su función dentro del análisis es establecer el perfil demográfico y laboral de base sobre el cual se leerán todos los demás hallazgos. Los indicadores de este módulo responden la pregunta: ¿quién es el microempresario colombiano?
 
 ## Situación en el empleo del propietario
 
 ![**Figura 1A:** Situación en el empleo: Cuenta propia vs. Empleador](output/figuras/10_A1_situacion_empleo.png)
 
-El dato más definitorio del microempresariado colombiano es, al mismo tiempo, el más revelador sobre sus límites estructurales: el **90,46% de los propietarios opera como trabajador por cuenta propia**, sin empleados a cargo. Solo el 9,54% ha escalado a la categoría de patrón o empleador, es decir, tiene la capacidad de generar empleo formal para otras personas.
+El dato más definitorio del microempresariado colombiano es, al mismo tiempo, el más revelador sobre sus límites estructurales: el **90,46% de los propietarios opera como trabajador por cuenta propia**. Solo el 9,54% es patrón o empleador, es decir, tiene trabajadores remunerados a cargo.
 
 Esta distribución no es únicamente un dato laboral; es un diagnóstico sobre la naturaleza misma del fenómeno microempresarial en Colombia. El micronegocio colombiano es, en su inmensa mayoría, una estrategia de autoempleo antes que una unidad de producción con vocación de escalamiento. Esto tiene implicaciones directas para el diseño de programas de apoyo: las intervenciones que asuman que estos negocios aspiran a crecer y contratar personal como objetivo primario estarán diseñando para el 10%, no para el 90%.
-
-Lo anterior no es un juicio de valor sobre el emprendedor individual, sino un reconocimiento del entorno institucional que lo rodea: cuando los costos de formalizar un empleado superan los ingresos adicionales que ese empleado generaría, el autoempleo es la decisión racional. Cambiar esa ecuación es una tarea de política pública, no de mentalidad empresarial.
 
 ## Sexo del propietario
 
 ![**Figura 1B:** Distribución por sexo del propietario](output/figuras/11_A2_sexo_propietario.png)
 
-La distribución por sexo muestra que el **64,59% de los micronegocios está en manos de hombres y el 35,41% en manos de mujeres**. A primera vista, esta cifra podría parecer modesta, pero en perspectiva comparada con otros países de ingreso medio en América Latina, la participación femenina del 35% en la propiedad de micronegocios es estadísticamente significativa.
+La distribución por sexo muestra que el **64,59% de los micronegocios está en manos de hombres y el 35,41% en manos de mujeres**.
 
-Sin embargo, el promedio nacional oculta una fractura territorial importante: **en zonas urbanas, la participación femenina llega al 38%, mientras que en zonas rurales desciende al 29,5%**, una brecha de 8,5 puntos porcentuales que refleja las desigualdades estructurales de género en el acceso a mercados, recursos y redes de apoyo en contextos rurales. Esta heterogeneidad es determinante para el diseño de políticas de género: una intervención homogénea que no distinga entre zonas urbanas y rurales subestimará sistemáticamente las barreras adicionales que enfrentan las microempresarias rurales.
+El promedio nacional oculta una diferencia territorial importante: según el boletín DANE, **en las cabeceras municipales la participación femenina llega al 38,0%, mientras que en centros poblados y rural disperso desciende al 29,5%**, una brecha de 8,5 puntos porcentuales. Esta heterogeneidad es relevante para el diseño de políticas de género: una intervención homogénea que no distinga entre zonas urbanas y rurales puede subestimar las barreras adicionales que enfrentan las microempresarias rurales.
 
 ---
 
-# Grupo B — Sector económico
+# Módulo B — Sector económico
 
-> **Guía metodológica:** El Grupo B caracteriza la actividad productiva de los micronegocios. Está construido en dos niveles de desagregación: una clasificación en 4 grandes grupos (que ofrece claridad estratégica) y una clasificación en 12 subsectores (que permite focalización por nicho). Ambos niveles son necesarios y se complementan.
+> **Guía metodológica:** El Módulo B caracteriza la actividad productiva de los micronegocios. Está construido en dos niveles de desagregación: una clasificación en 4 grandes grupos (que ofrece claridad estratégica) y una clasificación en 12 subsectores (que permite focalización por nicho).
 
 ## Distribución sectorial (4 grupos principales)
 
@@ -138,381 +196,523 @@ Sin embargo, el promedio nacional oculta una fractura territorial importante: **
 
 La economía microempresarial colombiana se organiza alrededor de cuatro grandes sectores con proporciones muy distintas: **Servicios (43,54%), Comercio (23,86%), Agricultura (22,56%) e Industria (10,04%)**.
 
-El predominio de los servicios —que concentran casi la mitad del ecosistema microempresarial— refleja una tendencia global hacia economías de servicios que en el caso colombiano se expresa desde la base productiva más informal. Actividades de reparación, preparación de alimentos, transporte informal, cuidado personal y servicios domésticos constituyen el grueso de esta categoría. Su carácter predominantemente local e interpersonal los hace menos vulnerables a la competencia de plataformas digitales, pero también los hace más difíciles de formalizar y escalar.
-
-La presencia significativa de la agricultura (22,56%), combinada con el comercio (23,86%), señala que casi la mitad del microempresariado colombiano opera en actividades de producción primaria o distribución de bienes. Aquí la oportunidad de agroindustria y encadenamientos productivos es evidente, pero también los retos de acceso a mercados, financiamiento y tecnología son los más agudos.
-
-La baja participación industrial (10,04%) es coherente con el perfil de un sector que en Colombia ha tendido a concentrarse en empresas medianas y grandes, dejando el espacio de la micromanufactura relativamente desatendido por la política pública.
+El predominio de los servicios —que concentran casi la mitad del ecosistema microempresarial— refleja una tendencia hacia economías de servicios que en el caso colombiano se expresa desde la base productiva más informal. La presencia significativa de la agricultura (22,56%), combinada con el comercio (23,86%), señala que casi la mitad del microempresariado opera en producción primaria o distribución de bienes. La baja participación industrial (10,04%) es coherente con un sector que en Colombia tiende a concentrarse en empresas medianas y grandes.
 
 ## Distribución sectorial (12 subsectores)
 
 ![**Figura 2B:** Distribución sectorial: 12 categorías económicas](output/figuras/13_B2_sector_12grupos.png)
 
-La desagregación a 12 subsectores revela una diversidad sectorial considerable, con los cinco primeros subsectores concentrando aproximadamente el 80% del universo microempresarial. Entre los sectores con relevancia particular se destacan los servicios artísticos y recreativos, el alojamiento y la restauración, y las actividades relacionadas con la construcción, que en conjunto representan nichos con alta capacidad de formalización si se generan los incentivos correctos.
+La desagregación a 12 subsectores revela una diversidad sectorial considerable: los cinco primeros subsectores —comercio (23,9%), agro (21,5%), transporte (11,9%), industria (10,0%) y artes y otros servicios (9,7%)— concentran el 77% del universo microempresarial.
 
 ---
 
-# Grupo C — Emprendimiento
+# Módulo C — Emprendimiento
 
-> **Guía metodológica:** El Grupo C aborda dos dimensiones del ciclo de vida empresarial: la longevidad del negocio (tiempo de funcionamiento) y su estructura financiera de origen (fuente de financiación). Juntos, estos indicadores permiten responder la pregunta: ¿cómo nacen y cómo sobreviven estos negocios?
+> **Guía metodológica:** El Módulo C aborda dos dimensiones del ciclo de vida empresarial: la longevidad del negocio (tiempo de funcionamiento) y su estructura financiera de origen (fuente de financiación). Juntos, estos indicadores permiten responder la pregunta: ¿cómo nacen y cuánto llevan funcionando estos negocios?
 
 ## Tiempo de funcionamiento
 
 ![**Figura 3A:** Distribución por tiempo de funcionamiento](output/figuras/14_C3_tiempo_funcionamiento.png)
 
-La distribución por tiempo de funcionamiento revela un rasgo sorprendente del microempresariado colombiano: **el 47,4% de los micronegocios lleva más de diez años en operación**, y el 65% supera los cinco años. Estamos ante un mercado que, contra el estereotipo del emprendimiento frágil y efímero, exhibe una notable capacidad de persistencia.
+La distribución por tiempo de funcionamiento revela un rasgo sorprendente del microempresariado colombiano: **el 47,4% de los micronegocios lleva más de diez años en operación**, y el 65% supera los cinco años. Contra el estereotipo del emprendimiento frágil y efímero, el universo exhibe una notable persistencia.
 
-Pero esta fortaleza tiene un lado oscuro. Un mercado en el que casi la mitad de los negocios lleva más de una década en operación, y en el que **solo el 7,8% tiene menos de un año de antigüedad**, es un mercado que no se renueva. La baja tasa de creación de nuevos negocios —ese 7,8%— sugiere que las barreras de entrada son percibidas como significativas, y que el emprendimiento como mecanismo de movilidad social ascendente está siendo subutilizado.
-
-El hallazgo adquiere aún mayor densidad cuando se lo combina con los datos de tecnología y la evidencia del análisis Apriori: los negocios más antiguos son, paradójicamente, los menos propensos a adoptar nuevas tecnologías, incluso cuando tienen acceso a ellas. La antigüedad en este contexto no es sinónimo de madurez adaptativa, sino de inercia institucional. La estrategia de política pública no puede ser la misma para un negocio de dos años que para uno de quince.
+Esta fortaleza tiene otra cara: solo el **7,8% tiene menos de un año de antigüedad**, lo que describe un mercado con baja renovación. Hay que leer este dato con cautela: la encuesta observa a los negocios que sobreviven, de modo que la proporción de negocios jóvenes también refleja la salida de los que no sobrevivieron.
 
 ## Fuente de financiación inicial
 
 ![**Figura 3B:** Fuentes de financiación al inicio del negocio](output/figuras/15_C4_fuente_financiacion.png)
 
-La estructura de financiamiento con la que los micronegocios colombianos nacen es quizás el indicador más elocuente sobre la desconexión entre el sistema financiero formal y la economía popular: **el 61,4% se financió exclusivamente con ahorros propios y el 15,5% no tuvo ninguna fuente de financiación** —es decir, empezó con cero capital externo—. Sumados, el 76,9% de los micronegocios surgió sin ningún vínculo con el crédito formal.
+La estructura de financiamiento con la que nacen los micronegocios es uno de los indicadores más elocuentes sobre la distancia entre el sistema financiero formal y la economía popular: **el 61,4% se financió con ahorros propios y el 15,5% no requirió financiación**. Sumados, el 76,9% de los micronegocios surgió sin ningún vínculo con el crédito.
 
-Solo el **8,8% accedió a préstamos bancarios** al inicio, y un preocupante **2,4% recurrió a prestamistas informales** —el denominado \"gota a gota\"—. Aunque este porcentaje parece pequeño en términos del universo total, su lectura correcta requiere cambiar el denominador: entre quienes efectivamente buscaron crédito (el 14,2% del universo), la cifra de quienes terminaron en el mercado informal asciende al **22,9%**, es decir, casi uno de cada cuatro microempresarios que busca financiamiento no encuentra alternativa formal y cae en redes de préstamo predatorio.
-
-El modelo de autofinanciamiento tiene una consecuencia directo y estructural: los micronegocios colombianos nacen con el capital mínimo de subsistencia, no con el capital de inversión y crecimiento. Esto explica, en gran medida, por qué la mayoría permanece en tamaño unipersonal y por qué la innovación y la tecnificación son tan difíciles de alcanzar desde adentro del negocio.
+Solo el **8,8% accedió a préstamos bancarios** al inicio, y un **2,4% recurrió a prestamistas**. Entre quienes solicitaron crédito en el último año (el 14,2% del universo), el **22,9% lo hizo con prestamistas "gota a gota"**: casi uno de cada cuatro microempresarios que busca financiamiento lo hace en el mercado informal.
 
 ---
 
-# Grupos D-E — Ubicación y operación
+# Módulos D-E — Ubicación y operación
 
-> **Guía metodológica:** Los Grupos D y E se analizan conjuntamente porque describen las condiciones físicas y de escala de la operación: dónde funciona el negocio y cuántas personas lo sostienen. Estos dos indicadores determinan en gran medida la visibilidad institucional del negocio y su capacidad de acceder a servicios de apoyo.
+> **Guía metodológica:** Los Módulos D y E se analizan conjuntamente porque describen las condiciones físicas y de escala de la operación: dónde funciona el negocio y cuántas personas lo sostienen.
 
 ## Ubicación principal del negocio
 
 ![**Figura 4A:** Ubicación principal del negocio](output/figuras/16_D1_tipo_ubicacion.png)
 
-La distribución de la ubicación de los micronegocios confirma una informalidad que va más allá de lo fiscal: es también una informalidad espacial y comercial. **El 30,56% opera desde la propia vivienda del propietario** y el **17,37% funciona de forma ambulante o puerta a puerta**, lo que significa que casi la mitad (47,93%) no cuenta con un local comercial fijo diferenciado del espacio doméstico.
+La distribución de la ubicación confirma una informalidad que va más allá de lo fiscal: también es espacial. **El 30,56% opera desde la vivienda del propietario**, el **17,37% puerta a puerta** y el **9,58% de forma ambulante**; sumados, el 57,5% no tiene un local comercial fijo diferenciado del espacio doméstico. El 13,46% que opera en fincas corresponde fundamentalmente a la actividad agropecuaria.
 
-El 13,46% que opera en fincas o predios rurales corresponde fundamentalmente a la actividad agropecuaria, un contexto donde la separación entre espacio productivo y vivienda es naturalmente difusa.
-
-Esta condición tiene implicaciones profundas para la política pública: un negocio que opera desde la sala de la casa o en la esquina de un barrio popular es, desde el punto de vista institucional, casi invisible. No tiene una dirección comercial registrable, no puede exhibir un aviso, y con frecuencia no puede acceder a servicios de logística o distribución formales. Las estrategias de formalización que exigen un local físico como requisito de inscripción están, estructuralmente, excluyendo a casi la mitad del universo antes de empezar.
+Un negocio que opera desde la sala de la casa o en la calle es, desde el punto de vista institucional, casi invisible. Las estrategias de formalización que exigen un local físico como requisito están excluyendo a más de la mitad del universo antes de empezar.
 
 ## Personal ocupado
 
 ![**Figura 4B:** Personal ocupado en el micronegocio](output/figuras/17_E2_rangos_personal.png)
 
-La distribución del personal ocupado complementa y refuerza el perfil del autoempleo descrito en la sección 2.1: **el 82,3% de los micronegocios es una operación unipersonal**, es decir, lo sostiene exclusivamente su propietario. El 14,9% emplea entre dos y tres personas, y solo el 2,8% tiene entre cuatro y nueve trabajadores.
+La distribución del personal ocupado refuerza el perfil del autoempleo: **el 82,3% de los micronegocios es una operación unipersonal**, sostenida exclusivamente por su propietario. El 14,9% ocupa entre dos y tres personas y solo el 2,8% entre cuatro y nueve. El personal ocupado incluye al propietario, los trabajadores remunerados, los socios y los familiares sin remuneración; con esta definición el pipeline reproduce el total del boletín DANE (6.879.489 personas ocupadas).
 
-En términos absolutos, el 82,3% equivale a aproximadamente **4,36 millones de negocios** en los que el propietario es simultáneamente el gerente, el operario, el vendedor y el contador. Esta estructura no es sostenible en el largo plazo: cualquier evento de salud, familiar o económico que afecte al propietario interrumpe toda la cadena productiva del negocio. La resiliencia del micronegocio unipersonal es intrínsecamente frágil.
-
-Al mismo tiempo, esta estructura representa una oportunidad: en un negocio de una sola persona, el principal factor de cambio es la persona misma. Las intervenciones de capacitación, acceso a tecnología o simplificación de trámites tienen un canal de transmisión directo y sin intermediarios.
+En términos absolutos, el 82,3% equivale a aproximadamente **4,36 millones de negocios** en los que el propietario es simultáneamente gerente, operario, vendedor y contador. Cualquier evento que afecte al propietario interrumpe toda la operación.
 
 ## Personal promedio por sector económico
 
 ![**Figura 4C:** Personal promedio por sector económico](output/figuras/18_E2a_personal_sector.png)
 
-El análisis del personal promedio por sector introduce una dimensión importante de heterogeneidad: no todos los micronegocios son igualmente unipersonales. Hay sectores —como servicios y comercio— donde la estructura de dos a tres personas es relativamente más frecuente, mientras que en actividades agrícolas y de manufactura artesanal el carácter unipersonal es casi absoluto. Esta variación sectorial es relevante para diseñar programas de escalamiento diferenciados: el piso mínimo de personal y la trayectoria de crecimiento natural varían según el sector.
+El personal promedio por negocio es bajo en todos los sectores y varía poco: 1,39 personas en agricultura, 1,37 en industria, 1,29 en comercio y 1,24 en servicios. Las actividades agropecuarias e industriales tienden a involucrar algo más de personal —con frecuencia familiar—, mientras que los servicios son los más unipersonales.
 
 ---
 
-# Grupo F — Formalización
+# Módulo F — Formalización
 
-> **Guía metodológica:** El Grupo F es el núcleo diagnóstico del análisis. Contiene los tres indicadores que definen la relación del micronegocio con el Estado: el RUT (relación tributaria), la contabilidad (capacidad de gestión interna) y el registro en Cámara de Comercio (reconocimiento legal-administrativo). Juntos, estos tres indicadores construyen el concepto de \"formalidad dual\": fiscal y administrativa. Ninguno de los tres puede leerse en aislamiento.
+> **Guía metodológica:** El Módulo F contiene tres indicadores que definen la relación del micronegocio con el Estado: el RUT (relación tributaria), la contabilidad (capacidad de gestión interna) y el registro en Cámara de Comercio (reconocimiento legal-administrativo).
 
 ## Tenencia de RUT
 
 ![**Figura 5A:** Tenencia de Registro Único Tributario](output/figuras/19_F1_rut.png)
 
-El Registro Único Tributario (RUT) es la puerta de entrada al sistema tributario formal en Colombia. Sin él, un negocio es invisible para la DIAN, no puede emitir facturas electrónicas, no puede acreditar ingresos ante una entidad financiera y no puede participar en procesos de contratación pública. El RUT no es solo un trámite: es el pasaporte de ciudadanía económica formal.
+El Registro Único Tributario (RUT) es la puerta de entrada al sistema tributario formal en Colombia. Sin él, un negocio no puede emitir facturas electrónicas, acreditar ingresos ante una entidad financiera ni participar en contratación pública.
 
-Pues bien: **el 77,61% de los micronegocios colombianos no tiene RUT**. Esto significa que más de cuatro millones de unidades económicas operan completamente fuera del radar tributario del Estado. La variación territorial de este fenómeno es igualmente alarmante: en zonas rurales, el porcentaje de negocios sin RUT escala al **94%**, frente al **70,4%** en cabeceras municipales. La informalidad fiscal es, en Colombia, un fenómeno con una dimensión urbano-rural devastadoramente asimétrica.
-
-La lectura más sólida de este dato no apunta hacia la falta de voluntad del empresario, sino hacia el diseño del sistema: si el 94% de los agricultores y emprendedores rurales no tiene RUT, la explicación más parsimoniosa es que el proceso de obtenerlo —sus costos, su complejidad, sus requisitos previos— es inaccesible para ese perfil de usuario. La solución, por tanto, no pasa por campañas de concientización, sino por reformas estructurales al proceso mismo.
+**El 77,61% de los micronegocios colombianos no tiene RUT**: más de cuatro millones de unidades económicas operan fuera del registro tributario. La variación territorial es marcada: según el boletín DANE, en centros poblados y rural disperso el porcentaje sin RUT llega al **94,0%**, frente al **70,4%** en las cabeceras municipales.
 
 ## Tipo de contabilidad
 
 ![**Figura 5B:** Tipo de contabilidad llevada por el negocio](output/figuras/20_F4_tipo_contabilidad.png)
 
-El panorama contable de los micronegocios colombianos es igualmente revelador de la precariedad de su gestión financiera interna: **el 68,2% no lleva ningún tipo de contabilidad**, ni siquiera informal; el 27,1% utiliza un cuaderno o una hoja de cálculo básica; y solo el **1,6% lleva un balance contable formal**.
+**El 68,2% no lleva ningún tipo de registro**; el 27,1% utiliza un cuaderno, una hoja de cálculo u otro registro informal; y solo el **1,6% lleva un balance general o estado de pérdidas y ganancias**. En conjunto, el 95,3% no lleva contabilidad formal.
 
-En términos prácticos, el 95,3% de los micronegocios colombianos no puede responder de forma rigurosa a preguntas básicas como: ¿cuánto ganó el mes pasado?, ¿cuáles son mis costos fijos?, ¿en qué meses el negocio pierde dinero? Esta incapacidad no es solo una deficiencia de gestión: es una barrera de acceso al crédito. Ninguna entidad financiera otorga un préstamo a un negocio que no puede demostrar flujo de caja. El 95,3% sin contabilidad formal explica, en gran medida, el 85,8% que nunca solicitó un crédito: si sabes que te van a pedir estados financieros y no los tienes, ni siquiera intentas pedirlo.
-
-Este es un círculo vicioso clásico: sin contabilidad, no hay crédito; sin crédito, no hay inversión; sin inversión, no hay crecimiento que justifique llevar contabilidad. Romperlo requiere una intervención simultánea en los dos extremos: simplificar la contabilidad para el microempresario y flexibilizar los requisitos de información para el crédito.
+Esta condición coincide con el bajo uso del crédito (85,8% no solicitó crédito en el último año): sin registros que demuestren flujo de caja, el acceso al financiamiento formal se dificulta. Ambos rasgos se presentan juntos, aunque los datos no permiten establecer cuál antecede al otro.
 
 ## Registro en Cámara de Comercio
 
 ![**Figura 5C:** Registro en Cámara de Comercio](output/figuras/21_F6_camara_comercio.png)
 
-El tercer indicador del grupo de formalización cierra el diagnóstico con una cifra que no deja espacio para la ambigüedad: **el 89,5% de los micronegocios colombianos no está registrado en ninguna Cámara de Comercio**. Solo el 10,5% ha completado este trámite, que en Colombia es el requisito básico para acceder a muchos programas de apoyo empresarial, participar en licitaciones o establecer contratos comerciales con otras empresas.
+**El 89,7% de los micronegocios no está registrado en ninguna Cámara de Comercio**; solo el 10,3% ha completado este trámite, requisito para muchos programas de apoyo empresarial y para contratar con otras empresas.
 
-La combinación de los tres indicadores del Grupo F construye lo que este análisis denomina **informalidad dual y reforzada**: el mismo negocio que no tiene RUT tampoco tiene registro mercantil, y tampoco lleva contabilidad. Estas tres ausencias no son coincidencias; son el resultado de un sistema de formalización cuyo costo de entrada —en tiempo, dinero y complejidad burocrática— supera sistemáticamente los beneficios percibidos por el microempresario en el corto plazo.
+La combinación de los tres indicadores describe una **informalidad dual y reforzada**: el negocio que no tiene RUT, en la práctica, tampoco tiene registro mercantil y con frecuencia tampoco lleva registros contables.
 
 ---
 
-# Grupo G — Tecnología
+# Módulo G — Tecnología
 
-> **Guía metodológica:** El Grupo G examina la relación de los micronegocios con las tecnologías de la información y las comunicaciones (TIC). Se estructura en tres indicadores que representan tres niveles de conectividad: dispositivos electrónicos (nivel más sofisticado), celular (nivel básico-universal) e internet (nivel intermediario). La lectura correcta de este grupo requiere analizar los tres indicadores en conjunto, no de forma aislada, pues las brechas entre ellos son tan importantes como los valores individuales.
+> **Guía metodológica:** El Módulo G examina la relación de los micronegocios con las TIC a través de tres indicadores: dispositivos electrónicos (computador o tableta), celular e internet. Las brechas entre ellos son tan importantes como los valores individuales.
 
 ## Dispositivos electrónicos
 
 ![**Figura 6A:** Tenencia de dispositivos electrónicos](output/figuras/22_G1_dispositivos.png)
 
-El primer indicador tecnológico es el más contundente en su crudeza: **el 89,09% de los micronegocios no tiene ningún dispositivo electrónico** —computador, tableta u otro equipo diferente al celular—. Solo el 10,91% cuenta con alguno de estos equipos.
-
-Esta cifra posiciona al micronegocio colombiano en un estadio de digitalización donde las soluciones tecnológicas más comunes en el mundo empresarial formal —software de gestión, facturación electrónica desde computador, comercio electrónico con catálogos y carritos de compra— son prácticamente inaccesibles para la gran mayoría. Las intervenciones que diseñen soluciones de escritorio para este universo estarán llegando al 11% que ya tiene los medios para usarlas, no al 89% que más las necesita.
+**El 89,09% de los micronegocios no usa ningún dispositivo electrónico** —computador, tableta u otro equipo diferente al celular—. Solo el 10,91% cuenta con alguno. Las soluciones de escritorio llegarán al 11% que ya tiene los medios para usarlas, no al 89% que más las necesita.
 
 ## Uso de celular
 
 ![**Figura 6B:** Uso de celular como herramienta del negocio](output/figuras/23_G4A_uso_celular.png)
 
-El celular es, con enorme distancia, la tecnología más extendida en el ecosistema microempresarial colombiano: **el 70,9% de los propietarios usa el celular para su actividad empresarial**. La diferencia entre este 70,9% y el 10,9% que tiene dispositivos electrónicos —una brecha de 60 puntos porcentuales— es la prueba más clara de que el teléfono móvil es la única plataforma tecnológica con capacidad de llegada masiva a este universo.
-
-El celular no solo está más extendido; es culturalmente el dispositivo de confianza del microempresario colombiano. Las implicaciones para la política pública son directas: cualquier solución de digitalización, pagos, contabilidad o comunicación con el Estado que no funcione en un celular de gama media con conexión móvil básica llegará, en el mejor de los casos, al 30% del universo objetivo.
+El celular es, con enorme distancia, la tecnología más extendida: **el 70,9% usa el celular para su actividad**. La brecha de 60 puntos porcentuales frente a los dispositivos electrónicos muestra que el teléfono móvil es la plataforma con mayor capacidad de llegada a este universo. Cualquier solución de digitalización, pagos o contabilidad que no funcione en un celular de gama media llegará, en el mejor de los casos, a una fracción del universo objetivo.
 
 ## Uso de internet
 
 ![**Figura 6C:** Acceso y uso de internet en el negocio](output/figuras/24_G9_uso_internet.png)
 
-El tercer indicador del grupo tecnológico instala el diagnóstico más urgente de todo el análisis: **el 50,4% de los micronegocios no tiene acceso a internet**. La brecha digital está exactamente en el punto de equilibrio —casi perfectamente dividida en dos mitades— y esto la convierte en una bifurcación de destino: de un lado, el 49,6% que está conectado y tiene acceso a un mundo de herramientas digitales, servicios financieros en línea, plataformas de comercio electrónico y comunicación instantánea; del otro, el 50,4% que opera en una economía analógica con las limitaciones estructurales que eso implica.
+**El 50,4% de los micronegocios no tiene acceso a internet**. La brecha digital está exactamente en el punto de equilibrio: el universo está partido en dos mitades.
 
-El cruce entre el uso de celular (70,9%) y el acceso a internet (49,6%) materializa el Grupo C de la segmentación: **1,4 millones de negocios (27% del universo) con celular pero sin internet**. Esta población tiene el dispositivo pero no la conectividad, y ese eslabón roto es el cuello de botella más crítico para la inclusión digital masiva.
+El cruce entre celular e internet muestra que **1,15 millones de negocios (21,6% del universo) usan el celular para el negocio pero no tienen internet**. Esta población tiene el dispositivo pero no la conectividad.
 
 ---
 
-# Grupo H — Inclusión financiera
+# Módulo H — Inclusión financiera
 
-> **Guía metodológica:** El Grupo H examina la relación activa de los micronegocios con el sistema financiero formal, desde dos ángulos complementarios: el acceso al crédito (dimensión activa del financiamiento) y el hábito de ahorro (dimensión pasiva de la gestión financiera). Juntos, estos dos indicadores permiten evaluar el grado de integración financiera real de los micronegocios, más allá de si tienen o no una cuenta bancaria.
+> **Guía metodológica:** El Módulo H examina la relación de los micronegocios con el sistema financiero desde dos ángulos: el acceso al crédito y el hábito de ahorro.
 
 ## Solicitud de crédito
 
 ![**Figura 7A:** Solicitud de crédito en el período de referencia](output/figuras/25_H2_solicito_credito.png)
 
-La cifra de acceso crediticio es, quizás, la más reveladora de todas las restricciones estructurales del microempresariado colombiano: **el 85,8% no solicitó ningún tipo de crédito** en el período de referencia. Solo el 14,2% lo intentó.
+**El 85,8% no solicitó ningún crédito** en el año anterior; solo el 14,2% lo intentó.
 
-Esta cifra puede interpretarse de tres maneras distintas, todas simultáneamente verdaderas. Primera interpretación: el microempresario colombiano tiene una cultura de autofinanciamiento —ya lo vimos antes, donde el 61,4% se financió con ahorros propios— y no concibe el crédito como una herramienta de crecimiento sino como una deuda peligrosa. Segunda interpretación: el 85,8% sabe, por experiencia propia o ajena, que los requisitos del sistema financiero formal son inalcanzables para su perfil —sin RUT, sin contabilidad, sin local fijo, sin garantías—, y por eso ni siquiera lo intenta. Tercera interpretación: la oferta de productos crediticios diseñados para el perfil del micronegocio informal es insuficiente o desconocida.
-
-Las tres interpretaciones convergen en una misma conclusión de política: el problema no es solo que los micronegocios no pidan crédito, sino que el sistema financiero no ha diseñado productos que los hagan sentir bienvenidos.
+Esta cifra admite varias lecturas compatibles entre sí: una preferencia por el autofinanciamiento (el 61,4% inició con ahorros propios), la percepción de que los requisitos del sistema financiero —RUT, contabilidad, garantías— son inalcanzables, y una oferta de productos poco adaptada al perfil del micronegocio informal. La encuesta incluye las razones declaradas para no solicitar crédito (cuadro H3), que permiten profundizar en cada una.
 
 ## Hábito de ahorro
 
 ![**Figura 7B:** Hábito de ahorro del propietario](output/figuras/26_H7_ahorro.png)
 
-El hábito de ahorro divide casi exactamente en dos al universo microempresarial: **el 49,6% ahorra con alguna regularidad**, mientras que el **50,4% no lo hace**. Este equilibrio casi perfecto, que recuerda la distribución de la brecha de internet, no es coincidencia: refleja la misma polarización estructural del Grupo C.
-
-El potencial de los programas de ahorro incentivado —como cuentas de ahorro con rendimiento bonificado para microempresarios— está directamente correlacionado con ese 49,6% que ya tiene el hábito: son los candidatos naturales para pasar del ahorro informal al ahorro financiero formal.
+**Solo el 18,1% ahorró dinero del negocio en el año anterior**; el 81,9% no lo hizo. El ahorro es más frecuente entre los negocios integrados (31,1%) que entre los excluidos (11,6%), como se muestra en la sección de segmentación.
 
 ---
 
-# Grupos J + V — Geografía e ingresos
+# Módulos J + V — Geografía e ingresos
 
-> **Guía metodológica:** Esta sección combina dos dimensiones que añaden profundidad territorial y económica al análisis: la distribución geográfica de los micronegocios por departamento y la productividad económica diferenciada por sector. Juntas, estas dos variables permiten responder la pregunta: ¿donde están los micronegocios y cuánto generan según lo que hacen?
+> **Guía metodológica:** Esta sección combina la distribución geográfica de los micronegocios por departamento y la distribución de ingresos por sector.
 
 ## Distribución geográfica de micronegocios por departamento
 
 ![**Figura 8A:** Micronegocios por departamento: Top 10](output/figuras/27_J1_departamentos_top10.png)
 
-La distribución geográfica del microempresariado colombiano refleja, con gran fidelidad, la distribución general de la población y la actividad económica en el país: existe una **concentración significativa en los grandes centros urbanos**, con los tres principales departamentos concentrando aproximadamente el 40% del universo total de micronegocios.
+La distribución geográfica refleja la distribución de la población y la actividad económica: los tres principales territorios —Antioquia (11,9%), Bogotá D.C. (11,1%) y Valle del Cauca (8,5%)— concentran el 31,5% del universo.
 
-Esta concentración geográfica tiene una doble lectura. Por un lado, es coherente con la dinámica económica urbana: donde hay más población y mayor densidad comercial, hay más negocios. Por otro, puede ocultar una subestimación de la microempresa rural y periurbana, que por sus características geográficas y de informalidad tiene mayor probabilidad de quedar fuera de los marcos de encuesta.
-
-La conexión entre este indicador y el Eje 2 de las recomendaciones de política pública (inclusión digital) es directa: la focalización de programas de conectividad debe cruzar la densidad de micronegocios con las tasas de desconexión departamentales para identificar los territorios donde la inversión pública tiene el mayor retorno social. Los departamentos con alta concentración de micronegocios y alta tasa de desconexión (ver Figura 6C cruzada con Figura 8A) son los prioritarios.
+La focalización de programas de conectividad debería cruzar la densidad de micronegocios con las tasas de desconexión departamentales (cuadro J2) para identificar los territorios prioritarios.
 
 ## Ingresos totales por sector económico
 
-![**Figura 8B:** Ingresos totales anuales por sector, en millones de COP](output/figuras/28_V1_ingresos_sector.png)
+![**Figura 8B:** Ingresos de 2024 por sector, en billones de pesos](output/figuras/28_V1_ingresos_sector.png)
 
-La distribución de ingresos por sector introduce la dimensión de **productividad diferenciada**: no todos los micronegocios generan la misma riqueza, y la política pública no puede ser indiferente a estas diferencias.
-
-El análisis sectorial de ingresos revela una paradoja aparente: el sector de comercio genera ingresos superiores al promedio, mientras que el sector de servicios —que tiene el mayor número de negocios (43,54%)— presenta niveles de ingreso más moderados. Esta divergencia entre volumen de negocios e ingreso por negocio tiene implicaciones importantes: el éxito de los programas de apoyo no puede medirse solo por el número de beneficiarios alcanzados, sino por el ingreso por beneficiario y su potencial de crecimiento.
-
-Las oportunidades de crecimiento diferenciadas por sector apuntan a que las intervenciones más eficientes no son las genéricas sino las diseñadas con lógica de cadena de valor sectorial.
+La distribución de ingresos introduce la dimensión de productividad diferenciada: el **comercio concentra el 36,5% de los ingresos con el 23,9% de los negocios**, mientras que los **servicios generan el 39,8% de los ingresos con el 43,5% de los negocios**. El éxito de los programas de apoyo no puede medirse solo por el número de beneficiarios, sino también por el ingreso por beneficiario.
 
 ---
 
 # Minería de reglas de asociación (Apriori)
 
-> **Guía metodológica:** Esta sección representa el segundo nivel metodológico del análisis, cualitativamente distinto al estadístico-descriptivo de las secciones anteriores. Su función es pasar de la fotografía del presente (qué tienen o no los negocios) a las reglas que gobiernan ese presente (qué viene con qué). Es, en cierto sentido, la sección que convierte el diagnóstico en inteligencia accionable para política pública.
+> **Guía metodológica:** Esta sección pasa de la fotografía (qué tienen o no los negocios) a las co-ocurrencias (qué características aparecen juntas). Las reglas describen asociaciones en datos de corte transversal; no identifican causas ni secuencias temporales.
 
 ## Marco conceptual: de la descripción a los patrones
 
-Los datos descriptivos de las secciones 2 a 9 nos dicen qué tiene o no tiene cada micronegocio. Pero la pregunta más valiosa para el diseño de política pública no es fotográfica sino relacional: ¿qué viene con qué? Si un negocio ya usa el celular, ¿es más probable que también tenga internet? ¿La tenencia de RUT va acompañada de mayor acceso al crédito? ¿Los negocios más formalizados son también los más digitalizados?
+Los datos descriptivos dicen qué tiene o no tiene cada micronegocio. La pregunta relacional es otra: ¿qué viene con qué? Si un negocio usa el celular, ¿es más probable que también tenga internet? ¿La tenencia de RUT va acompañada de pagos digitales?
 
-Para responder estas preguntas usamos **minería de reglas de asociación con el algoritmo Apriori**, una técnica desarrollada originalmente para el análisis de patrones de compra en supermercados y hoy ampliamente utilizada en ciencias sociales y economía aplicada. En términos prácticos, el algoritmo analiza el universo completo de 5,3 millones de micronegocios y detecta cuáles combinaciones de características aparecen juntas con mayor frecuencia de la que cabría esperar por azar.
+Para responder usamos **minería de reglas de asociación con el algoritmo Apriori** (paquete `arules`). Una regla {A} ⇒ {B} se evalúa con tres medidas:
 
-**¿Qué significa el \"lift\"?** El indicador central de este análisis es el **lift** (o factor de levantamiento). En lenguaje llano: un lift de 1,81 significa que la probabilidad de que un negocio tenga internet es un **81% mayor de lo que se esperaría por puro azar** cuando ya sabemos que ese negocio usa celular y realiza transferencias digitales. Un lift de 1,0 indica que no hay relación entre dos características; un lift mayor a 1,0 indica que van juntas con más frecuencia de la esperada; y cuanto más alto el lift, más fuerte y relevante es la asociación. En el contexto de este análisis, los lifts más altos —superiores a 1,9— corresponden a patrones de exclusión que son casi predeterminados: si un negocio no tiene celular, las probabilidades de que tampoco tenga internet son tan altas que la asociación es casi una ley del sistema.
+- **Soporte:** proporción de negocios que tienen A y B a la vez.
+- **Confianza:** entre los negocios con A, proporción que también tiene B.
+- **Lift:** confianza dividida por la proporción general de B. Un lift de 1 indica independencia; un lift de 1,81 indica que B es 1,81 veces más frecuente entre quienes tienen A que en el total.
 
 ## Parámetros metodológicos
 
-El algoritmo se ejecutó con los siguientes umbrales:
-
-- **Soporte mínimo: 15%** — El patrón debe estar presente en al menos 1 de cada 7 negocios del universo.
-- **Confianza mínima: 70%** — La regla debe cumplirse en al menos 7 de cada 10 casos donde ocurre el antecedente.
-
-De las **55.906 reglas inicialmente generadas**, se seleccionaron para el análisis final **39 reglas de alta relevancia** con soporte superior al 20%, lo que garantiza que los patrones identificados tienen representación estadística suficiente para fundamentar decisiones de política.
+- **Datos:** 30 variables categóricas (formalización, TIC, medios de pago, sector, antigüedad, perfil del propietario, emprendimiento, ubicación, seguridad social, declaraciones tributarias e inclusión financiera), recodificadas en 99 ítems sobre 77.202 registros completos. En las preguntas de selección múltiple (formas de pago, TIC) la no respuesta se interpreta como "No".
+- **Soporte mínimo 15%:** cada patrón debe observarse en al menos ~11.600 registros de la muestra (más de 790.000 negocios en el universo). El umbral prioriza patrones con peso poblacional suficiente para informar política pública y evita reglas sobre nichos pequeños.
+- **Confianza mínima 70%:** la regla debe cumplirse en al menos 7 de cada 10 casos con el antecedente.
+- **Longitud máxima 4:** antecedentes de hasta tres ítems, para que las reglas sean interpretables.
+- **Reglas redundantes:** se eliminaron con `arules::is.redundant()`. Una regla es redundante si existe otra más general (con un subconjunto de su antecedente y el mismo consecuente) con igual o mayor confianza: la condición adicional no aporta información. De 119.456 reglas quedaron 55.906 no redundantes.
+- **Factores de expansión:** `apriori()` trata cada registro con igual peso. Para que las medidas representen al universo se asignó F_EXP como peso de cada transacción y se recalcularon soporte, confianza y lift ponderados con `arules::support(..., weighted = TRUE)` (función `medidas_ponderadas()` en `scripts/00_config.R`). En las tablas siguientes se reportan ambas versiones.
 
 ## Hallazgos principales
 
-Los seis hallazgos centrales del análisis Apriori, con su interpretación en lenguaje de política pública:
+```{r tabla-reglas-clave}
+clave <- leer("12a_reglas_clave.csv")
+tab <- data.frame(
+  Hallazgo = clave$hallazgo,
+  Regla = regla_legible(clave$regla),
+  `Soporte (pond.)` = pct(clave$support_pond * 100),
+  `Confianza (pond.)` = pct(clave$confidence_pond * 100),
+  `Lift muestral` = num(clave$lift, 2),
+  `Lift ponderado` = num(clave$lift_pond, 2),
+  check.names = FALSE
+)
+knitr::kable(tab, align = "llrrrr",
+             caption = "Reglas clave con medidas muestrales y ponderadas por F_EXP (fuente: output/tablas/12a_reglas_clave.csv)")
+```
 
-| Hallazgo | Regla principal | Lift | Implicación para política pública |
-|---|---|---|---|
-| TIC interconectado | Celular + Transferencias → Internet | 1,81 | Las TIC son un sistema acoplado. Una política de pagos digitales arrastrará adopción de internet, y viceversa. Las intervenciones aisladas son menos eficientes. |
-| Exclusión dominante | Sin celular → Sin internet | 1,97 | El 65% de negocios completamente excluidos está en un estado casi predeterminado. La exclusión digital no es accidental: es estructural. |
-| RUT exógeno | 0 reglas predicen RUT = Sí | N/A | La formalización no surge espontáneamente de otras variables digitales o financieras. Requiere política activa y directa: no se \"contagia\" del ecosistema. |
-| Asimetría de predicción | 768 reglas negativas vs 201 positivas | 1,13x | Es más fácil predecir por qué un negocio está excluido que por qué está incluido. La exclusión es el estado de equilibrio del sistema; la inclusión, la excepción. |
-| Celular dominante | Aparece en 77% de los antecedentes | — | El celular es la variable pivote de la digitalización. Toda política de inclusión digital debería comenzar por él. |
-| Pagos digitales y rentabilidad | Internet + Transferencias → Ingresos altos | 1,75+ | Los negocios conectados y con pagos digitales tienen un 75% más de probabilidad de ingresos superiores. La conectividad tiene retorno económico medible. |
+- **Exclusión digital acumulada.** Los negocios sin dispositivos electrónicos, sin celular para el negocio y sin transferencias casi nunca tienen internet en el local (confianza 99,6%). Este patrón abarca a cerca de 28% del universo con el soporte ponderado: la ausencia de una herramienta digital tiende a coincidir con la ausencia de las demás.
+- **Sin celular, sin internet.** La sola ausencia del celular ya se asocia con no tener internet en 98,9% de los casos.
+- **TIC acopladas.** Entre quienes usan celular y aceptan transferencias, el 89,3% tiene internet en el local; el lift ponderado (1,87) es incluso mayor que el muestral.
+- **RUT y pagos digitales.** La regla con mayor lift de todo el análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (lift 2,01): la formalización fiscal aparece fuertemente asociada a los pagos digitales.
 
-El hallazgo sobre el RUT merece énfasis especial: el algoritmo Apriori, con 55.906 reglas analizadas, **no encontró ninguna combinación de variables digitales o financieras que prediga la tenencia de RUT**. Esto significa que la formalización fiscal no es un resultado \"natural\" de la digitalización o del crecimiento del negocio: es un proceso que requiere una intervención institucional directa, deliberada y activa. Esperar que los micronegocios se formalicen solos a medida que se digitalizan es, a la luz de estos datos, una hipótesis sin sustento empírico.
+**Sobre el RUT.** Con los umbrales principales no aparece ninguna regla cuyo consecuente sea tener RUT. Esto **no** significa que el RUT sea independiente del resto del sistema. La ausencia de reglas se explica por el umbral de soporte: los negocios con RUT son el 22,4% del universo, y las combinaciones que mejor lo acompañan son menos frecuentes que el 15%. Al bajar el soporte al 5% (sección de robustez) aparecen reglas con confianza cercana al 77% y lift de 3,4 formadas solo por variables digitales y de ubicación, por ejemplo {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}. La formalización fiscal está asociada a la digitalización y al local fijo, aunque en segmentos más pequeños del universo.
 
 ## Visualizaciones Apriori
 
-Las seis visualizaciones producidas por el análisis Apriori ofrecen perspectivas complementarias sobre la misma realidad. A continuación se describe el contenido y la lección de cada una:
+**Figura 9A — Frecuencia de ítems**
 
-**Figura 9A — Frecuencia de ítems: las variables TIC dominan el panorama**
+![**Figura 9A:** Frecuencia de los 30 ítems más comunes en las transacciones](output/figuras/12_apriori_item_frequency.png)
 
-![**Figura 9A:** Frecuencia de ítems - TIC variables dominan](output/figuras/12_apriori_item_frequency.png)
-
-Esta visualización muestra con qué frecuencia aparece cada variable en el conjunto de reglas significativas. El celular, el internet y las transferencias digitales aparecen en el **77% de todas las reglas de alta relevancia**. Esto no solo confirma su importancia estadística; confirma que el eje tecnológico es el eje organizador de todo el ecosistema microempresarial. Las demás variables —formalización, crédito, ahorro— orbitan alrededor de este núcleo digital.
+Muestra la proporción de negocios que presenta cada característica (soporte de cada ítem). Dominan los ítems de ausencia —no aceptar cheques ni tarjetas, no ser responsable de IVA, no tener sitio web—, presentes en más del 97% de los registros, lo que explica que muchas de las reglas frecuentes describan patrones de exclusión.
 
 ---
 
-**Figura 9B — Lift vs. Soporte: las \"joyas\" y los \"estados de trampa\"**
+**Figura 9B — Soporte vs. confianza**
 
-![**Figura 9B:** Lift vs. Soporte - Reglas por fuerza y prevalencia](output/figuras/13_apriori_scatter_reglas.png)
+![**Figura 9B:** Soporte (eje horizontal) vs. confianza (eje vertical), color según lift](output/figuras/13_apriori_scatter_reglas.png)
 
-Cada regla de asociación aparece como un punto en este gráfico de dispersión: la posición horizontal indica qué tan común es el patrón (soporte), y la posición vertical indica qué tan fuerte es la asociación (lift). Las reglas ubicadas en el cuadrante superior derecho —alto soporte y alto lift— son las más valiosas para la política pública: son patrones frecuentes Y robustos. Los clústeres de puntos en la zona superior del gráfico corresponden, en su mayoría, a patrones de exclusión digital: confirman que la desconexión no es un accidente individual sino un estado de equilibrio sistémico que se auto-reproduce.
-
----
-
-**Figura 9C — Top 20 reglas por significancia (lift)**
-
-![**Figura 9C:** Top 20 reglas por significancia (Lift)](output/figuras/14_apriori_grafo_top20.png)
-
-Este gráfico muestra las veinte reglas con mayor lift, es decir, las asociaciones más sorpresivas y fuertes del sistema. Los patrones de exclusión digital dominan la parte alta de esta lista: la regla \"sin celular implica sin internet\" tiene un lift de 1,97, lo que la convierte casi en una ley del ecosistema microempresarial colombiano. Las conexiones más gruesas en la visualización corresponden a las asociaciones más rígidas —aquellas donde la presencia o ausencia de una variable casi determina la presencia o ausencia de otra.
+Cada punto es una regla no redundante: la posición horizontal indica qué tan común es el patrón (soporte), la vertical qué tan seguido se cumple (confianza) y el color su lift. De las 251 reglas con lift superior a 1,9, el 99% tiene como consecuente "sin internet en el local": los patrones más fuertes son de exclusión digital.
 
 ---
 
-**Figura 9D — Agrupamiento de reglas por categoría**
+**Figura 9C — Top 20 reglas por lift**
 
-![**Figura 9D:** Agrupamiento de reglas por categoría](output/figuras/15_apriori_grouped_matrix.png)
+![**Figura 9C:** Grafo de las 20 reglas con mayor lift](output/figuras/14_apriori_grafo_top20.png)
 
-Esta visualización permite identificar visualmente los tres grandes clústeres de comportamiento que existen en el ecosistema: el clúster de los Formalizados (con RUT, contabilidad, registro mercantil), el de los Digitalizados (con internet, celular, transferencias) y el de los Excluidos (sin ninguna de las anteriores). Lo más revelador del gráfico es que estos clústeres son relativamente impermeables entre sí: las reglas no \"viajan\" fácilmente de un grupo a otro, lo que confirma la hipótesis de la segmentación polarizada.
-
----
-
-**Figura 9E — Coordenadas paralelas: el camino a la modernización**
-
-![**Figura 9E:** Coordenadas paralelas: el camino a la modernización](output/figuras/17_apriori_paracoord_pagos.png)
-
-Esta visualización muestra, en forma de flujos paralelos, las trayectorias que siguen los negocios hacia la adopción de herramientas digitales y de pago. El hallazgo central es que existe un camino dominante: comienza con la tenencia del celular, que luego \"tira\" del uso de internet, y finalmente desemboca en la adopción de transferencias digitales. Este es el orden natural de adopción tecnológica en el microempresariado colombiano, y cualquier política de digitalización que lo respete —empezando por el celular— tendrá mayor probabilidad de éxito que una que lo ignore.
+Diecinueve de las veinte reglas con mayor lift combinan la ausencia de dispositivos, celular, transferencias o registros contables y desembocan en "sin internet en el local". La excepción —y la regla de mayor lift— es {tiene RUT, usa celular} ⇒ {acepta transferencias}.
 
 ---
 
-**Figura 9F — Red de relaciones: la inercia de los negocios maduros**
+**Figura 9D — Antecedentes × consecuentes**
 
-![**Figura 9F:** Red de relaciones: la inercia de los negocios maduros](output/figuras/18_apriori_grafo_antiguedad.png)
+![**Figura 9D:** Ítems del antecedente y consecuentes de las 50 reglas con mayor lift (tamaño = n.º de reglas, color = lift ponderado)](output/figuras/15_apriori_grouped_matrix.png)
 
-La visualización de red muestra cómo los patrones de comportamiento de los negocios con mayor antigüedad (10+ años) forman una estructura más rígida y densa, con menos conexiones hacia el ecosistema digital. Los nodos de negocios maduros tienden a agruparse en regiones del grafo alejadas de los nodos de adopción tecnológica, lo que confirma el hallazgo de la sección 4.1: la antigüedad en el mercado no es sinónimo de adaptabilidad; en este contexto, es frecuentemente sinónimo de inercia operativa.
+Cada punto cruza un ítem que aparece en el antecedente con el consecuente de la regla, entre las 50 reglas con mayor lift. Un número reducido de ítems —ligados a la ausencia de herramientas digitales— se repite en buena parte de las reglas más fuertes, y casi todas desembocan en "sin internet en el local".
 
 ---
 
-# Segmentación de mercado: tres grupos estructurales
+**Figura 9E — Reglas hacia pagos digitales**
 
-## El mercado está polarizado, no es un continuo gradual
+![**Figura 9E:** Las 12 reglas con mayor lift hacia la aceptación de transferencias (barra = lift ponderado, color = confianza ponderada)](output/figuras/17_apriori_reglas_pagos.png)
 
-Una de las tentaciones más comunes en el análisis de micronegocios es asumir que existe un espectro gradual de formalización: desde el negocio más informal hasta el más formal, pasando por infinitas etapas intermedias. Los datos de EMICRON 2024, reforzados por el análisis Apriori, contradicen esta imagen: el mercado no es gradual sino **estructuralmente polarizado en tres grupos con dinámicas propias y fronteras relativamente rígidas**.
+Muestra las combinaciones de ítems que acompañan la aceptación de transferencias. El RUT, el internet en el local y el celular aparecen de forma recurrente en estas combinaciones. Al ser datos de corte transversal, el gráfico no describe una secuencia temporal de adopción.
 
-| Grupo | Proporción | Cantidad estimada | Características | Dinámica del sistema |
-|---|---|---|---|---|
-| **A — Excluidos** | 65% | 3,44 millones | Sin celular, sin internet, operan en efectivo, sin RUT, sin crédito formal | Ciclo vicioso: sin documentos → sin crédito → sin tecnología → sin documentos |
-| **B — Incluidos** | 8% | 424.000 | Con RUT, internet, pagos digitales, contabilidad, acceso a crédito | Ciclo virtuoso: formalización → crédito → tecnología → mayor formalización |
-| **C — Transición** | 27% | 1,4 millones | Tienen celular pero no internet; parcialmente digitalizados | Punto de bifurcación: pueden caer al Grupo A o escalar al B según el entorno |
+---
 
-La implicación más crítica de esta segmentación es que **el salto del Grupo A al Grupo B no es gradual ni automático**. Un negocio del Grupo A no va adquiriendo progresivamente las características del Grupo B a medida que pasan los años; en ausencia de intervención externa, permanece en el Grupo A. Esto es lo que el análisis Apriori confirma con el concepto de \"estado de trampa\": la exclusión es el equilibrio estable del sistema para el 65% del universo.
+**Figura 9F — Red de relaciones: negocios de 10+ años**
 
-El **Grupo C es el objetivo estratégico prioritario** de política pública por una razón de eficiencia: estos 1,4 millones de negocios ya han dado el primer paso de la digitalización (tienen celular), lo que significa que el costo marginal de incluirlos plenamente —conectarlos a internet, incorporarlos a pagos digitales— es significativamente menor que el costo de intervenir en el Grupo A desde cero. El Grupo C es el puente entre los dos extremos, y la política pública que opere en este puente tendrá el mayor retorno social por peso invertido.
+![**Figura 9F:** Grafo de las reglas hacia negocios con 10 o más años](output/figuras/18_apriori_grafo_antiguedad.png)
+
+Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no pagar arriendo y propietario hombre. Son asociaciones moderadas (lift cercano a 1,27): describen un perfil, no una regla rígida.
+
+---
+
+# Robustez de los resultados
+
+> **Guía metodológica:** Esta sección evalúa si los hallazgos dependen de las decisiones metodológicas: los umbrales de soporte y confianza, y el uso o no de los factores de expansión. Todo se calcula en `scripts/07_sensibilidad_apriori.R`.
+
+## Sensibilidad a los umbrales
+
+```{r tabla-sensibilidad}
+sens <- leer("12_sensibilidad_umbrales.csv")
+marca <- function(x) ifelse(as.logical(x), "✓", "—")
+tab <- data.frame(
+  Soporte = pct(sens$soporte * 100, 0),
+  Confianza = pct(sens$confianza * 100, 0),
+  `Reglas` = num(sens$n_reglas),
+  `No redundantes` = num(sens$n_no_redundantes),
+  `Exclusión acumulada` = marca(sens[["Exclusión digital acumulada"]]),
+  `Sin celular → sin internet` = marca(sens[["Sin celular → sin internet"]]),
+  `TIC acopladas` = marca(sens[["TIC acopladas"]]),
+  check.names = FALSE
+)
+knitr::kable(tab, align = "rrrrccc",
+             caption = "Número de reglas y presencia de las reglas clave según umbrales (fuente: output/tablas/12_sensibilidad_umbrales.csv)")
+```
+
+![**Figura 10A:** Reglas no redundantes según los umbrales de soporte y confianza](output/figuras/30_sensibilidad_umbrales.png)
+
+El número de reglas varía con los umbrales —como es esperable—, pero los patrones centrales se mantienen. Las dos reglas de exclusión digital aparecen en las 16 combinaciones evaluadas. La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; solo sale al exigir 90%, porque su confianza es de 89,6%.
+
+## Medidas muestrales vs. ponderadas
+
+```{r tabla-ponderado}
+comp <- leer("12b_ponderado_vs_muestral.csv")
+valor <- mapply(function(v) num(v, if (v %% 1 == 0) 0 else 4), comp$valor)
+knitr::kable(data.frame(Medida = comp$medida, Valor = valor),
+             align = "lr",
+             caption = "Comparación del conjunto de reglas con y sin factores de expansión (fuente: output/tablas/12b_ponderado_vs_muestral.csv)")
+```
+
+Incorporar F_EXP no altera las conclusiones. El 99% de las reglas del conjunto muestral (55.282 de 55.906) también cumple los umbrales al ponderar, y la correlación entre el lift muestral y el ponderado es de 0,996. El orden fino de las reglas sí cambia —la mitad del top 30 por lift coincide (índice de Jaccard 0,33)—, porque las 30 reglas de mayor lift tienen valores casi idénticos (entre 1,97 y 2,01) y pequeñas variaciones reordenan la lista. Por eso este análisis se apoya en patrones y no en la posición exacta de una regla en el ranking.
+
+Para construir el conjunto ponderado se mineró con un soporte muestral de 8%: al ponderar, el soporte de algunas reglas cambia hasta 8,4 puntos, y el soporte muestral mínimo entre las reglas del conjunto ponderado fue de 8,65%. Bajar el piso al 6% no agrega ninguna regla.
+
+## ¿Qué se asocia con tener RUT?
+
+```{r tabla-rut}
+rut <- leer("12d_reglas_rut_sin_formalizacion.csv")[1:5, ]
+tab <- data.frame(
+  Regla = regla_legible(rut$regla),
+  `Soporte (pond.)` = pct(rut$support_pond * 100),
+  `Confianza (pond.)` = pct(rut$confidence_pond * 100),
+  `Lift ponderado` = num(rut$lift_pond, 2),
+  check.names = FALSE
+)
+knitr::kable(tab, align = "lrrr",
+             caption = "Mejores reglas hacia tiene_rut=Sí con soporte ≥ 5%, excluyendo otras variables de formalización como antecedente (fuente: output/tablas/12d_reglas_rut_sin_formalizacion.csv)")
+```
+
+Si se permiten todas las variables como antecedente, las reglas hacia el RUT tienen confianza cercana al 100%, pero son casi tautológicas: declarar renta o estar en Cámara de Comercio exige tener RUT (ver `output/tablas/12c_reglas_rut.csv`). Al excluir esas variables, las combinaciones de internet, transferencias y local fijo predicen el RUT con confianza de 75–77% y lift de 3,4. **El RUT no es exógeno al sistema: está asociado con la digitalización y con tener un local fijo**, en segmentos que abarcan alrededor del 6% del universo.
+
+---
+
+# Segmentación: tres grupos estructurales
+
+> **Guía metodológica:** Los grupos se definen en `scripts/06_segmentacion.R` a partir de dos variables —acceso a internet (P2524) y tenencia de RUT (P1633)—, que representan las dos fracturas centrales del diagnóstico. Todas las cifras están ponderadas por F_EXP.
+
+## Definición
+
+| Grupo | Definición |
+|---|---|
+| **Excluidos** | Sin internet y sin RUT |
+| **En transición** | Solo una de las dos: internet sin RUT, o RUT sin internet |
+| **Integrados** | Con internet y con RUT |
+
+La tabla 2 × 2 produce grupos **mutuamente excluyentes y exhaustivos**: cada micronegocio pertenece a exactamente uno. El crédito, el ahorro, los pagos digitales y el celular no intervienen en la definición; se usan después para describir a cada grupo, de modo que la caracterización no es circular.
+
+## Tamaño de los grupos
+
+```{r tabla-grupos}
+g <- leer("11_segmentacion_grupos.csv")
+sg <- leer("11a_segmentacion_subgrupos.csv")
+knitr::kable(data.frame(Grupo = g$grupo, `Muestra` = num(g$Muestra),
+                        `Negocios (universo)` = num(g$Universo), `%` = pct(g$Porcentaje),
+                        check.names = FALSE),
+             align = "lrrr",
+             caption = "Tamaño de los grupos (fuente: output/tablas/11_segmentacion_grupos.csv)")
+```
+
+![**Figura 11A:** Distribución de los micronegocios en los tres grupos](output/figuras/29_segmentacion_grupos.png)
+
+Casi la mitad del universo está en el grupo de **excluidos** (46,2%, 2,45 millones). El grupo **en transición** (35,7%) está compuesto casi por completo por negocios con internet pero sin RUT (31,4% del universo); los negocios con RUT pero sin internet son solo el 4,2%. Los **integrados** son el 18,2% (962.000 negocios).
+
+## Perfil de los grupos
+
+```{r tabla-perfil}
+p <- leer("11b_perfil_grupos.csv")
+tab <- data.frame(
+  Indicador = c("Usa celular para el negocio", "Acepta transferencias", "Lleva algún registro contable",
+                "Registro en Cámara de Comercio", "Solicitó crédito (año anterior)",
+                "Ahorró (año anterior)", "Propietaria mujer", "Zona rural", "10 o más años",
+                "Ventas del mes (mediana, COP)"),
+  sapply(seq_len(nrow(p)), function(i) c(
+    pct(unlist(p[i, 2:10])), num(p$Ventas_mes_mediana[i])
+  )),
+  check.names = FALSE
+)
+names(tab)[-1] <- p$grupo
+knitr::kable(tab, align = "lrrrr",
+             caption = "Perfil ponderado por grupo con variables que no definen los grupos (fuente: output/tablas/11b_perfil_grupos.csv)")
+```
+
+Los grupos se diferencian con claridad en variables que no intervienen en su definición. La aceptación de transferencias pasa de 5,7% en los excluidos a 86,9% en los integrados; llevar registros contables, de 12,6% a 75,4%; ahorrar, de 11,6% a 31,1%; y la mediana de ventas mensuales, de 900.000 a 3.500.000 pesos. Los excluidos son mayoritariamente rurales (50,1%) y antiguos (55,2% con 10+ años). El grupo en transición tiene la mayor participación de mujeres (39,5%) y casi todos sus negocios usan celular (95,0%).
+
+Estas diferencias describen co-ocurrencias, no efectos: no permiten afirmar que conectarse a internet o tramitar el RUT produzca, por sí mismo, más ventas o más acceso al crédito.
+
+## Relación con la versión inicial del trabajo
+
+El resumen enviado a LatinR presentaba una segmentación 65% / 8% / 27%. Esas proporciones no provenían de un procedimiento reproducible dentro del pipeline. Al definir los grupos de forma explícita y calcularlos con los factores de expansión, las proporciones son 46,2% / 35,7% / 18,2%. La lectura cualitativa se mantiene —un grupo mayoritario excluido, un grupo intermedio y una minoría integrada—, pero las cifras correctas son las de esta sección.
+
+---
+
+# Cómo se construyó en R
+
+> **Guía metodológica:** Fragmentos centrales del pipeline (`main.R` ejecuta los scripts 01 a 07 en orden). El código completo está en `scripts/`.
+
+**1. Consolidación de los 11 módulos con `data.table`** (`01_consolidar.R`): los módulos de una fila por negocio se unen por la llave `DIRECTORIO + SECUENCIA_P + SECUENCIA_ENCUESTA`; el módulo de personal ocupado (varias filas por negocio) se agrega antes de unirlo.
+
+```{r ejemplo-consolidar, echo=TRUE, eval=FALSE}
+key_variables <- c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA")
+for (file in all_files[-1]) {
+  df <- fread(file, encoding = "Latin-1")
+  if ("SECUENCIA_PH" %in% colnames(df)) next   # varias filas por negocio: se agrega aparte
+  final_df <- merge(final_df, df, by = intersect(colnames(df), key_variables), all.x = TRUE)
+}
+```
+
+**2. Depuración** (`02_limpiar.R`): los códigos 98/99 (no sabe / no informa) se convierten en `NA`, se conservan solo registros con factor de expansión válido y se etiquetan las variables según el diccionario DANE.
+
+**3. Índices sintéticos** (`02_limpiar.R`). Cada índice suma criterios binarios cumplidos:
+
+- *Formalización (0–5):* tiene RUT, tiene registro en Cámara de Comercio, lleva algún registro contable, paga salud y pensión, declara renta.
+- *Digital (0–4):* usa internet, usa redes sociales, tiene página web, usa celular para el negocio.
+
+```{r ejemplo-indices, echo=TRUE, eval=FALSE}
+base[, idx_formalizacion := fifelse(P1633 == 1, 1L, 0L, na = 0L) +  # RUT
+                            fifelse(P1055 == 1, 1L, 0L, na = 0L) +  # Cámara de Comercio
+                            fifelse(P640 %in% 1:4, 1L, 0L, na = 0L) + # algún registro contable
+                            fifelse(P3088 == 1, 1L, 0L, na = 0L) +  # salud y pensión
+                            fifelse(P2991 == 1, 1L, 0L, na = 0L)]   # declara renta
+```
+
+```{r tabla-indices}
+idx <- leer("03_indices_distribucion.csv")
+tab <- reshape(idx[, c("Indice", "Puntaje", "Pct")], idvar = "Puntaje", timevar = "Indice", direction = "wide")
+names(tab) <- c("Puntaje", "Formalización (0–5)", "Digital (0–4)")
+tab[, 2:3] <- lapply(tab[, 2:3], function(x) ifelse(is.na(x), "—", pct(x)))
+knitr::kable(tab, align = "crr", row.names = FALSE,
+             caption = paste0("Distribución ponderada de los índices. Promedios: formalización ",
+                              num(idx$Promedio[1], 2), ", digital ", num(idx$Promedio[nrow(idx)], 2),
+                              " (fuente: output/tablas/03_indices_distribucion.csv)"))
+```
+
+El 60,7% de los micronegocios no cumple ningún criterio de formalización y solo el 2,2% cumple los cinco.
+
+**4. Estadística ponderada** (`03_cuadros_boletin_COMPLETO.R`): una función calcula cada cuadro con el factor de expansión.
+
+```{r ejemplo-ponderado, echo=TRUE, eval=FALSE}
+calc_dist <- function(dt, variable) {
+  dt[!is.na(get(variable)), .(Cantidad = sum(F_EXP)), by = variable][
+    , Distribucion_Pct := round(Cantidad / sum(Cantidad) * 100, 2)]
+}
+```
+
+**5. Apriori con medidas ponderadas** (`05_apriori.R` y `00_config.R`):
+
+```{r ejemplo-apriori, echo=TRUE, eval=FALSE}
+trans <- as(as.data.frame(base_apr), "transactions")
+transactionInfo(trans)$weight <- pesos            # F_EXP de cada registro
+
+reglas <- apriori(trans, parameter = list(supp = 0.15, conf = 0.70, minlen = 2, maxlen = 4))
+reglas <- reglas[!is.redundant(reglas)]
+
+medidas_ponderadas <- function(reglas, trans) {
+  s_xy <- support(items(reglas), trans, weighted = TRUE)
+  s_x  <- support(lhs(reglas),   trans, weighted = TRUE)
+  s_y  <- support(rhs(reglas),   trans, weighted = TRUE)
+  data.table(support_pond = s_xy, confidence_pond = s_xy / s_x, lift_pond = s_xy / (s_x * s_y))
+}
+```
+
+**6. Segmentación** (`06_segmentacion.R`):
+
+```{r ejemplo-segmentacion, echo=TRUE, eval=FALSE}
+base[, grupo := fcase(
+  usa_internet != 1 & tiene_rut != 1, "Excluidos",
+  usa_internet == 1 & tiene_rut == 1, "Integrados",
+  default = "En transición"
+)]
+```
+
+**Correcciones durante el proceso.** Al auditar el pipeline para esta versión se corrigieron cuatro errores, todos documentados en el código: (1) el conteo de personal ocupado usaba el módulo de trabajadores, que está incompleto; ahora se usa la definición DANE (propietario + P3032) y se reproduce exactamente el boletín (82,3% unipersonal, 6.879.489 personas ocupadas); (2) la Figura 4C graficaba el porcentaje de negocios por sector en lugar del personal promedio; (3) las etiquetas del tipo de contabilidad en Apriori estaban desplazadas (lo rotulado "Libro diario" era en realidad "cuaderno u otro registro"); (4) los porcentajes de RUT e internet por departamento (cuadro J2) no estaban ponderados.
 
 ---
 
 # Recomendaciones de política pública
 
+> **Nota:** Las metas y los instrumentos de esta sección son **propuestas normativas** del autor. Se apoyan en el diagnóstico descriptivo y en las asociaciones encontradas, pero no son estimaciones de impacto derivadas de los datos.
+
 ## Eje 1: Formalización fiscal y administrativa
 
-**Diagnóstico que lo justifica:** 77,6% sin RUT + 89,5% sin registro mercantil + 0 reglas Apriori que predigan formalización espontánea.
+**Diagnóstico que lo justifica:** 77,6% sin RUT, 89,7% sin registro mercantil y 94,0% sin RUT en zonas rurales. El RUT se asocia con pagos digitales, internet y local fijo (lift de 2,0 a 3,4).
 
-**Objetivo:** Reducir la tasa de micronegocios sin RUT del 77,6% al 50% en un horizonte de tres años.
+**Objetivo propuesto:** reducir la tasa de micronegocios sin RUT del 77,6% al 50% en tres años.
 
-La formalización no puede seguir siendo un proceso que el microempresario gestiona de forma autónoma en un sistema diseñado para empresas medianas. Hay que reimaginar el RUT como un servicio del Estado que llega al empresario, no como un trámite que el empresario debe buscar.
+**Medidas:**
 
-**Medidas concretas:**
-
-- **Simplificación radical del RUT:** Proceso completamente en línea, completable en menos de 24 horas, con costo cero y sin requisitos previos como estados financieros o local fijo. La dirección del negocio puede ser la vivienda del propietario.
-- **Incentivo de acceso vinculado:** Todo micronegocio con RUT activo obtiene acceso automático a una línea de microcrédito de hasta 5 salarios mínimos legales vigentes, sin garantías adicionales. El RUT deja de ser solo una obligación y se convierte en una llave de acceso al sistema financiero.
-- **Focalización con enfoque diferencial de género y territorio:** Los programas de formalización deben priorizar las zonas rurales —con enfoque diferencial hacia las mujeres propietarias, cuya participación cae del 38% urbano al 29,5% rural—, donde la informalidad fiscal es más aguda: el 94% opera sin RUT, frente al 70,4% en las cabeceras municipales (una brecha territorial de ~24 puntos).
-- **Reforma sin presión tributaria inmediata:** Diferir la primera obligación tributaria por 18 meses después del registro. El objetivo del primer año es la formalización, no la recaudación: un negocio registrado que luego crece y tributa vale más en el largo plazo que un negocio que nunca se registra por temor al fisco.
+- **Simplificación radical del RUT:** proceso en línea desde el celular, sin costo y sin exigir local fijo; la dirección del negocio puede ser la vivienda del propietario (el 57,5% no tiene local fijo).
+- **Incentivo de acceso vinculado:** asociar el RUT activo a beneficios concretos —acceso a microcrédito o a pagos digitales sin costo—, para que deje de ser solo una obligación.
+- **Focalización territorial y de género:** priorizar zonas rurales, donde la informalidad fiscal es más aguda, con enfoque diferencial hacia las mujeres propietarias.
+- **Sin presión tributaria inmediata:** diferir la primera obligación tributaria tras el registro; el objetivo inicial es la formalización, no la recaudación.
 
 ## Eje 2: Inclusión digital e internet
 
-**Diagnóstico que lo justifica:** 50,4% sin internet + 1,4 millones con celular sin internet (Grupo C) + regla Apriori: celular + transferencias \u2192 internet (lift = 1,81).
+**Diagnóstico que lo justifica:** 50,4% sin internet; 1,15 millones de negocios usan celular pero no tienen internet; las TIC co-ocurren como sistema (lift ponderado de 1,87).
 
-**Objetivo:** Reducir la tasa de micronegocios sin internet del 50,4% al 20% en dos años.
+**Objetivo propuesto:** reducir la tasa de micronegocios sin internet del 50,4% al 20% en dos años.
 
-**Prioridad 1 — Internet rural:** La desconexión de internet es marcadamente más severa en las zonas rurales que en las cabeceras municipales. Esta brecha no se resolverá con soluciones de mercado: requiere subsidio selectivo focalizado en las microrregiones con mayor concentración de micronegocios desconectados (cruzar Figura 8A con Figura 6C para identificar los departamentos prioritarios). El modelo de referencia es el programa Vive Digital, que debe re-editarse con focalización microempresarial explícita. Meta: que el 94% de los 5,3 millones de micronegocios tenga acceso a internet en tres años.
-
-**Prioridad 2 — Adopción de transferencias digitales:** La brecha de adopción entre celular (70,9%), internet (49,6%) y transferencias (38,9%) define una escalera de tres peldaños. La política pública debe facilitar el ascenso entre peldaños: aplicaciones de billetera móvil gratuitas, con registro simplificado, e incentivos de adopción como un cashback del 2% en las primeras transacciones. Meta: 70% de micronegocios aceptando transferencias digitales en dos años.
-
-**Prioridad 3 — Ecosistema de aplicación PYME:** El Grupo C tiene el celular pero no explota su potencial. Una aplicación pública integrada —facturación, pagos, contabilidad básica y acceso a programas de apoyo, todo en una sola interfaz diseñada para baja conectividad y usuarios sin experiencia técnica— puede ser el catalizador de ese escalamiento. Meta: 50% del Grupo C utilizando la aplicación integrada en tres años.
+- **Prioridad 1 — Internet rural:** la desconexión es más severa fuera de las cabeceras. Se propone un subsidio selectivo focalizado en los territorios con mayor concentración de micronegocios desconectados (cuadros J1 y J2).
+- **Prioridad 2 — Transferencias digitales:** la escalera celular (70,9%) → internet (49,6%) → transferencias (38,9%) muestra dónde se pierden negocios en cada peldaño. Billeteras móviles gratuitas con registro simplificado pueden facilitar el ascenso.
+- **Prioridad 3 — Aplicación integrada para micronegocios:** facturación, pagos, contabilidad básica y acceso a programas de apoyo en una sola interfaz pensada para celular y baja conectividad.
 
 ## Eje 3: Financiamiento e inclusión financiera
 
-**Diagnóstico que lo justifica:** 85,8% sin crédito formal + 76,9% se autofinancia + 22,9% de quienes buscan crédito terminan en prestamistas informales.
+**Diagnóstico que lo justifica:** 85,8% no solicitó crédito; 76,9% inició sin financiación externa; entre quienes solicitaron crédito, 22,9% lo hizo con prestamistas gota a gota.
 
-**Objetivo:** Incrementar el acceso crediticio formal del 14,2% al 40% en tres años.
+**Objetivo propuesto:** aumentar la solicitud de crédito formal del 14,2% al 40% en tres años.
 
-**Microcrédito digital sin barreras:** Diseñar un producto crediticio completamente digital, sin necesidad de visitar una sucursal, sin garantías físicas, y cuya evaluación de riesgo se base en el historial de transacciones digitales del propietario (pagos móviles, transferencias, flujo de caja registrado en la aplicación PYME del Eje 2). Montos entre $500.000 y $2.000.000 para el Grupo C, con tasa máxima del 24% anual subsidiada por el Estado durante los primeros dos años. Este producto no compite con los bancos comerciales; llena el vacío que ellos no están dispuestos a ocupar.
+- **Microcrédito digital:** producto sin sucursal ni garantías físicas, con evaluación de riesgo basada en el historial de transacciones digitales —coherente con la fuerte asociación entre RUT y pagos digitales—.
+- **Fondo de garantía focalizado en el grupo en transición:** su alta tenencia de celular (95,0%) y de transferencias (57,6%) facilita productos financieros digitales.
+- **Estrategia contra el gota a gota:** alternativa formal inmediata y comunicación en los canales donde opera el préstamo informal (redes sociales locales, radio comunitaria, líderes de barrio).
 
-**Fondo de garantía focalizado en el Grupo C:** Para movilizar capital privado hacia este segmento, el Estado debe actuar como garante. Un fondo que cubra el 80% del valor de los créditos otorgados al Grupo C \u2014con coaseguro por parte del sector bancario\u2014 puede desbloquear una cartera de hasta $1,68 billones de pesos (1,4 millones de negocios \u00d7 promedio de $1,2 millones por crédito). El objetivo es triplicar la cartera de microcrédito en tres años.
+## Eje 4: Renovación y modernización
 
-**Estrategia contra el gota a gota:** El 22,9% de los microempresarios que buscan crédito y terminan en el mercado informal es una emergencia, no una estadística. La estrategia debe ser dual: por un lado, persecución legal activa de las redes de préstamo predatorio; por otro, disponibilidad inmediata de una alternativa formal accesible. La campaña de comunicación debe posicionarse en los mismos canales donde opera el gota a gota: redes sociales locales, radio comunitaria, líderes de barrio.
+**Diagnóstico que lo justifica:** 47,4% de negocios con 10+ años; los negocios antiguos se asocian con no usar redes sociales ni dispositivos (lift ~1,27).
 
-## Eje 4: Renovación generacional y modernización
+**Objetivo propuesto:** incorporar a 500.000 micronegocios con más de diez años al ecosistema digital en dos años.
 
-**Diagnóstico que lo justifica:** 47,4% de negocios con 10+ años + evidencia Apriori de que los negocios maduros tienen estructura de comportamiento más rígida ante la adopción de TIC (Figura 9F).
+- **Programa de modernización:** asesoría técnica gratuita en digitalización de procesos y crédito especial para inversión en tecnología.
+- **Formación digital acelerada:** microcursos accesibles desde el celular sobre pagos digitales, contabilidad básica y ventas por plataformas.
 
-**Objetivo:** Dinamizar un mercado estancado e incorporar a 500.000 micronegocios maduros al ecosistema digital en dos años.
+## Indicadores de seguimiento
 
-El diagnóstico de fondo es que los negocios más antiguos no adoptan tecnología por falta de incentivos económicos combinados con inercia cultural. Cambiar esto requiere dos palancas simultáneas: un incentivo económico visible a corto plazo y un acompañamiento técnico que reduzca la percepción de riesgo.
-
-**Programa de Modernización PYME:**
-- Asesoría técnica gratuita de 40 horas anuales por negocio, enfocada en digitalización de procesos, mejora operativa y adopción de herramientas de gestión.
-- Crédito especial para modernización tecnológica: tasa del 8% a cinco años, exclusivamente para inversión en tecnología o equipamiento productivo.
-- Reconocimiento \"Negocio Moderno\": certificación pública con visibilidad digital, que sirva tanto como distinción como herramienta de marketing para el negocio.
-
-**Bootcamp Digital acelerado:**
-- Micro-cursos de 20 horas, 100% en línea y accesibles desde celular, sobre pagos digitales, contabilidad básica y ventas por plataformas digitales.
-- Subsidio cruzado: empleador y trabajador reciben el beneficio simultáneamente.
-- Meta: 500.000 micronegocios capacitados en los primeros dos años.
-
-## Cronograma de implementación
-
-| Período | Eje 1 (RUT) | Eje 2 (Digital) | Eje 3 (Crédito) | Eje 4 (Modernización) |
-|---|---|---|---|---|
-| **Año 1** | Reforma del proceso RUT + piloto de incentivo crediticio | Subsidio de internet rural (departamentos prioritarios) | Lanzamiento de microcrédito digital piloto (50.000 negocios) | Bootcamp digital inicial + diseño de App PYME |
-| **Año 2** | Escalamiento nacional del RUT simplificado | Lanzamiento de billetera móvil sin costo | Expansión del microcrédito (500.000 negocios) | 250.000 PYME capacitadas + App PYME en producción |
-| **Año 3** | Consolidación: evaluación y ajuste de incentivos | App PYME integrada + cierre de brecha rural | Meta: 1,4 millones de negocios con acceso crediticio | 500.000 PYME modernizadas acumuladas |
-
-## Indicadores de éxito
-
-Los indicadores de seguimiento permiten evaluar el avance de cada eje de forma objetiva y comparable:
-
-| Indicador | Línea de base (2024) | Meta (Año 3) | Variación esperada |
+| Indicador | Línea de base (2024) | Meta propuesta (año 3) | Variación |
 |---|---|---|---|
-| Micronegocios sin RUT | 77,6% | 50,0% | \u221227,6 puntos porcentuales |
-| Micronegocios sin internet | 50,4% | 20,0% | \u221230,4 puntos porcentuales |
-| Micronegocios con acceso a crédito formal | 14,2% | 40,0% | +25,8 puntos porcentuales |
-| PYME capacitadas digitalmente (acumulado) | 0 | 500.000 | +500.000 unidades |
+| Micronegocios sin RUT | 77,6% | 50,0% | −27,6 p.p. |
+| Micronegocios sin internet | 50,4% | 20,0% | −30,4 p.p. |
+| Micronegocios que solicitan crédito | 14,2% | 40,0% | +25,8 p.p. |
+| Grupo de excluidos (sin internet ni RUT) | 46,2% | — | Seguimiento con EMICRON |
 
 ---
 
-# Conclusión: Hacia un ecosistema microempresarial resiliente
+# Conclusión
 
-El cambio estructural que estos cuatro ejes proponen no es marginal. Se trata de una transición de un modelo de subsistencia atomizado hacia un ecosistema de microempresa tecnificado y formalizado. La evidencia de la EMICRON 2024 es clara: el talento emprendedor está presente en cada rincón del país, pero sin el puente de la conectividad digital y la inclusión financiera, ese talento seguirá atrapado en el techo de cristal de la informalidad. Implementar estas recomendaciones no es solo una tarea económica, es un imperativo de equidad territorial.
+El microempresariado colombiano combina una notable persistencia con una débil conexión a la infraestructura institucional, digital y financiera. Las reglas de asociación muestran que las carencias tienden a presentarse juntas —la exclusión digital es acumulada— y que la formalización fiscal, lejos de ser independiente, co-ocurre con los pagos digitales, el internet y el local fijo. La segmentación reproducible ubica a casi la mitad del universo en el grupo de excluidos y a menos de uno de cada cinco negocios en el de integrados.
+
+Estos resultados describen asociaciones y no efectos causales; sirven para focalizar y para formular hipótesis que deberían evaluarse con diseños que permitan inferencia causal. El aporte metodológico es un pipeline en R reproducible de extremo a extremo —desde los microdatos crudos del DANE hasta este reporte en Quarto—, con medidas ponderadas por el diseño muestral y pruebas de robustez explícitas.
 
 ---
 
@@ -520,27 +720,35 @@ El cambio estructural que estos cuatro ejes proponen no es marginal. Se trata de
 
 ### Fuentes primarias
 
-- **Encuesta de Micronegocios 2024 (EMICRON)** \u2014 Departamento Administrativo Nacional de Estadística (DANE). Boletín Técnico oficial validado.
-- **Base de datos:** 77.202 observaciones \u00d7 128 variables. Factor de expansión F_EXP provisto por DANE.
+- **Encuesta de Micronegocios 2024 (EMICRON)** — Departamento Administrativo Nacional de Estadística (DANE). Microdatos y Boletín Técnico.
+- **Base de datos:** 78.501 micronegocios encuestados en 11 módulos; 77.202 registros completos en las 30 variables de Apriori. Factor de expansión F_EXP provisto por el DANE.
 - **Universo representado:** 5.297.252 micronegocios a nivel nacional.
 - **Período de referencia:** 2024.
+- Hahsler, M., Grün, B. y Hornik, K. (2005). arules — A Computational Environment for Mining Association Rules and Frequent Item Sets. *Journal of Statistical Software*, 14(15).
 
 ### Archivos de salida del análisis
 
 | Tipo de archivo | Cantidad | Ubicación |
 |---|---|---|
-| Cuadros DANE validados | 70 cuadros | `output/tablas/boletin/` |
-| Gráficos DANE (estadística descriptiva) | 25 PNG (300 DPI) | `output/figuras/` (archivos `10_A1` a `28_V1`) |
-| Gráficos Apriori | 6 PNG (300 DPI) | `output/figuras/` (archivos `12` a `18`) |
-| Tablas Apriori | 8 CSV | `output/tablas/` |
-| Tabla de reglas filtradas (support > 20%) | 39 reglas | `10_TABLA_RESUMEN_FILTRADA_20PCT.csv` |
+| Cuadros estadísticos ponderados | 70 CSV | `output/tablas/boletin/` |
+| Gráficos de cuadros DANE | 19 PNG (300 DPI) | `output/figuras/` (`10_A1` a `28_V1`) |
+| Gráficos Apriori | 6 PNG (300 DPI) | `output/figuras/` (`12` a `18`, prefijo `apriori`) |
+| Reglas de asociación (muestrales y ponderadas) | 8 CSV | `output/tablas/06*` a `10*` |
+| Segmentación | 4 CSV + 1 PNG | `output/tablas/11*`, `output/figuras/29_*` |
+| Robustez | 5 CSV + 1 PNG | `output/tablas/12*`, `output/figuras/30_*` |
 
 ### Reproducibilidad
 
-Este análisis es completamente reproducible. Fue generado con **R** (versión \u2265 4.3) y **Quarto** (versión 1.8.25). Todos los cuadros estadísticos fueron validados contra el Boletín Técnico oficial del DANE con una precisión de \u00b10,1% en todos los indicadores. El código fuente, los scripts de limpieza de datos y los archivos de configuración de Quarto están disponibles en el directorio raíz del proyecto.
+El análisis completo se reproduce con `source("main.R")` desde la raíz del proyecto, tras restaurar los paquetes con `renv::restore()` (versiones fijadas en `renv.lock`; R 4.5.2, Quarto 1.8.25). El pipeline corre en unos dos minutos y regenera todas las tablas y figuras que usa este reporte.
+
+### Limitaciones
+
+- Las reglas de asociación describen co-ocurrencias en datos de corte transversal; no identifican causas ni secuencias temporales.
+- Apriori se ejecuta sobre la muestra y las medidas se ponderan después; no se calculan errores estándar que incorporen el diseño muestral complejo (estratos y conglomerados).
+- La segmentación usa dos variables por transparencia; otras definiciones (por ejemplo, con los índices sintéticos) producirían grupos de distinto tamaño.
 
 ---
 
-*Documento elaborado con R + Quarto. Análisis reproducible, validado contra fuentes oficiales DANE.*
-*Autor: **Daniel Molina Barrios** — Economista &amp; Data Scientist · [GitHub](https://github.com/dmetrics1) · [LinkedIn](https://www.linkedin.com/in/daniel-molina-b76a4323b/)*
-*Última actualización: mayo de 2026.*
+*Documento elaborado con R + Quarto. Análisis reproducible a partir de los microdatos oficiales del DANE.*
+*Autor: **Daniel Molina Barrios** — Economista &amp; Data Scientist · [GitHub](https://github.com/dmetrics1) · [LinkedIn](https://www.linkedin.com/in/danieljmolina/)*
+*Última actualización: octubre de 2026.*
