@@ -15,7 +15,7 @@ with sync_playwright() as p:
     pag.goto(f"{BASE}/REPORTE_WIDE_PRO_2024.html", wait_until="networkidle")
     pag.wait_for_timeout(1500)
 
-    pag.locator(".dm-hero").screenshot(path=str(SALIDA / "01-portada-reporte.png"))
+    pag.locator(".dm-hero").screenshot(path=str(SALIDA / "01-portada-reporte-2026.png"))
 
     def figura(texto, archivo):
         fig = pag.locator(".quarto-figure", has_text=texto).first

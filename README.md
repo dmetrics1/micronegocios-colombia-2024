@@ -71,7 +71,7 @@ Lo que puedes reutilizar:
 
 <table>
   <tr>
-    <td colspan="2"><img src="docs/screenshots/01-portada-reporte.png" alt="Portada del reporte: Economía popular en Colombia, ¿tres problemas o uno solo? Cifras clave: 5.297.252 micronegocios, 77,6 % sin RUT, 50,4 % sin internet, 14,2 % solicitó crédito" /></td>
+    <td colspan="2"><img src="docs/screenshots/01-portada-reporte-2026.png" alt="Portada del reporte: Economía popular en Colombia, ¿tres problemas o uno solo? Cifras clave: 5.297.252 micronegocios, 77,6 % sin RUT, 50,4 % sin internet, 14,2 % solicitó crédito" /></td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/02-apriori-red-reglas.png" alt="Red de las 20 reglas de asociación con mayor lift: los ítems de ausencia digital convergen en 'sin internet en el local'" /><br><sub><b>Reglas de asociación:</b> la exclusión digital es acumulada.</sub></td>
