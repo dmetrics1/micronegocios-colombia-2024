@@ -104,7 +104,7 @@ cuadros[["B3_Sector_12Grupos_Detallado"]] <- base[!is.na(GRUPOS12_DESC), .(
   Cantidad = sum(F_EXP, na.rm = TRUE),
   Distribucion_Pct = round(sum(F_EXP, na.rm = TRUE) / sum(base[, F_EXP], na.rm = TRUE) * 100, 2),
   Ingresos_Promedio = round(weighted.mean(VENTAS_MES_ANTERIOR, F_EXP, na.rm = TRUE), 2),
-  Personal_Promedio = round(weighted.mean(n_total_personal_ocu, F_EXP, na.rm = TRUE), 2)
+  Personal_Promedio = round(weighted.mean(personal_total, F_EXP, na.rm = TRUE), 2)
 ), by = "GRUPOS12_DESC"][order(-Cantidad)]
 
 # =====================================================================
@@ -136,14 +136,11 @@ cuadros[["E1_1_Salud_Pension_Propietario"]] <- calc_dist(base, "P3088_DESC")
 cuadros[["E1_3_ARL_Propietario"]] <- calc_dist(base, "P3090_DESC")
 
 # E2: Rangos de personal en el negocio
-if (!"personal_total" %in% colnames(base)) {
-  base[, personal_total := fifelse(P3031 == 1, n_total_personal_ocu + 1, 1)]
-}
+# personal_total viene de 02_limpiar.R (propietario + P3032_1..3, definición DANE)
 base[, Rango_Personal := fcase(
   personal_total == 1, "1 persona",
   personal_total >= 2 & personal_total <= 3, "2 a 3 personas",
-  personal_total >= 4 & personal_total <= 5, "4 a 5 personas",
-  personal_total >= 6 & personal_total <= 9, "6 a 9 personas",
+  personal_total >= 4 & personal_total <= 9, "4 a 9 personas",
   default = "10 o más"
 )]
 cuadros[["E2_Rangos_Personal"]] <- calc_dist(base, "Rango_Personal")
@@ -154,8 +151,8 @@ calc_personal <- function(dt, variable) {
 
   res <- dt[!is.na(get(variable)), .(
     Cantidad = sum(F_EXP, na.rm = TRUE),
-    Personal_Promedio = round(weighted.mean(n_total_personal_ocu, F_EXP, na.rm = TRUE), 2),
-    Personal_Total_Expandido = round(sum(n_total_personal_ocu * F_EXP, na.rm = TRUE), 0),
+    Personal_Promedio = round(weighted.mean(personal_total, F_EXP, na.rm = TRUE), 2),
+    Personal_Total_Expandido = round(sum(personal_total * F_EXP, na.rm = TRUE), 0),
     Trab_Remunerados_Promedio = round(weighted.mean(n_trab_remunerados, F_EXP, na.rm = TRUE), 2)
   ), by = variable]
 
@@ -287,11 +284,12 @@ calc_dpto_multidim <- function(dt) {
     Cantidad_Negocios = sum(F_EXP, na.rm = TRUE),
     Pct_Distribucion = round(sum(F_EXP, na.rm = TRUE) / dt[, sum(F_EXP, na.rm = TRUE)] * 100, 2),
     Ingresos_Promedio = round(weighted.mean(VENTAS_MES_ANTERIOR, F_EXP, na.rm = TRUE), 2),
-    Personal_Promedio = round(weighted.mean(n_total_personal_ocu, F_EXP, na.rm = TRUE), 2),
+    Personal_Promedio = round(weighted.mean(personal_total, F_EXP, na.rm = TRUE), 2),
     Idx_Formalizacion_Prom = round(weighted.mean(idx_formalizacion, F_EXP, na.rm = TRUE), 2),
     Idx_Digital_Prom = round(weighted.mean(idx_digital, F_EXP, na.rm = TRUE), 2),
-    Pct_Con_RUT = round(sum(tiene_rut == 1, na.rm = TRUE) * 100 / sum(!is.na(tiene_rut)), 2),
-    Pct_Con_Internet = round(sum(usa_internet == 1, na.rm = TRUE) * 100 / sum(!is.na(usa_internet)), 2)
+    # Porcentajes ponderados por F_EXP (antes se contaban registros sin ponderar)
+    Pct_Con_RUT = round(sum(F_EXP[tiene_rut %in% 1]) * 100 / sum(F_EXP[!is.na(tiene_rut)]), 2),
+    Pct_Con_Internet = round(sum(F_EXP[usa_internet %in% 1]) * 100 / sum(F_EXP[!is.na(usa_internet)]), 2)
   ), by = "COD_DEPTO_DESC"]
 
   setorderv(res, "Cantidad_Negocios", order = -1)

@@ -1,5 +1,9 @@
 # =====================================================================
-# ANÁLISIS: Reglas con Soporte >= 24%
+# ANÁLISIS EXPLORATORIO: Reglas con Soporte >= 24%
+# =====================================================================
+# Script auxiliar, fuera del pipeline principal (main.R). Se conserva
+# como registro del proceso de exploración. Requiere haber corrido
+# 05_apriori.R y ejecutarse desde la raíz del proyecto.
 # =====================================================================
 
 library(data.table)

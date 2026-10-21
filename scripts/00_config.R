@@ -1,36 +1,25 @@
 # =====================================================================
-# PROYECTO: Tipologías y Permanencia de Micronegocios (EMICRON + ML)
+# PROYECTO: Reglas de Asociación y Caracterización de Micronegocios (EMICRON 2024)
 # SCRIPT 00: Configuración general y carga de paquetes
 # =====================================================================
 
 # 1. CARGA DE PAQUETES
 # =====================================================================
-# Usamos suppressPackageStartupMessages para limpiar la salida en consola
+# Solo los paquetes que usa el pipeline (versiones fijadas en renv.lock)
 suppressPackageStartupMessages({
   # Manipulación y limpieza
   library(data.table)
-  
-  # ML no supervisado (MCA + Clustering)
-  library(FactoMineR)
-  library(factoextra)
-  library(cluster)
-  
+
   # Reglas de Asociación (Apriori)
   library(arules)
   library(arulesViz)
-  
-  # ML supervisado
-  library(tidymodels)
-  library(xgboost)
-  
-  # Interpretabilidad
-  library(shapviz)
-  
+
   # Visualización
   library(ggplot2)
   library(patchwork)
   library(scales)
-  library(pheatmap)
+  library(ggraph)      # redes de reglas (05_apriori.R)
+  library(tidygraph)
 })
 
 # 2. DEFINICIÓN DE RUTAS (PATHS)
@@ -65,14 +54,26 @@ SEMILLA <- 42
 setDTthreads(percent = 80) # Usar 80% de los cores disponibles
 options(datatable.print.class = TRUE)
 
-# Tema base para ggplot2
-theme_set(theme_minimal(base_family = "sans") +
-            theme(
-              plot.title = element_text(face = "bold", size = 14),
-              plot.subtitle = element_text(color = "gray30", size = 11),
-              axis.text = element_text(color = "gray30"),
-              strip.background = element_rect(fill = "gray90", color = NA),
-              legend.position = "bottom"
-            ))
+# Identidad visual DM: paleta, tipografía, guardar_fig(), barras_dm(),
+# etiqueta_item() y regla_legible() (ver scripts/tema_dm.R)
+source(file.path("scripts", "tema_dm.R"))
+theme_set(tema_dm())
+
+# 5. FUNCIONES AUXILIARES
+# =====================================================================
+# Medidas de reglas PONDERADAS por el factor de expansión.
+# apriori() trata cada registro con igual peso; aquí se recalculan
+# soporte, confianza y lift usando transactionInfo(trans)$weight (F_EXP),
+# de modo que las medidas representan al universo y no a la muestra.
+medidas_ponderadas <- function(reglas, trans) {
+  s_xy <- support(items(reglas), trans, weighted = TRUE)
+  s_x  <- support(lhs(reglas),   trans, weighted = TRUE)
+  s_y  <- support(rhs(reglas),   trans, weighted = TRUE)
+  data.table(
+    support_pond    = s_xy,
+    confidence_pond = s_xy / s_x,
+    lift_pond       = s_xy / (s_x * s_y)
+  )
+}
 
 message("Entorno configurado correctamente. Paquetes y rutas cargados.")

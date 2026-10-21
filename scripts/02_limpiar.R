@@ -30,6 +30,7 @@ vars_seleccionadas <- c(
   "P639", 
   # Identificación
   "P35", "P241", "P3033", "P3031", "GRUPOS4", "GRUPOS12",
+  "P3032_1", "P3032_2", "P3032_3",  # N.º de trabajadores pagados, socios y familiares
   # Geografía
   "AREA", "COD_DEPTO", "CLASE_TE",
   # Emprendimiento
@@ -115,6 +116,14 @@ base[, n_organizaciones := (
   fifelse(P3002 == 1, 1L, 0L, na=0L) +
   fifelse(P3004 == 1, 1L, 0L, na=0L)
 )]
+
+# 6b. PERSONAL OCUPADO TOTAL (definición DANE)
+# =====================================================================
+# Propietario + trabajadores pagados + socios + familiares sin pago
+# (P3032_1..3 del módulo de identificación). Reproduce el boletín DANE:
+# 82,3% con 1 persona y 6.879.489 personas ocupadas en total.
+base[, personal_total := 1 + rowSums(.SD, na.rm = TRUE),
+     .SDcols = c("P3032_1", "P3032_2", "P3032_3")]
 
 # 7. FILTRADO FINAL Y CALIDAD DE DATOS
 # =====================================================================

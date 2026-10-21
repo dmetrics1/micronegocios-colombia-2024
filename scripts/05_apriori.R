@@ -1,10 +1,14 @@
 # =====================================================================
 # PROYECTO: Reglas de Asociación en Micronegocios (EMICRON 2024)
-# SCRIPT 04: Minería de Reglas de Asociación (Apriori)
+# SCRIPT 05: Minería de Reglas de Asociación (Apriori)
 # =====================================================================
 # Aplica el algoritmo Apriori para descubrir reglas de co-ocurrencia
 # entre las características de los micronegocios, usando 30 variables
 # categóricas originales del DANE.
+#
+# apriori() minera sobre la muestra (cada registro pesa igual). Después
+# se recalculan soporte, confianza y lift ponderados por F_EXP con
+# medidas_ponderadas() (00_config.R) para reportar valores del universo.
 #
 # Análisis dirigidos: Formalización, Pagos Digitales, TIC, Antigüedad
 # Paquetes: arules, arulesViz, ggplot2
@@ -59,7 +63,8 @@ vars_apriori <- c(
   "tiene_ahorros"           # P3014
 )
 
-base_apr <- base[, ..vars_apriori]
+# F_EXP viaja junto a las variables para poder ponderar las reglas después
+base_apr <- base[, c(vars_apriori, "F_EXP"), with = FALSE]
 
 # Imputar NAs en variables check-all-that-apply (NA = No marcó = "No")
 vars_pago <- c("acepta_efectivo", "acepta_cheque", "acepta_transferencia",
@@ -86,6 +91,10 @@ set(base_apr, which(is.na(base_apr[["paga_seg_social_prop"]])), "paga_seg_social
 base_apr <- na.omit(base_apr)
 message(sprintf("Observaciones para Apriori: %d", nrow(base_apr)))
 
+# Separar el factor de expansión (no es un ítem de las transacciones)
+pesos <- base_apr$F_EXP
+base_apr[, F_EXP := NULL]
+
 # 3. RECODIFICAR A ETIQUETAS LEGIBLES
 # =====================================================================
 message("\n=== RECODIFICANDO VARIABLES ===")
@@ -110,12 +119,12 @@ setnames(base_apr, "P3031", "tiene_personal")
 setnames(base_apr, "P1056", "es_persona_juridica")
 setnames(base_apr, "paga_arriendo", "paga_arriendo_local")
 
-# --- Contabilidad ---
+# --- Contabilidad (P640, según Diccionario EMICRON 2024) ---
 base_apr[, tipo_contabilidad := fcase(
-  tipo_contabilidad == 1, "Balance",
-  tipo_contabilidad == 2, "P&G",
-  tipo_contabilidad == 3, "Libro_diario",
-  tipo_contabilidad == 4, "Otro_registro",
+  tipo_contabilidad == 1, "Balance_PyG",
+  tipo_contabilidad == 2, "Libro_diario",
+  tipo_contabilidad == 3, "Cuaderno_u_otro",
+  tipo_contabilidad == 4, "Informes",
   tipo_contabilidad == 5, "Sin_registro",
   default = "Sin_registro"
 )]
@@ -217,15 +226,17 @@ message(sprintf("✓ %d variables recodificadas a etiquetas legibles.", ncol(bas
 # =====================================================================
 message("\n=== CONVIRTIENDO A TRANSACCIONES ===")
 trans <- as(as.data.frame(base_apr), "transactions")
+transactionInfo(trans)$weight <- pesos
 message(sprintf("Transacciones: %d × %d items", length(trans), nitems(trans)))
 
-# Gráfico de frecuencia
-png(file.path(DIR_OUTPUT_FIGS, "12_apriori_item_frequency.png"),
-    width = 12, height = 8, units = "in", res = 300)
-itemFrequencyPlot(trans, topN = 30,
-                  main = "",
-                  col = "#4E79A7", cex.names = 0.8)
-dev.off()
+# Guardar transacciones (con pesos) para el análisis de sensibilidad (07)
+saveRDS(trans, file.path(DIR_DATA_PROCESSED, "transacciones_apriori.rds"))
+
+# Gráfico de frecuencia: los 30 ítems más comunes, con etiquetas legibles
+frec <- sort(itemFrequency(trans), decreasing = TRUE)[1:30]
+df_frec <- data.frame(item = etiqueta_item(names(frec)), pct = as.numeric(frec) * 100)
+p_frec <- barras_dm(df_frec, cat = "item", val = "pct", eje = "% de registros que presentan el ítem")
+guardar_fig(file.path(DIR_OUTPUT_FIGS, "12_apriori_item_frequency.png"), p_frec, width = 9, height = 7.5)
 message("✓ Gráfico: 12_apriori_item_frequency.png")
 
 # =====================================================================
@@ -253,6 +264,13 @@ inspect(reglas_top30)
 # Guardar
 reglas_df <- as(reglas, "data.frame")
 write.csv(reglas_df, file.path(DIR_OUTPUT_TABS, "06_reglas_asociacion_todas.csv"), row.names = FALSE)
+
+# Medidas ponderadas por F_EXP (representativas del universo de 5,3M)
+reglas_pond_df <- cbind(as.data.table(reglas_df), medidas_ponderadas(reglas, trans))
+write.csv(reglas_pond_df, file.path(DIR_OUTPUT_TABS, "06b_reglas_ponderadas.csv"),
+          row.names = FALSE, fileEncoding = "UTF-8")
+message(sprintf(">>> Correlación lift muestral vs ponderado: %.4f",
+                cor(reglas_pond_df$lift, reglas_pond_df$lift_pond)))
 
 reglas_top30_df <- as(reglas_top30, "data.frame")
 write.csv(reglas_top30_df, file.path(DIR_OUTPUT_TABS, "06a_reglas_top30_lift.csv"), row.names = FALSE)
@@ -345,87 +363,122 @@ if (length(reglas_antiguedad) > 0) {
 }
 
 # =====================================================================
-# 10. VISUALIZACIONES
+# 10. VISUALIZACIONES (identidad DM: scripts/tema_dm.R)
 # =====================================================================
-# NOTA: arulesViz devuelve objetos ggplot2 silenciosamente.
-# Dentro de png()/dev.off() hay que usar print() explícito,
-# si no el gráfico sale vacío.
+# Todas las figuras se construyen con ggplot2/ggraph a partir de las
+# reglas, con etiquetas legibles y colores del sistema de diseño DM.
 # =====================================================================
 message("\n=== GENERANDO VISUALIZACIONES ===")
 
-# 10a. Scatter plot
-message("  - Scatter plot...")
-p_scatter <- plot(reglas, method = "scatterplot",
-                  measure = c("support", "confidence"), shading = "lift",
-                  engine = "ggplot2")
-ggsave(file.path(DIR_OUTPUT_FIGS, "13_apriori_scatter_reglas.png"),
-       p_scatter, width = 10, height = 7, dpi = 300)
-message("  ✓ 13_apriori_scatter_reglas.png")
+# Dominio temático de cada ítem (color de los nodos en las redes)
+dominio_item <- function(x) fcase(
+  grepl("^(usa_|internet_|tiene_sitio)", x), "TIC",
+  grepl("^acepta_", x), "Medios de pago",
+  grepl("^(tiene_rut|tiene_camara|tipo_contab|declara_|es_persona|paga_seg)", x), "Formalización",
+  default = "Perfil y ubicación"
+)
 
-# 10b. Grafo de red — Top 20
-message("  - Grafo de red (Top 20)...")
-if (length(reglas_top) >= 20) {
-  p_graph <- plot(head(reglas_top, 20), method = "graph", engine = "ggplot2")
-  ggsave(file.path(DIR_OUTPUT_FIGS, "14_apriori_grafo_top20.png"),
-         p_graph, width = 14, height = 10, dpi = 300)
-  message("  ✓ 14_apriori_grafo_top20.png")
+# Red de reglas: nodos = ítems, flechas = antecedente → consecuente
+red_reglas <- function(r, archivo, width = 11, height = 8, semilla = 7) {
+  df <- cbind(as(r, "data.frame"), medidas_ponderadas(r, trans))
+  aristas <- rbindlist(lapply(seq_len(nrow(df)), function(i) {
+    p <- strsplit(gsub("[{}]", "", df$rules[i]), " => ")[[1]]
+    data.table(from = strsplit(p[1], ",")[[1]], to = p[2], lift = df$lift_pond[i])
+  }))[, .(n = .N, lift = max(lift)), by = .(from, to)]
+  nodos <- data.table(name = unique(c(aristas$from, aristas$to)))
+  nodos[, `:=`(dominio = dominio_item(name), etiqueta = etiqueta_item(name))]
+  g <- tbl_graph(nodes = nodos, edges = aristas, directed = TRUE) |>
+    activate(nodes) |> mutate(grado = centrality_degree(mode = "all"))
+  set.seed(semilla)
+  p <- ggraph(g, layout = "stress") +
+    geom_edge_fan(aes(width = n, alpha = lift), colour = DM$ink$blue,
+                  arrow = arrow(length = unit(2.5, "mm"), type = "closed"), end_cap = circle(3.5, "mm")) +
+    scale_edge_width(range = c(0.4, 2.2), guide = "none") +
+    scale_edge_alpha(range = c(0.3, 0.85), guide = "none") +
+    geom_node_point(aes(colour = dominio, size = grado)) +
+    geom_node_label(aes(label = etiqueta, colour = dominio), family = DM_FONT_BODY, size = 3.6,
+                    repel = TRUE, fill = "white", label.padding = unit(0.18, "lines"),
+                    show.legend = FALSE) +
+    scale_colour_manual(values = DM_DOMINIO, name = NULL) +
+    scale_size(range = c(2.5, 9), guide = "none") +
+    guides(colour = guide_legend(override.aes = list(size = 4))) +
+    theme(panel.grid = element_blank(), panel.grid.major = element_blank(), axis.text = element_blank(), axis.title = element_blank(),
+          legend.position = "top")
+  guardar_fig(file.path(DIR_OUTPUT_FIGS, archivo), p, width = width, height = height)
+  message("  ✓ ", archivo)
 }
 
-# 10c. Matriz agrupada — Top 50
-message("  - Matriz agrupada...")
+# Barras de reglas (lift ponderado), una regla por fila con su texto legible
+barras_reglas <- function(r, archivo, n = 12, width = 10, height = 6) {
+  r <- head(sort(r, by = "lift"), n)
+  df <- cbind(as(r, "data.frame"), medidas_ponderadas(r, trans))
+  df$regla <- factor(regla_legible(df$rules), levels = rev(unique(regla_legible(df$rules))))
+  p <- ggplot(df, aes(x = regla, y = lift_pond, fill = confidence_pond * 100)) +
+    geom_col(width = 0.65) +
+    geom_text(aes(label = formatC(lift_pond, format = "f", digits = 2, decimal.mark = ",")),
+              hjust = -0.15, size = 3.4, family = DM_FONT_MONO, fontface = "bold", colour = DM$textTitle) +
+    coord_flip() +
+    scale_fill_gradientn(colours = DM_RAMPA, name = "Confianza (%)", labels = eje_dm) +
+    scale_y_continuous(expand = expansion(mult = c(0, 0.2)), labels = eje_dm) +
+    labs(x = NULL, y = "Lift ponderado") +
+    theme(panel.grid.major.y = element_blank(), axis.text.y = element_text(colour = DM$textBody, size = 9),
+          legend.position = "right")
+  guardar_fig(file.path(DIR_OUTPUT_FIGS, archivo), p, width = width, height = height)
+  message("  ✓ ", archivo)
+}
+
+# 10a. Soporte vs confianza (color = lift ponderado)
+message("  - Scatter soporte vs confianza...")
+df_sc <- cbind(reglas_df[, c("support", "confidence")], medidas_ponderadas(reglas, trans))
+p_scatter <- ggplot(df_sc, aes(support, confidence, colour = lift_pond)) +
+  geom_point(alpha = 0.25, size = 0.9) +
+  scale_colour_gradientn(colours = DM_RAMPA, name = "Lift\nponderado", labels = eje_dm) +
+  scale_x_continuous(labels = label_percent(accuracy = 1)) +
+  scale_y_continuous(labels = label_percent(accuracy = 1)) +
+  labs(x = "Soporte", y = "Confianza",
+       caption = sprintf("%s reglas no redundantes · soporte ≥ 15 %% · confianza ≥ 70 %%",
+                         format(nrow(df_sc), big.mark = ".", decimal.mark = ","))) +
+  theme(legend.position = "right")
+guardar_fig(file.path(DIR_OUTPUT_FIGS, "13_apriori_scatter_reglas.png"), p_scatter, width = 9, height = 5.5)
+message("  ✓ 13_apriori_scatter_reglas.png")
+
+# 10b. Red de las 20 reglas con mayor lift
+message("  - Red top 20...")
+if (length(reglas_top) >= 20) red_reglas(head(reglas_top, 20), "14_apriori_grafo_top20.png")
+
+# 10c. Matriz: qué ítems del antecedente acompañan a cada consecuente (50 reglas con mayor lift)
+message("  - Matriz antecedentes × consecuentes...")
 if (length(reglas) >= 20) {
-  p_grouped <- plot(head(sort(reglas, by = "lift"), 50),
-                    method = "grouped", engine = "ggplot2")
-  ggsave(file.path(DIR_OUTPUT_FIGS, "15_apriori_grouped_matrix.png"),
-         p_grouped, width = 14, height = 10, dpi = 300)
+  top50 <- head(sort(reglas, by = "lift"), 50)
+  df50  <- cbind(as(top50, "data.frame"), medidas_ponderadas(top50, trans))
+  mat <- rbindlist(lapply(seq_len(nrow(df50)), function(i) {
+    p <- strsplit(gsub("[{}]", "", df50$rules[i]), " => ")[[1]]
+    data.table(antecedente = strsplit(p[1], ",")[[1]], consecuente = p[2], lift = df50$lift_pond[i])
+  }))[, .(reglas = .N, lift = mean(lift)), by = .(antecedente, consecuente)]
+  mat[, `:=`(antecedente = etiqueta_item(antecedente), consecuente = etiqueta_item(consecuente))]
+  orden <- mat[, .(n = sum(reglas)), by = antecedente][order(n), antecedente]
+  mat[, antecedente := factor(antecedente, levels = orden)]
+  p_grouped <- ggplot(mat, aes(x = consecuente, y = antecedente, size = reglas, colour = lift)) +
+    geom_point() +
+    scale_size(range = c(2, 10), name = "N.º de reglas") +
+    guides(size = guide_legend(override.aes = list(colour = DM$accent))) +
+    scale_colour_gradientn(colours = DM_RAMPA, name = "Lift\nponderado", labels = eje_dm) +
+    labs(x = "Consecuente", y = "Ítem del antecedente") +
+    theme(legend.position = "right", axis.text.y = element_text(colour = DM$textBody))
+  guardar_fig(file.path(DIR_OUTPUT_FIGS, "15_apriori_grouped_matrix.png"), p_grouped, width = 9, height = 6.5)
   message("  ✓ 15_apriori_grouped_matrix.png")
 }
 
-# 10d. Top reglas de formalización — bar chart (más robusto que grafo)
-message("  - Barplot de formalización...")
-if (length(reglas_rut) >= 5) {
-  top_rut <- head(reglas_rut, 15)
-  df_rut <- as(top_rut, "data.frame")
-  df_rut$rule_label <- paste0(seq_len(nrow(df_rut)), ". ", df_rut$rules)
-  df_rut$rule_label <- factor(df_rut$rule_label, 
-                               levels = rev(df_rut$rule_label))
-  
-  p_formal <- ggplot(df_rut, aes(x = rule_label, y = lift, fill = confidence)) +
-    geom_col() +
-    coord_flip() +
-    scale_fill_gradient(low = "#FDE725", high = "#440154", name = "Confianza") +
-    labs(
-      x = "", y = "Lift (fuerza de asociación)"
-    ) +
-    theme_minimal(base_family = "sans") +
-    theme(
-      plot.title = element_text(face = "bold", size = 13),
-      axis.text.y = element_text(size = 7)
-    )
-  
-  ggsave(file.path(DIR_OUTPUT_FIGS, "16_apriori_formalizacion_top15.png"),
-         p_formal, width = 14, height = 8, dpi = 300)
-  message("  ✓ 16_apriori_formalizacion_top15.png")
-}
+# 10d. Reglas hacia formalización (solo si existen con los umbrales principales)
+if (length(reglas_rut) >= 5) barras_reglas(reglas_rut, "16_apriori_formalizacion_top15.png", n = 15)
 
-# 10e. Paracoord — Pagos digitales
-message("  - Paracoord pagos digitales...")
-if (length(reglas_pago) >= 5) {
-  png(file.path(DIR_OUTPUT_FIGS, "17_apriori_paracoord_pagos.png"),
-      width = 12, height = 8, units = "in", res = 300)
-  print(plot(head(reglas_pago, 10), method = "paracoord", engine = "default"))
-  dev.off()
-  message("  ✓ 17_apriori_paracoord_pagos.png")
-}
+# 10e. Reglas hacia pagos digitales
+message("  - Reglas hacia pagos digitales...")
+if (length(reglas_pago) >= 5) barras_reglas(reglas_pago, "17_apriori_reglas_pagos.png", n = 12)
 
-# 10f. Grafo de antigüedad
-message("  - Grafo de antigüedad...")
-if (length(reglas_antiguedad) >= 5) {
-  p_antig <- plot(head(reglas_antiguedad, 15), method = "graph", engine = "ggplot2")
-  ggsave(file.path(DIR_OUTPUT_FIGS, "18_apriori_grafo_antiguedad.png"),
-         p_antig, width = 14, height = 10, dpi = 300)
-  message("  ✓ 18_apriori_grafo_antiguedad.png")
-}
+# 10f. Red de las reglas hacia negocios con 10+ años
+message("  - Red antigüedad...")
+if (length(reglas_antiguedad) >= 5) red_reglas(head(reglas_antiguedad, 15), "18_apriori_grafo_antiguedad.png")
 
 # =====================================================================
 # 11. TABLA RESUMEN UNIFICADA (Frecuencia + Confianza + Lift)
@@ -437,7 +490,8 @@ reglas_a_tabla <- function(reglas_obj, categoria, top_n = 20) {
   if (length(reglas_obj) == 0) return(NULL)
   r <- head(sort(reglas_obj, by = "lift", decreasing = TRUE), top_n)
   df <- as(r, "data.frame")
-  
+  mp <- medidas_ponderadas(r, trans)
+
   # Separar LHS => RHS
   partes <- strsplit(as.character(df$rules), " => ")
   df$Antecedente <- sapply(partes, `[`, 1)
@@ -454,7 +508,10 @@ reglas_a_tabla <- function(reglas_obj, categoria, top_n = 20) {
     Soporte       = round(df$support, 4),
     Confianza     = round(df$confidence, 4),
     Lift          = round(df$lift, 2),
-    Frecuencia    = df$count
+    Frecuencia    = df$count,
+    Soporte_pond   = round(mp$support_pond, 4),
+    Confianza_pond = round(mp$confidence_pond, 4),
+    Lift_pond      = round(mp$lift_pond, 2)
   )
 }
 
@@ -527,7 +584,7 @@ message("╔══════════════════════�
 message("║  RESULTADOS: REGLAS DE ASOCIACIÓN (APRIORI)                  ║")
 message("╚════════════════════════════════════════════════════════════════╝")
 message("")
-message(sprintf("  Reglas generales (supp≥0.05, conf≥0.70): %d", length(reglas)))
+message(sprintf("  Reglas generales (supp≥0.15, conf≥0.70): %d", length(reglas)))
 message(sprintf("  Reglas → Formalización (tiene_rut=Sí):   %d", length(reglas_rut)))
 message(sprintf("  Reglas → Pagos digitales:                %d", length(reglas_pago)))
 message(sprintf("  Reglas → Adopción TIC (internet):        %d", length(reglas_tic)))
@@ -536,6 +593,7 @@ message("")
 message("=== TABLAS ===")
 message("  output/tablas/06_reglas_asociacion_todas.csv")
 message("  output/tablas/06a_reglas_top30_lift.csv")
+message("  output/tablas/06b_reglas_ponderadas.csv  (medidas con F_EXP)")
 message("  output/tablas/07b_reglas_formalizacion.csv")
 message("  output/tablas/07c_reglas_pagos_digitales.csv")
 message("  output/tablas/07d_reglas_tic.csv")
@@ -548,7 +606,7 @@ message("  13_apriori_scatter_reglas.png")
 message("  14_apriori_grafo_top20.png")
 message("  15_apriori_grouped_matrix.png")
 message("  16_apriori_formalizacion_top15.png")
-message("  17_apriori_paracoord_pagos.png")
+message("  17_apriori_reglas_pagos.png")
 message("  18_apriori_grafo_antiguedad.png")
 message("")
 message("════════════════════════════════════════════════════════════════\n")

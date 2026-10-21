@@ -1,0 +1,11 @@
+cuadro,indicador,archivo,fila,columna,valor_dane,fuente_dane
+A1,Cuenta propia,A1_Situacion_Empleo.csv,Trabajador(a) por cuenta propia,Distribucion_Pct,90.5,Boletín técnico EMICRON 2024 (DANE) — Gráfico 1
+A2,Propietario hombre,A2_Sexo_Propietario.csv,Hombre,Distribucion_Pct,64.6,Boletín técnico EMICRON 2024 (DANE) — Gráfico 2
+B1,Comercio,B1_Sector_4Grupos.csv,Comercio,Distribucion_Pct,23.9,Boletín técnico EMICRON 2024 (DANE) — Gráfico 3
+B1,Agricultura,B1_Sector_4Grupos.csv,"Agricultura, ganadería...",Distribucion_Pct,21.5,Boletín técnico EMICRON 2024 (DANE) — Gráfico 3
+D1,Opera en la vivienda,D1_Tipo_Ubicacion.csv,Vivienda,Distribucion_Pct,30.6,Boletín técnico EMICRON 2024 (DANE) — Gráfico 5
+E2,Negocio unipersonal,E2_Rangos_Personal.csv,1 persona,Distribucion_Pct,82.3,Boletín técnico EMICRON 2024 (DANE) — Gráfico 6
+F1,Tiene RUT,F1_RUT.csv,Sí,Distribucion_Pct,22.4,Boletín técnico EMICRON 2024 (DANE) — Gráfico 8
+G1,Usa dispositivos electrónicos,G1_Dispositivos_Electronicos.csv,Sí,Distribucion_Pct,10.9,Boletín técnico EMICRON 2024 (DANE) — Gráfico 10
+G9,Usa internet,G9_Uso_Internet.csv,Sí,Distribucion_Pct,49.6,Boletín técnico EMICRON 2024 (DANE) — Gráfico 12
+H2,Solicitó crédito,H2_Solicito_Credito.csv,Sí,Distribucion_Pct,14.2,Boletín técnico EMICRON 2024 (DANE) — Gráfico 14
