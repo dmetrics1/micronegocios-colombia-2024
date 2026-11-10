@@ -392,7 +392,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <div class="f"><div class="bar" style="height:4%;"></div><div class="num" data-v="n_39"></div><div class="lbl">de mayor lift (generales y dirigidas) con soporte &gt; 20 %: las que sostienen el relato</div></div>
   </div>
   <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 10_TABLA_RESUMEN_FILTRADA_20PCT.csv</span>
-  <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y trabajo con las treinta y nueve que tienen soporte mayor al veinte por ciento en los análisis dirigidos. Tres de ellas son las que les voy a contar.</aside>
+  <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y de las de mayor lift, generales y dirigidas, me quedo con las treinta y nueve que tienen soporte mayor al veinte por ciento. Tres de ellas son las que les voy a contar.</aside>
 </section>
 
 <!-- ============ 9 · REGLA MÁS FUERTE ============ -->
@@ -493,15 +493,15 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
   <div class="two" style="gap:56px;">
     <div class="stack" style="gap:18px;">
       <div class="figbox"><img class="fig" data-fig="sensibilidad" alt="Reglas no redundantes por combinación de umbrales"></div>
-      <p class="body"><b><span data-v="n_combos"></span> combinaciones</b> de soporte y confianza. Las dos reglas de exclusión digital aparecen en todas; la de TIC acopladas solo sale al exigir 90 % (tiene <span class="mono" data-v="regla_tic.conf_m" data-f="pct1"></span>).</p>
+      <p class="body"><b><span data-v="n_combos"></span> combinaciones</b> de soporte y confianza. Las dos reglas de exclusión digital aparecen en todas; la de TIC acopladas solo se cae al exigir 90 % de confianza (tiene <span class="mono" data-v="regla_tic.conf_m" data-f="pct1"></span>).</p>
     </div>
     <div class="stack" style="gap:18px;">
       <div class="figbox"><img class="fig" data-fig="ponderado" alt="Lift muestral vs ponderado"></div>
-      <p class="body"><b><span data-v="en_ambos" data-f="num0"></span> de <span data-v="n_muestral" data-f="num0"></span> reglas</b> sobreviven al ponderar por <code>F_EXP</code>; correlación de lifts <span class="mono hi" data-v="cor_lift" data-f="num3"></span>. Cambia el orden fino del top 30, no los patrones.</p>
+      <p class="body"><b><span data-v="en_ambos" data-f="num0"></span> de <span data-v="n_muestral" data-f="num0"></span> reglas</b> sobreviven al ponderar por <code>F_EXP</code>; correlación de lifts <span class="mono hi" data-v="cor_lift" data-f="num3"></span>.</p>
     </div>
   </div>
   <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 12b_ponderado_vs_muestral.csv · scripts/07_sensibilidad_apriori.R</span>
-  <aside class="notes">Las dos preguntas que me hicieron los revisores. ¿Dependen los resultados de los umbrales? Dieciséis combinaciones: el número de reglas cambia, los patrones no. ¿Y de la ponderación? El noventa y nueve por ciento de las reglas sobrevive y la correlación de los lifts es cero noventa y nueve seis. Lo que sí cambia es el orden fino, porque los lifts están casi empatados. Por eso cuento patrones, no rankings.</aside>
+  <aside class="notes">Las dos preguntas que me hicieron los revisores. ¿Dependen los resultados de los umbrales? Dieciséis combinaciones: el número de reglas cambia, los patrones no. ¿Y de la ponderación? El noventa y nueve por ciento de las reglas sobrevive y la correlación de los lifts es cero noventa y nueve seis. La regla de TIC acopladas solo se cae al pedir noventa por ciento de confianza, porque tiene ochenta y nueve coma seis: se queda a cuatro décimas.</aside>
 </section>
 
 <!-- ============ 15 · QUÉ HACER ============ -->
