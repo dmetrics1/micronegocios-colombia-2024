@@ -1,5 +1,7 @@
 # 🆕 Cuadros Nuevos Agregados: Script 03 COMPLETO vs Script 03 Original
 
+> **Nota (2026-11-10).** Documento histórico de mayo de 2026. La versión final de `scripts/03_cuadros_boletin_COMPLETO.R` genera **70 cuadros** (la lista exacta son los archivos de `output/tablas/boletin/`), no "65-77". Algunos cuadros planeados aquí no forman parte de esa salida: D2–D5, `E1_3_ARL_Propietario` y `H9_Formas_Pago`. Las cifras de resultados vigentes están en el [README](../README.md) y en el [informe](informe_caracterizacion_y_reglas.md).
+
 **Documento:** Catálogo de mejoras en script 03_cuadros_boletin_COMPLETO.R  
 **Fecha:** 14 de mayo de 2026  
 **Cambio:** Integración de legacy_04 + 8 nuevas métricas

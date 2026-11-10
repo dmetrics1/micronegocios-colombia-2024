@@ -3,6 +3,7 @@
 **Trabajo:** *Minería de Reglas de Asociación y Caracterización de la Economía Popular en Colombia: Un Enfoque de Datos Abiertos Basado en R y Quarto*
 **Autor:** Daniel José Molina Barrios
 **Decisión:** aceptado como presentación de 15 minutos (7 de agosto de 2026)
+**Presentación:** viernes 13 de noviembre de 2026, 8:50, sesión "Aplicaciones de R"
 
 Agradezco a ambos revisores sus comentarios. A continuación detallo cómo se atendió cada observación del revisor XxTZ. Todos los cambios están en el repositorio público ([github.com/dmetrics1/micronegocios-colombia-2024](https://github.com/dmetrics1/micronegocios-colombia-2024)) y se reproducen con `renv::restore()` + `source("main.R")`.
 
@@ -51,25 +52,25 @@ En la versión original, no: `apriori()` trata todos los registros con igual pes
 | Reglas del conjunto muestral que también cumplen los umbrales al ponderar | 55.282 (99%) |
 | Correlación entre lift muestral y ponderado | 0,996 |
 
-Las conclusiones no cambian; la posición exacta de las reglas en el ranking sí varía, porque las de mayor lift tienen valores casi idénticos (entre 1,97 y 2,01).
+Las conclusiones no cambian; la posición exacta de las reglas en el ranking sí varía, porque las de mayor lift tienen valores casi idénticos (lift muestral entre 1,97 y 2,01 en las 30 primeras). La regla de mayor lift, {tiene RUT, usa celular} ⇒ {acepta transferencias}, tiene lift ponderado de 2,08 (2,01 muestral) y confianza ponderada de 81,5% (75,4% muestral).
 
 ### 5. Justificar los umbrales, describir el filtrado de redundantes y evaluar la estabilidad
 
 - **Justificación:**
-  - El soporte de 15% exige que cada patrón se observe en ~11.600 registros (más de 790.000 negocios en el universo), lo que prioriza patrones con peso poblacional para política pública.
+  - El soporte de 15% exige que cada patrón se observe en ~11.600 de los 77.202 registros completos (del orden de 780.000 de los 5,2 millones de negocios que esos registros representan), lo que prioriza patrones con peso poblacional para política pública.
   - La confianza de 70% exige que la regla se cumpla en 7 de cada 10 casos.
-  - Los antecedentes se limitan a tres ítems para que las reglas sean interpretables.
+  - Las reglas tienen entre 2 y 4 ítems (`minlen = 2`, `maxlen = 4`), es decir, antecedentes de hasta tres ítems, para que sean interpretables.
 - **Redundancia:** se usa `arules::is.redundant()`. Una regla se elimina si existe otra más general, con el mismo consecuente, de igual o mayor confianza. De 119.456 reglas quedan 55.906.
 - **Estabilidad** (`scripts/07_sensibilidad_apriori.R`): rejilla de soporte {10, 15, 20, 25%} × confianza {60, 70, 80, 90%}.
   - El número de reglas no redundantes va de 34.724 a 83.119.
   - Las dos reglas de exclusión digital aparecen en las 16 combinaciones.
-  - La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; solo sale al exigir 90%, porque su confianza es de 89,6%.
+  - La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; solo se cae al exigir 90%, porque su confianza muestral es de 89,6%.
 
 ### 6. Moderar conclusiones: RUT "exógeno" y efectos de la inclusión digital
 
 Ambas observaciones eran correctas y se corrigieron.
 
-- **RUT:** la ausencia de reglas hacia "tiene RUT" se debía al umbral de soporte. Al bajarlo al 5% aparecen reglas formadas solo por variables digitales y de ubicación —por ejemplo, {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}, con confianza de 77% y lift de 3,4—. Además, la regla de mayor lift del análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (2,01). La conclusión pasa a ser que **el RUT está asociado con la digitalización y con el local fijo**; la afirmación de exogeneidad se retiró.
+- **RUT:** la ausencia de reglas hacia "tiene RUT" se debía al umbral de soporte: con 15% ninguna regla termina en ese ítem. Al bajarlo al 5% y excluir del antecedente las demás variables de formalización, aparecen reglas con variables digitales y de ubicación —por ejemplo, {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}, con confianza ponderada de 76,9% y lift ponderado de 3,44—. Además, la regla de mayor lift del análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (lift ponderado de 2,08; 2,01 muestral). La conclusión pasa a ser que **el RUT está asociado con la digitalización y con el local fijo**; la afirmación de exogeneidad se retiró.
 - **Causalidad:** se eliminaron las afirmaciones de que la inclusión digital "produce" o "potencia" efectos fiscales o crediticios. El reporte señala explícitamente que las reglas describen co-ocurrencias en datos de corte transversal, y las recomendaciones de política se presentan como propuestas normativas, no como estimaciones de impacto.
 
 ### Otras correcciones de cifras
@@ -90,4 +91,4 @@ Gracias por los comentarios. La presentación mantendrá el recorrido completo �
 
 ## Resumen actualizado (borrador para la versión final)
 
-> Este trabajo presenta un pipeline reproducible en R para consolidar, depurar y analizar los microdatos de la Encuesta de Micronegocios (EMICRON) 2024 del DANE: 78.501 negocios que representan a 5,3 millones de micronegocios en Colombia. Con data.table se integran los once módulos de la encuesta y se generan 70 cuadros ponderados por los factores de expansión. Con el paquete arules se aplican reglas de asociación (Apriori) sobre 30 variables categóricas, y el soporte, la confianza y el lift se recalculan ponderando cada registro por su factor de expansión. Los resultados muestran que la exclusión digital es acumulada —los negocios sin dispositivos, sin celular y sin transferencias casi nunca tienen internet (confianza de 99,6%)—, que las herramientas digitales co-ocurren como sistema (lift ponderado de 1,87) y que la formalización fiscal se asocia con los pagos digitales y el local fijo. Los patrones son estables en 16 combinaciones de umbrales y al incorporar los factores de expansión. Una segmentación reproducible por acceso a internet y tenencia de RUT ubica al 46,2% de los negocios como excluidos, al 35,7% en transición y al 18,2% como integrados. Al tratarse de asociaciones en datos de corte transversal, los resultados orientan la focalización de políticas sin establecer efectos causales. Todo el análisis se documenta en un reporte en Quarto, con las versiones de los paquetes fijadas mediante renv.
+> Este trabajo presenta un pipeline reproducible en R para consolidar, depurar y analizar los microdatos de la Encuesta de Micronegocios (EMICRON) 2024 del DANE: 78.501 negocios que representan a 5,3 millones de micronegocios en Colombia. Con data.table se integran los once módulos de la encuesta y se generan 70 cuadros ponderados por los factores de expansión. Con el paquete arules se aplican reglas de asociación (Apriori) sobre 30 variables categóricas, y el soporte, la confianza y el lift se recalculan ponderando cada registro por su factor de expansión. Los resultados muestran que la exclusión digital es acumulada —los negocios sin dispositivos, sin celular y sin transferencias casi nunca tienen internet (confianza de 99,6%)—, que las herramientas digitales co-ocurren como sistema (lift ponderado de 1,87) y que la formalización fiscal se asocia con los pagos digitales y el local fijo. La regla de exclusión digital se mantiene en las 16 combinaciones de umbrales evaluadas, y el 99% de las reglas sigue cumpliendo los umbrales al incorporar los factores de expansión. Una segmentación reproducible por acceso a internet y tenencia de RUT ubica al 46,2% de los negocios como excluidos, al 35,7% en transición y al 18,2% como integrados. Al tratarse de asociaciones en datos de corte transversal, los resultados orientan la focalización de políticas sin establecer efectos causales. Todo el análisis se documenta en un reporte en Quarto, con las versiones de los paquetes fijadas mediante renv.

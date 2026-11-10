@@ -143,7 +143,7 @@ El 50,4% de los micronegocios no tiene acceso a internet. La brecha entre el uso
 ::: {.callout-tip}
 ## 💡 Las TIC co-ocurren como sistema acoplado
 
-Las tecnologías no aparecen de forma aislada. Entre los negocios que usan el celular y aceptan transferencias, la proporción que tiene internet en el local es 1,81 veces la que se observa en el conjunto (lift = 1,81; 1,87 al ponderar por el factor de expansión). Esto es coherente con una adopción conjunta de herramientas digitales y sugiere que las intervenciones integrales podrían ser más pertinentes que las aisladas, aunque las reglas de asociación por sí solas no permiten estimar ese efecto.
+Las tecnologías no aparecen de forma aislada. Entre los negocios que usan el celular y aceptan transferencias, la proporción que tiene internet en el local es 1,87 veces la que se observa en el conjunto (lift ponderado por el factor de expansión 1,87; 1,81 en la muestra). Esto es coherente con una adopción conjunta de herramientas digitales y sugiere que las intervenciones integrales podrían ser más pertinentes que las aisladas, aunque las reglas de asociación por sí solas no permiten estimar ese efecto.
 :::
 
 ::: {.callout-note}
@@ -158,9 +158,9 @@ Este análisis integra dos niveles metodológicos complementarios:
 
 **Estadística descriptiva ponderada.** Se produjeron 70 cuadros estadísticos aplicando el factor de expansión F_EXP del DANE, lo que permite que los resultados de la muestra representen al universo nacional de 5,3 millones de micronegocios. Diez indicadores clave de nueve cuadros se contrastaron con el Boletín Técnico oficial: nueve coinciden con diferencias inferiores a 0,1 puntos porcentuales y uno (participación de la agricultura) difiere en 1,06 puntos. La comprobación está automatizada en `tests/validar_resultados.R`.
 
-**Minería de reglas de asociación (algoritmo Apriori).** Esta técnica detecta combinaciones de características que aparecen juntas con mayor frecuencia de la esperada si fueran independientes. Mientras la estadística descriptiva dice "el 70,9% usa celular", el análisis Apriori responde "entre quienes usan celular y aceptan transferencias, tener internet es 1,81 veces más frecuente que en el total". Apriori se ejecutó sobre la muestra (77.202 registros completos, 30 variables) y luego se recalcularon soporte, confianza y lift **ponderados por F_EXP** para reportar valores representativos del universo.
+**Minería de reglas de asociación (algoritmo Apriori).** Esta técnica detecta combinaciones de características que aparecen juntas con mayor frecuencia de la esperada si fueran independientes. Mientras la estadística descriptiva dice "el 70,9% usa celular", el análisis Apriori responde "entre quienes usan celular y aceptan transferencias, tener internet es 1,87 veces más frecuente que en el total" (lift ponderado). Apriori se ejecutó sobre la muestra (77.202 registros completos de 78.501, 30 variables) y luego se recalcularon soporte, confianza y lift **ponderados por F_EXP** para reportar valores representativos del universo.
 
-Los umbrales principales fueron soporte mínimo del 15% y confianza mínima del 70%, con antecedentes de hasta tres ítems. Se generaron 119.456 reglas, de las cuales 55.906 son no redundantes. La estabilidad de los resultados se evaluó en una rejilla de 16 combinaciones de umbrales (sección de robustez).
+Los umbrales principales fueron soporte mínimo del 15% y confianza mínima del 70%, con reglas de dos a cuatro ítems (antecedentes de hasta tres). Se generaron 119.456 reglas, de las cuales 55.906 son no redundantes. La estabilidad de los resultados se evaluó en una rejilla de 16 combinaciones de umbrales (sección de robustez).
 
 ---
 
@@ -222,7 +222,7 @@ Esta fortaleza tiene otra cara: solo el **7,8% tiene menos de un año de antigü
 
 ![**Figura 3B:** Fuentes de financiación al inicio del negocio](output/figuras/15_C4_fuente_financiacion.png)
 
-La estructura de financiamiento con la que nacen los micronegocios es uno de los indicadores más elocuentes sobre la distancia entre el sistema financiero formal y la economía popular: **el 61,4% se financió con ahorros propios y el 15,5% no requirió financiación**. Sumados, el 76,9% de los micronegocios surgió sin ningún vínculo con el crédito.
+La estructura de financiamiento con la que nacen los micronegocios es uno de los indicadores más elocuentes sobre la distancia entre el sistema financiero formal y la economía popular: **el 61,4% se financió con ahorros propios y el 15,5% no requirió financiación**. Sumados, el 76,8% de los micronegocios surgió sin ningún vínculo con el crédito.
 
 Solo el **8,8% accedió a préstamos bancarios** al inicio, y un **2,4% recurrió a prestamistas**. Entre quienes solicitaron crédito en el último año (el 14,2% del universo), el **22,9% lo hizo con prestamistas "gota a gota"**: casi uno de cada cuatro microempresarios que busca financiamiento lo hace en el mercado informal.
 
@@ -236,7 +236,7 @@ Solo el **8,8% accedió a préstamos bancarios** al inicio, y un **2,4% recurri�
 
 ![**Figura 4A:** Ubicación principal del negocio](output/figuras/16_D1_tipo_ubicacion.png)
 
-La distribución de la ubicación confirma una informalidad que va más allá de lo fiscal: también es espacial. **El 30,56% opera desde la vivienda del propietario**, el **17,37% puerta a puerta** y el **9,58% de forma ambulante**; sumados, el 57,5% no tiene un local comercial fijo diferenciado del espacio doméstico. El 13,46% que opera en fincas corresponde fundamentalmente a la actividad agropecuaria.
+La distribución de la ubicación confirma una informalidad que va más allá de lo fiscal: también es espacial. **El 30,56% opera desde la vivienda del propietario**, el **17,37% puerta a puerta** y el **9,58% de forma ambulante**; sumados, el 57,5% opera en la vivienda, puerta a puerta o en la calle, sin un local comercial fijo. El 13,46% que opera en fincas corresponde fundamentalmente a la actividad agropecuaria.
 
 Un negocio que opera desde la sala de la casa o en la calle es, desde el punto de vista institucional, casi invisible. Las estrategias de formalización que exigen un local físico como requisito están excluyendo a más de la mitad del universo antes de empezar.
 
@@ -368,10 +368,10 @@ Para responder usamos **minería de reglas de asociación con el algoritmo Aprio
 
 ## Parámetros metodológicos
 
-- **Datos:** 30 variables categóricas (formalización, TIC, medios de pago, sector, antigüedad, perfil del propietario, emprendimiento, ubicación, seguridad social, declaraciones tributarias e inclusión financiera), recodificadas en 99 ítems sobre 77.202 registros completos. En las preguntas de selección múltiple (formas de pago, TIC) la no respuesta se interpreta como "No".
-- **Soporte mínimo 15%:** cada patrón debe observarse en al menos ~11.600 registros de la muestra (más de 790.000 negocios en el universo). El umbral prioriza patrones con peso poblacional suficiente para informar política pública y evita reglas sobre nichos pequeños.
+- **Datos:** 30 variables categóricas (formalización, TIC, medios de pago, sector, antigüedad, perfil del propietario, emprendimiento, ubicación, seguridad social, declaraciones tributarias e inclusión financiera), recodificadas en 99 ítems sobre 77.202 registros completos (de 78.501), cuyos factores de expansión suman 5.203.185 negocios. En las preguntas de selección múltiple (formas de pago, TIC) la no respuesta se interpreta como "No".
+- **Soporte mínimo 15%:** cada patrón debe observarse en al menos ~11.600 registros de la muestra (en términos ponderados, el 15% de 5.203.185 equivale a unos 780.000 negocios). El umbral prioriza patrones con peso poblacional suficiente para informar política pública y evita reglas sobre nichos pequeños.
 - **Confianza mínima 70%:** la regla debe cumplirse en al menos 7 de cada 10 casos con el antecedente.
-- **Longitud máxima 4:** antecedentes de hasta tres ítems, para que las reglas sean interpretables.
+- **Longitud mínima 2 y máxima 4:** antecedentes de uno a tres ítems, para que las reglas sean interpretables.
 - **Reglas redundantes:** se eliminaron con `arules::is.redundant()`. Una regla es redundante si existe otra más general (con un subconjunto de su antecedente y el mismo consecuente) con igual o mayor confianza: la condición adicional no aporta información. De 119.456 reglas quedaron 55.906 no redundantes.
 - **Factores de expansión:** `apriori()` trata cada registro con igual peso. Para que las medidas representen al universo se asignó F_EXP como peso de cada transacción y se recalcularon soporte, confianza y lift ponderados con `arules::support(..., weighted = TRUE)` (función `medidas_ponderadas()` en `scripts/00_config.R`). En las tablas siguientes se reportan ambas versiones.
 
@@ -392,12 +392,12 @@ knitr::kable(tab, align = "llrrrr",
              caption = "Reglas clave con medidas muestrales y ponderadas por F_EXP (fuente: output/tablas/12a_reglas_clave.csv)")
 ```
 
-- **Exclusión digital acumulada.** Los negocios sin dispositivos electrónicos, sin celular para el negocio y sin transferencias casi nunca tienen internet en el local (confianza 99,6%). Este patrón abarca a cerca de 28% del universo con el soporte ponderado: la ausencia de una herramienta digital tiende a coincidir con la ausencia de las demás.
+- **Exclusión digital acumulada.** Los negocios sin dispositivos electrónicos, sin celular para el negocio y sin transferencias casi nunca tienen internet en el local (confianza 99,6%; lift ponderado 1,90). El patrón abarca al 27,6% del universo según el soporte ponderado, unos 1,44 millones de negocios (27,6% de 5.203.185): la ausencia de una herramienta digital tiende a coincidir con la ausencia de las demás.
 - **Sin celular, sin internet.** La sola ausencia del celular ya se asocia con no tener internet en 98,9% de los casos.
 - **TIC acopladas.** Entre quienes usan celular y aceptan transferencias, el 89,3% tiene internet en el local; el lift ponderado (1,87) es incluso mayor que el muestral.
-- **RUT y pagos digitales.** La regla con mayor lift de todo el análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (lift ponderado 2,08; 2,01 en la muestra): la formalización fiscal aparece fuertemente asociada a los pagos digitales.
+- **RUT y pagos digitales.** La regla con mayor lift de todo el análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (confianza ponderada 81,5%; lift ponderado 2,08, 2,01 en la muestra): la formalización fiscal aparece fuertemente asociada a los pagos digitales.
 
-**Sobre el RUT.** Con los umbrales principales no aparece ninguna regla cuyo consecuente sea tener RUT. Esto **no** significa que el RUT sea independiente del resto del sistema. La ausencia de reglas se explica por el umbral de soporte: los negocios con RUT son el 22,4% del universo, y las combinaciones que mejor lo acompañan son menos frecuentes que el 15%. Al bajar el soporte al 5% (sección de robustez) aparecen reglas con confianza cercana al 77% y lift de 3,4 formadas solo por variables digitales y de ubicación, por ejemplo {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}. La formalización fiscal está asociada a la digitalización y al local fijo, aunque en segmentos más pequeños del universo.
+**Sobre el RUT.** Con los umbrales principales no aparece ninguna regla cuyo consecuente sea tener RUT. Esto **no** significa que el RUT sea independiente del resto del sistema. La ausencia de reglas se explica por el umbral de soporte: los negocios con RUT son el 22,4% del universo, y las combinaciones que mejor lo acompañan son menos frecuentes que el 15%. Al bajar el soporte al 5% y excluir las demás variables de formalización (sección de robustez) aparecen reglas formadas solo por variables digitales y de ubicación; la de mayor confianza es {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}, con confianza ponderada de 76,9% y lift ponderado de 3,44. La formalización fiscal está asociada a la digitalización y al local fijo, aunque en segmentos más pequeños del universo.
 
 ## Visualizaciones Apriori
 
@@ -413,7 +413,7 @@ Muestra la proporción de negocios que presenta cada característica (soporte de
 
 ![**Figura 9B:** Soporte (eje horizontal) vs. confianza (eje vertical), color según lift](output/figuras/13_apriori_scatter_reglas.png)
 
-Cada punto es una regla no redundante: la posición horizontal indica qué tan común es el patrón (soporte), la vertical qué tan seguido se cumple (confianza) y el color su lift. De las 251 reglas con lift superior a 1,9, el 99% tiene como consecuente "sin internet en el local": los patrones más fuertes son de exclusión digital.
+Cada punto es una regla no redundante: la posición horizontal indica qué tan común es el patrón (soporte), la vertical qué tan seguido se cumple (confianza) y el color su lift. De las 251 reglas con lift muestral superior a 1,9, el 99% tiene como consecuente "sin internet en el local": los patrones más fuertes son de exclusión digital.
 
 ---
 
@@ -445,7 +445,7 @@ Muestra las combinaciones de ítems que acompañan la aceptación de transferenc
 
 ![**Figura 9F:** Grafo de las reglas hacia negocios con 10 o más años](output/figuras/18_apriori_grafo_antiguedad.png)
 
-Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no ser visibles al público y propietario hombre. Son asociaciones moderadas (lift cercano a 1,27): describen un perfil, no una regla rígida.
+Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no ser visibles al público y propietario hombre. Son asociaciones moderadas (lift ponderado entre 1,21 y 1,31): describen un perfil, no una regla rígida.
 
 ---
 
@@ -474,7 +474,7 @@ knitr::kable(tab, align = "rrrrccc",
 
 ![**Figura 10A:** Reglas no redundantes según los umbrales de soporte y confianza](output/figuras/30_sensibilidad_umbrales.png)
 
-El número de reglas varía con los umbrales —como es esperable—, pero los patrones centrales se mantienen. Las dos reglas de exclusión digital aparecen en las 16 combinaciones evaluadas. La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; solo sale al exigir 90%, porque su confianza es de 89,6%.
+El número de reglas varía con los umbrales —como es esperable—, pero los patrones centrales se mantienen. Las dos reglas de exclusión digital aparecen en las 16 combinaciones evaluadas. La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; se cae solo al exigir 90%, porque su confianza muestral es de 89,6%.
 
 ## Medidas muestrales vs. ponderadas
 
@@ -505,7 +505,7 @@ knitr::kable(tab, align = "lrrr",
              caption = "Mejores reglas hacia tiene_rut=Sí con soporte ≥ 5%, excluyendo otras variables de formalización como antecedente (fuente: output/tablas/12d_reglas_rut_sin_formalizacion.csv)")
 ```
 
-Si se permiten todas las variables como antecedente, las reglas hacia el RUT tienen confianza cercana al 100%, pero son casi tautológicas: declarar renta o estar en Cámara de Comercio exige tener RUT (ver `output/tablas/12c_reglas_rut.csv`). Al excluir esas variables, las combinaciones de internet, transferencias y local fijo predicen el RUT con confianza de 75–77% y lift de 3,4. **El RUT no es exógeno al sistema: está asociado con la digitalización y con tener un local fijo**, en segmentos que abarcan alrededor del 6% del universo.
+Si se permiten todas las variables como antecedente, las reglas hacia el RUT tienen confianza cercana al 100%, pero son casi tautológicas: declarar renta o estar en Cámara de Comercio exige tener RUT (ver `output/tablas/12c_reglas_rut.csv`). Al excluir esas variables, las combinaciones de internet, transferencias, dispositivos y local fijo acompañan al RUT con confianza ponderada de 75–77% y lift ponderado de 3,4. **El RUT no es exógeno al sistema: está asociado con la digitalización y con tener un local fijo**, en segmentos que abarcan alrededor del 6% del universo.
 
 ---
 
@@ -577,9 +577,12 @@ El resumen enviado a LatinR presentaba una segmentación 65% / 8% / 27%. Esas pr
 ```{r ejemplo-consolidar, echo=TRUE, eval=FALSE}
 key_variables <- c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA")
 for (file in all_files[-1]) {
-  df <- fread(file, encoding = "Latin-1")
+  df <- fread(file = file, encoding = "Latin-1",
+              colClasses = list(character = c("COD_DPTO", "COD_DEPTO", "AREA")))
   if ("SECUENCIA_PH" %in% colnames(df)) next   # varias filas por negocio: se agrega aparte
-  final_df <- merge(final_df, df, by = intersect(colnames(df), key_variables), all.x = TRUE)
+  merge_keys <- intersect(colnames(df), key_variables)
+  if (length(merge_keys) == 0) next
+  final_df <- merge(final_df, df, by = merge_keys, all.x = TRUE)
 }
 ```
 
@@ -614,9 +617,12 @@ El 60,7% de los micronegocios no cumple ningún criterio de formalización y sol
 **4. Estadística ponderada** (`03_cuadros_boletin_COMPLETO.R`): una función calcula cada cuadro con el factor de expansión.
 
 ```{r ejemplo-ponderado, echo=TRUE, eval=FALSE}
-calc_dist <- function(dt, variable) {
-  dt[!is.na(get(variable)), .(Cantidad = sum(F_EXP)), by = variable][
-    , Distribucion_Pct := round(Cantidad / sum(Cantidad) * 100, 2)]
+calc_dist <- function(dt, variable, peso = "F_EXP") {   # "FEX_C" en los cuadros por departamento
+  if (!variable %in% colnames(dt)) return(NULL)
+  res <- dt[!is.na(get(variable)), .(Cantidad = sum(get(peso), na.rm = TRUE)), by = variable]
+  res[, Distribucion_Pct := round((Cantidad / sum(Cantidad)) * 100, 2)]
+  setorderv(res, variable)
+  return(res)
 }
 ```
 
@@ -640,9 +646,21 @@ medidas_ponderadas <- function(reglas, trans) {
 **6. Segmentación** (`06_segmentacion.R`):
 
 ```{r ejemplo-segmentacion, echo=TRUE, eval=FALSE}
+base[, `:=`(
+  internet = usa_internet == 1,
+  rut      = tiene_rut == 1
+)]
+
+base[, subgrupo := fcase(
+  !internet & !rut, "Sin internet y sin RUT",
+   internet & !rut, "Con internet, sin RUT",
+  !internet &  rut, "Con RUT, sin internet",
+   internet &  rut, "Con internet y con RUT"
+)]
+
 base[, grupo := fcase(
-  usa_internet != 1 & tiene_rut != 1, "Excluidos",
-  usa_internet == 1 & tiene_rut == 1, "Integrados",
+  subgrupo == "Sin internet y sin RUT", "Excluidos",
+  subgrupo == "Con internet y con RUT", "Integrados",
   default = "En transición"
 )]
 ```
@@ -663,7 +681,7 @@ base[, grupo := fcase(
 
 **Medidas:**
 
-- **Simplificación radical del RUT:** proceso en línea desde el celular, sin costo y sin exigir local fijo; la dirección del negocio puede ser la vivienda del propietario (el 57,5% no tiene local fijo).
+- **Simplificación radical del RUT:** proceso en línea desde el celular, sin costo y sin exigir local fijo; la dirección del negocio puede ser la vivienda del propietario (el 57,5% opera en la vivienda, puerta a puerta o de forma ambulante).
 - **Incentivo de acceso vinculado:** asociar el RUT activo a beneficios concretos —acceso a microcrédito o a pagos digitales sin costo—, para que deje de ser solo una obligación.
 - **Focalización territorial y de género:** priorizar zonas rurales, donde la informalidad fiscal es más aguda, con enfoque diferencial hacia las mujeres propietarias.
 - **Sin presión tributaria inmediata:** diferir la primera obligación tributaria tras el registro; el objetivo inicial es la formalización, no la recaudación.
@@ -680,7 +698,7 @@ base[, grupo := fcase(
 
 ## Eje 3: Financiamiento e inclusión financiera
 
-**Diagnóstico que lo justifica:** 85,8% no solicitó crédito; 76,9% inició sin financiación externa; entre quienes solicitaron crédito, 22,9% lo hizo con prestamistas gota a gota.
+**Diagnóstico que lo justifica:** 85,8% no solicitó crédito; 76,8% inició sin financiación externa; entre quienes solicitaron crédito, 22,9% lo hizo con prestamistas gota a gota.
 
 **Objetivo propuesto:** aumentar la solicitud de crédito formal del 14,2% al 40% en tres años.
 
@@ -690,7 +708,7 @@ base[, grupo := fcase(
 
 ## Eje 4: Renovación y modernización
 
-**Diagnóstico que lo justifica:** 47,4% de negocios con 10+ años; los negocios antiguos se asocian con no usar redes sociales ni dispositivos (lift ~1,27).
+**Diagnóstico que lo justifica:** 47,4% de negocios con 10+ años; los negocios antiguos se asocian con no usar redes sociales ni dispositivos (lift ponderado de 1,2 a 1,3).
 
 **Objetivo propuesto:** incorporar a 500.000 micronegocios con más de diez años al ecosistema digital en dos años.
 
@@ -751,4 +769,4 @@ El análisis completo se reproduce con `source("main.R")` desde la raíz del pro
 
 *Documento elaborado con R + Quarto. Análisis reproducible a partir de los microdatos oficiales del DANE.*
 *Autor: **Daniel Molina Barrios** — Economista &amp; Data Scientist · [GitHub](https://github.com/dmetrics1) · [LinkedIn](https://www.linkedin.com/in/danieljmolina/)*
-*Última actualización: octubre de 2026.*
+*Última actualización: `r fecha`.*

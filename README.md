@@ -57,13 +57,13 @@ Lo que puedes reutilizar:
 
 **Reglas de asociación** (55.906 reglas no redundantes · soporte ≥ 15 % · confianza ≥ 70 % · medidas ponderadas por `F_EXP`):
 
-- `{sin computador ni tableta, sin celular de negocio, sin transferencias} ⇒ {sin internet en el local}` — **confianza 99,6 %, soporte 27,6 %, lift 1,90**. La exclusión digital es acumulada: cuando falta una herramienta, faltan todas. Estable en las 16 combinaciones de umbrales evaluadas.
+- `{sin computador ni tableta, sin celular de negocio, sin transferencias} ⇒ {sin internet en el local}` — **confianza 99,6 %, soporte 27,6 % (≈1,44 millones de negocios), lift 1,90**. La exclusión digital es acumulada: cuando falta una herramienta, faltan todas. Estable en las 16 combinaciones de umbrales evaluadas.
 - `{usa celular, acepta transferencias} ⇒ {internet en el local}` — **lift ponderado 1,87**. Las TIC co-ocurren como sistema.
-- `{tiene RUT, usa celular} ⇒ {acepta transferencias}` — **lift ponderado 2,08** (2,01 en la muestra), el más alto del análisis. Con soporte ≥ 5 %, las combinaciones de internet, transferencias y local fijo se asocian con tener RUT (confianza 77 %, lift 3,4): la formalización no es independiente de la digitalización.
+- `{tiene RUT, usa celular} ⇒ {acepta transferencias}` — **lift ponderado 2,08** (2,01 en la muestra), el más alto del análisis. Con soporte ≥ 15 % ninguna regla termina en tener RUT; con soporte ≥ 5 % y sin otras variables de formalización en el antecedente, `{internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}` alcanza confianza ponderada 76,9 % y lift ponderado 3,44: la formalización no es independiente de la digitalización.
 
-**Segmentación** (internet × RUT, grupos excluyentes y exhaustivos): **Excluidos 46,2 %** · **En transición 35,7 %** · **Integrados 18,2 %**. Los grupos se diferencian en variables que no los definen: aceptan transferencias el 5,7 % de los excluidos frente al 86,9 % de los integrados.
+**Segmentación** (internet × RUT, grupos excluyentes y exhaustivos): **Excluidos 46,2 %** · **En transición 35,7 %** (31,4 % con internet sin RUT y 4,2 % con RUT sin internet) · **Integrados 18,2 %**. Los grupos se diferencian en variables que no los definen: aceptan transferencias el 5,7 % de los excluidos frente al 86,9 % de los integrados.
 
-**Robustez:** al ponderar por `F_EXP`, el 99 % de las reglas se mantiene y la correlación entre lifts es 0,996.
+**Robustez:** al ponderar por `F_EXP` se mantienen 55.282 de las 55.906 reglas y la correlación entre lifts es 0,996. En la rejilla de 16 combinaciones de umbrales, las dos reglas de exclusión digital (la de arriba y `{sin celular de negocio} ⇒ {sin internet en el local}`) aparecen siempre; la de TIC acopladas (confianza muestral 89,6 %) solo se cae al exigir confianza ≥ 90 %.
 
 > Son asociaciones en datos de corte transversal: describen co-ocurrencias, no efectos causales.
 
@@ -195,7 +195,7 @@ emicron/
 - **No respuesta** en preguntas de selección múltiple (formas de pago, TIC) interpretada como "No".
 - **Segmentación con dos variables** por transparencia; otras definiciones darían grupos de distinto tamaño.
 - **Validación parcial:** 10 indicadores contrastados uno a uno; los demás cuadros usan la misma función ponderada pero no se verificaron individualmente.
-- Parte de la documentación de `docs/` es anterior a la versión final del código y está pendiente de revisión (ver [`PENDIENTES.md`](PENDIENTES.md)).
+- El informe y la validación de `docs/` se revisaron contra `output/tablas/` el 2026-11-10; el protocolo, el diccionario y el catálogo de cuadros son documentos de referencia o históricos y no describen cifras de resultados (ver [`PENDIENTES.md`](PENDIENTES.md)).
 
 ## 📚 Documentación
 
@@ -203,7 +203,7 @@ emicron/
 |---|---|
 | [`docs/informe_caracterizacion_y_reglas.md`](docs/informe_caracterizacion_y_reglas.md) | Síntesis de hallazgos descriptivos, patrones Apriori y segmentación |
 | [`docs/validacion/`](docs/validacion/) | Contraste con el boletín DANE e indicadores oficiales extraídos |
-| [`docs/Diccionario_EMICRON_2024.md`](docs/Diccionario_EMICRON_2024.md) | Diccionario de variables y variables derivadas |
+| [`docs/Diccionario_EMICRON_2024.md`](docs/Diccionario_EMICRON_2024.md) | Diccionario de variables del DANE (las variables derivadas se definen en `scripts/02_limpiar.R`) |
 | [`docs/PROTOCOLO_MAESTRO_EMICRON.md`](docs/PROTOCOLO_MAESTRO_EMICRON.md) | Metodologías de procesamiento ponderado del DANE |
 | [`docs/CUADROS_NUEVOS_AGREGADOS.md`](docs/CUADROS_NUEVOS_AGREGADOS.md) | Historial de cuadros del script 03 (documento histórico) |
 | [`paper/RESPUESTA_REVISORES.md`](paper/RESPUESTA_REVISORES.md) | Respuesta punto por punto a los revisores de LatinR y resumen actualizado |

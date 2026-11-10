@@ -1,5 +1,7 @@
 # ✅ VALIDACIÓN FINAL: 70 Cuadros Generados vs DANE Oficial
 
+> **Nota (2026-11-10).** Documento de mayo de 2026, conservado como registro. El contraste vigente está en `data/reference/validacion_dane.csv` y `tests/validar_resultados.R` (40 de 40 pruebas superadas): 10 indicadores de 9 cuadros (los 9 de la tabla de abajo más el negocio unipersonal, E2: 82,31 % frente a 82,3 % del DANE); 9 coinciden con menos de 0,1 p.p. y la agricultura difiere en 1,06 p.p. Los demás cuadros usan la misma función ponderada pero **no** se verificaron uno a uno, así que las afirmaciones de abajo sobre "70/70 cuadros validados" y la tabla "Validación por grupo (estimada)" no deben leerse como validación individual.
+
 **Fecha:** 14 de mayo de 2026  
 **Cuadros evaluados:** 8 cuadros representativos (1 por grupo principal)  
 **Resultado:** ✅ **VALIDACIÓN EXITOSA — 100% Coincidencia**

@@ -5,7 +5,8 @@
 # Integra:
 # - 62 cuadros DANE del legacy
 # - 8 cuadros nuevos (ingresos, multidimensionales, cruzadas)
-# Total: ~75-80 cuadros para validación y análisis
+# Total: 70 cuadros en output/tablas/boletin/ (los que devuelven NULL,
+# como H9_Formas_Pago, no se guardan)
 # =====================================================================
 
 source(file.path("scripts", "00_config.R"))

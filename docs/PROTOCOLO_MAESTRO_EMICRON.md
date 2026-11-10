@@ -21,7 +21,7 @@ La Encuesta de Micronegocios es una operación estadística del DANE que proporc
 
 **Frecuencia:** recolección mensual continua. Publicación trimestral y anual.
 
-**Tamaño de muestra:** aproximadamente 85.000 unidades económicas al año.
+**Tamaño de muestra:** aproximadamente 85.000 unidades económicas al año según el diseño metodológico. Los microdatos públicos de 2024 contienen 78.501 micronegocios, que representan 5.297.252 con `F_EXP`.
 
 **Factor de expansión:** `F_EXP` (presente en todos los módulos). Indispensable para cualquier estimación poblacional.
 

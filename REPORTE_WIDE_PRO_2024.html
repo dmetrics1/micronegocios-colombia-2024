@@ -3703,7 +3703,7 @@ window.onload = function() {
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Las tecnologías no aparecen de forma aislada. Entre los negocios que usan el celular y aceptan transferencias, la proporción que tiene internet en el local es 1,81 veces la que se observa en el conjunto (lift = 1,81; 1,87 al ponderar por el factor de expansión). Esto es coherente con una adopción conjunta de herramientas digitales y sugiere que las intervenciones integrales podrían ser más pertinentes que las aisladas, aunque las reglas de asociación por sí solas no permiten estimar ese efecto.</p>
+<p>Las tecnologías no aparecen de forma aislada. Entre los negocios que usan el celular y aceptan transferencias, la proporción que tiene internet en el local es 1,87 veces la que se observa en el conjunto (lift ponderado por el factor de expansión 1,87; 1,81 en la muestra). Esto es coherente con una adopción conjunta de herramientas digitales y sugiere que las intervenciones integrales podrían ser más pertinentes que las aisladas, aunque las reglas de asociación por sí solas no permiten estimar ese efecto.</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -3724,8 +3724,8 @@ window.onload = function() {
 <h2 data-number="1.3" class="anchored" data-anchor-id="metodología-y-fuentes"><span class="header-section-number">1.3</span> Metodología y fuentes</h2>
 <p>Este análisis integra dos niveles metodológicos complementarios:</p>
 <p><strong>Estadística descriptiva ponderada.</strong> Se produjeron 70 cuadros estadísticos aplicando el factor de expansión F_EXP del DANE, lo que permite que los resultados de la muestra representen al universo nacional de 5,3 millones de micronegocios. Diez indicadores clave de nueve cuadros se contrastaron con el Boletín Técnico oficial: nueve coinciden con diferencias inferiores a 0,1 puntos porcentuales y uno (participación de la agricultura) difiere en 1,06 puntos. La comprobación está automatizada en <code>tests/validar_resultados.R</code>.</p>
-<p><strong>Minería de reglas de asociación (algoritmo Apriori).</strong> Esta técnica detecta combinaciones de características que aparecen juntas con mayor frecuencia de la esperada si fueran independientes. Mientras la estadística descriptiva dice “el 70,9% usa celular”, el análisis Apriori responde “entre quienes usan celular y aceptan transferencias, tener internet es 1,81 veces más frecuente que en el total”. Apriori se ejecutó sobre la muestra (77.202 registros completos, 30 variables) y luego se recalcularon soporte, confianza y lift <strong>ponderados por F_EXP</strong> para reportar valores representativos del universo.</p>
-<p>Los umbrales principales fueron soporte mínimo del 15% y confianza mínima del 70%, con antecedentes de hasta tres ítems. Se generaron 119.456 reglas, de las cuales 55.906 son no redundantes. La estabilidad de los resultados se evaluó en una rejilla de 16 combinaciones de umbrales (sección de robustez).</p>
+<p><strong>Minería de reglas de asociación (algoritmo Apriori).</strong> Esta técnica detecta combinaciones de características que aparecen juntas con mayor frecuencia de la esperada si fueran independientes. Mientras la estadística descriptiva dice “el 70,9% usa celular”, el análisis Apriori responde “entre quienes usan celular y aceptan transferencias, tener internet es 1,87 veces más frecuente que en el total” (lift ponderado). Apriori se ejecutó sobre la muestra (77.202 registros completos de 78.501, 30 variables) y luego se recalcularon soporte, confianza y lift <strong>ponderados por F_EXP</strong> para reportar valores representativos del universo.</p>
+<p>Los umbrales principales fueron soporte mínimo del 15% y confianza mínima del 70%, con reglas de dos a cuatro ítems (antecedentes de hasta tres). Se generaron 119.456 reglas, de las cuales 55.906 son no redundantes. La estabilidad de los resultados se evaluó en una rejilla de 16 combinaciones de umbrales (sección de robustez).</p>
 <hr>
 </section>
 </section>
@@ -3810,7 +3810,7 @@ window.onload = function() {
 <figcaption><strong>Figura 3B:</strong> Fuentes de financiación al inicio del negocio</figcaption>
 </figure>
 </div>
-<p>La estructura de financiamiento con la que nacen los micronegocios es uno de los indicadores más elocuentes sobre la distancia entre el sistema financiero formal y la economía popular: <strong>el 61,4% se financió con ahorros propios y el 15,5% no requirió financiación</strong>. Sumados, el 76,9% de los micronegocios surgió sin ningún vínculo con el crédito.</p>
+<p>La estructura de financiamiento con la que nacen los micronegocios es uno de los indicadores más elocuentes sobre la distancia entre el sistema financiero formal y la economía popular: <strong>el 61,4% se financió con ahorros propios y el 15,5% no requirió financiación</strong>. Sumados, el 76,8% de los micronegocios surgió sin ningún vínculo con el crédito.</p>
 <p>Solo el <strong>8,8% accedió a préstamos bancarios</strong> al inicio, y un <strong>2,4% recurrió a prestamistas</strong>. Entre quienes solicitaron crédito en el último año (el 14,2% del universo), el <strong>22,9% lo hizo con prestamistas “gota a gota”</strong>: casi uno de cada cuatro microempresarios que busca financiamiento lo hace en el mercado informal.</p>
 <hr>
 </section>
@@ -3828,7 +3828,7 @@ window.onload = function() {
 <figcaption><strong>Figura 4A:</strong> Ubicación principal del negocio</figcaption>
 </figure>
 </div>
-<p>La distribución de la ubicación confirma una informalidad que va más allá de lo fiscal: también es espacial. <strong>El 30,56% opera desde la vivienda del propietario</strong>, el <strong>17,37% puerta a puerta</strong> y el <strong>9,58% de forma ambulante</strong>; sumados, el 57,5% no tiene un local comercial fijo diferenciado del espacio doméstico. El 13,46% que opera en fincas corresponde fundamentalmente a la actividad agropecuaria.</p>
+<p>La distribución de la ubicación confirma una informalidad que va más allá de lo fiscal: también es espacial. <strong>El 30,56% opera desde la vivienda del propietario</strong>, el <strong>17,37% puerta a puerta</strong> y el <strong>9,58% de forma ambulante</strong>; sumados, el 57,5% opera en la vivienda, puerta a puerta o en la calle, sin un local comercial fijo. El 13,46% que opera en fincas corresponde fundamentalmente a la actividad agropecuaria.</p>
 <p>Un negocio que opera desde la sala de la casa o en la calle es, desde el punto de vista institucional, casi invisible. Las estrategias de formalización que exigen un local físico como requisito están excluyendo a más de la mitad del universo antes de empezar.</p>
 </section>
 <section id="personal-ocupado" class="level2" data-number="5.2">
@@ -4006,10 +4006,10 @@ window.onload = function() {
 <section id="parámetros-metodológicos" class="level2" data-number="10.2">
 <h2 data-number="10.2" class="anchored" data-anchor-id="parámetros-metodológicos"><span class="header-section-number">10.2</span> Parámetros metodológicos</h2>
 <ul>
-<li><strong>Datos:</strong> 30 variables categóricas (formalización, TIC, medios de pago, sector, antigüedad, perfil del propietario, emprendimiento, ubicación, seguridad social, declaraciones tributarias e inclusión financiera), recodificadas en 99 ítems sobre 77.202 registros completos. En las preguntas de selección múltiple (formas de pago, TIC) la no respuesta se interpreta como “No”.</li>
-<li><strong>Soporte mínimo 15%:</strong> cada patrón debe observarse en al menos ~11.600 registros de la muestra (más de 790.000 negocios en el universo). El umbral prioriza patrones con peso poblacional suficiente para informar política pública y evita reglas sobre nichos pequeños.</li>
+<li><strong>Datos:</strong> 30 variables categóricas (formalización, TIC, medios de pago, sector, antigüedad, perfil del propietario, emprendimiento, ubicación, seguridad social, declaraciones tributarias e inclusión financiera), recodificadas en 99 ítems sobre 77.202 registros completos (de 78.501), cuyos factores de expansión suman 5.203.185 negocios. En las preguntas de selección múltiple (formas de pago, TIC) la no respuesta se interpreta como “No”.</li>
+<li><strong>Soporte mínimo 15%:</strong> cada patrón debe observarse en al menos ~11.600 registros de la muestra (en términos ponderados, el 15% de 5.203.185 equivale a unos 780.000 negocios). El umbral prioriza patrones con peso poblacional suficiente para informar política pública y evita reglas sobre nichos pequeños.</li>
 <li><strong>Confianza mínima 70%:</strong> la regla debe cumplirse en al menos 7 de cada 10 casos con el antecedente.</li>
-<li><strong>Longitud máxima 4:</strong> antecedentes de hasta tres ítems, para que las reglas sean interpretables.</li>
+<li><strong>Longitud mínima 2 y máxima 4:</strong> antecedentes de uno a tres ítems, para que las reglas sean interpretables.</li>
 <li><strong>Reglas redundantes:</strong> se eliminaron con <code>arules::is.redundant()</code>. Una regla es redundante si existe otra más general (con un subconjunto de su antecedente y el mismo consecuente) con igual o mayor confianza: la condición adicional no aporta información. De 119.456 reglas quedaron 55.906 no redundantes.</li>
 <li><strong>Factores de expansión:</strong> <code>apriori()</code> trata cada registro con igual peso. Para que las medidas representen al universo se asignó F_EXP como peso de cada transacción y se recalcularon soporte, confianza y lift ponderados con <code>arules::support(..., weighted = TRUE)</code> (función <code>medidas_ponderadas()</code> en <code>scripts/00_config.R</code>). En las tablas siguientes se reportan ambas versiones.</li>
 </ul>
@@ -4068,12 +4068,12 @@ window.onload = function() {
 </div>
 </div>
 <ul>
-<li><strong>Exclusión digital acumulada.</strong> Los negocios sin dispositivos electrónicos, sin celular para el negocio y sin transferencias casi nunca tienen internet en el local (confianza 99,6%). Este patrón abarca a cerca de 28% del universo con el soporte ponderado: la ausencia de una herramienta digital tiende a coincidir con la ausencia de las demás.</li>
+<li><strong>Exclusión digital acumulada.</strong> Los negocios sin dispositivos electrónicos, sin celular para el negocio y sin transferencias casi nunca tienen internet en el local (confianza 99,6%; lift ponderado 1,90). El patrón abarca al 27,6% del universo según el soporte ponderado, unos 1,44 millones de negocios (27,6% de 5.203.185): la ausencia de una herramienta digital tiende a coincidir con la ausencia de las demás.</li>
 <li><strong>Sin celular, sin internet.</strong> La sola ausencia del celular ya se asocia con no tener internet en 98,9% de los casos.</li>
 <li><strong>TIC acopladas.</strong> Entre quienes usan celular y aceptan transferencias, el 89,3% tiene internet en el local; el lift ponderado (1,87) es incluso mayor que el muestral.</li>
-<li><strong>RUT y pagos digitales.</strong> La regla con mayor lift de todo el análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (lift ponderado 2,08; 2,01 en la muestra): la formalización fiscal aparece fuertemente asociada a los pagos digitales.</li>
+<li><strong>RUT y pagos digitales.</strong> La regla con mayor lift de todo el análisis es {tiene RUT, usa celular} ⇒ {acepta transferencias} (confianza ponderada 81,5%; lift ponderado 2,08, 2,01 en la muestra): la formalización fiscal aparece fuertemente asociada a los pagos digitales.</li>
 </ul>
-<p><strong>Sobre el RUT.</strong> Con los umbrales principales no aparece ninguna regla cuyo consecuente sea tener RUT. Esto <strong>no</strong> significa que el RUT sea independiente del resto del sistema. La ausencia de reglas se explica por el umbral de soporte: los negocios con RUT son el 22,4% del universo, y las combinaciones que mejor lo acompañan son menos frecuentes que el 15%. Al bajar el soporte al 5% (sección de robustez) aparecen reglas con confianza cercana al 77% y lift de 3,4 formadas solo por variables digitales y de ubicación, por ejemplo {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}. La formalización fiscal está asociada a la digitalización y al local fijo, aunque en segmentos más pequeños del universo.</p>
+<p><strong>Sobre el RUT.</strong> Con los umbrales principales no aparece ninguna regla cuyo consecuente sea tener RUT. Esto <strong>no</strong> significa que el RUT sea independiente del resto del sistema. La ausencia de reglas se explica por el umbral de soporte: los negocios con RUT son el 22,4% del universo, y las combinaciones que mejor lo acompañan son menos frecuentes que el 15%. Al bajar el soporte al 5% y excluir las demás variables de formalización (sección de robustez) aparecen reglas formadas solo por variables digitales y de ubicación; la de mayor confianza es {internet en el local, acepta transferencias, local fijo} ⇒ {tiene RUT}, con confianza ponderada de 76,9% y lift ponderado de 3,44. La formalización fiscal está asociada a la digitalización y al local fijo, aunque en segmentos más pequeños del universo.</p>
 </section>
 <section id="visualizaciones-apriori" class="level2" data-number="10.4">
 <h2 data-number="10.4" class="anchored" data-anchor-id="visualizaciones-apriori"><span class="header-section-number">10.4</span> Visualizaciones Apriori</h2>
@@ -4093,7 +4093,7 @@ window.onload = function() {
 <figcaption><strong>Figura 9B:</strong> Soporte (eje horizontal) vs. confianza (eje vertical), color según lift</figcaption>
 </figure>
 </div>
-<p>Cada punto es una regla no redundante: la posición horizontal indica qué tan común es el patrón (soporte), la vertical qué tan seguido se cumple (confianza) y el color su lift. De las 251 reglas con lift superior a 1,9, el 99% tiene como consecuente “sin internet en el local”: los patrones más fuertes son de exclusión digital.</p>
+<p>Cada punto es una regla no redundante: la posición horizontal indica qué tan común es el patrón (soporte), la vertical qué tan seguido se cumple (confianza) y el color su lift. De las 251 reglas con lift muestral superior a 1,9, el 99% tiene como consecuente “sin internet en el local”: los patrones más fuertes son de exclusión digital.</p>
 <hr>
 <p><strong>Figura 9C — Top 20 reglas por lift</strong></p>
 <div class="quarto-figure quarto-figure-center">
@@ -4129,7 +4129,7 @@ window.onload = function() {
 <figcaption><strong>Figura 9F:</strong> Grafo de las reglas hacia negocios con 10 o más años</figcaption>
 </figure>
 </div>
-<p>Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no ser visibles al público y propietario hombre. Son asociaciones moderadas (lift cercano a 1,27): describen un perfil, no una regla rígida.</p>
+<p>Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no ser visibles al público y propietario hombre. Son asociaciones moderadas (lift ponderado entre 1,21 y 1,31): describen un perfil, no una regla rígida.</p>
 <hr>
 </section>
 </section>
@@ -4319,7 +4319,7 @@ window.onload = function() {
 <figcaption><strong>Figura 10A:</strong> Reglas no redundantes según los umbrales de soporte y confianza</figcaption>
 </figure>
 </div>
-<p>El número de reglas varía con los umbrales —como es esperable—, pero los patrones centrales se mantienen. Las dos reglas de exclusión digital aparecen en las 16 combinaciones evaluadas. La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; solo sale al exigir 90%, porque su confianza es de 89,6%.</p>
+<p>El número de reglas varía con los umbrales —como es esperable—, pero los patrones centrales se mantienen. Las dos reglas de exclusión digital aparecen en las 16 combinaciones evaluadas. La regla de TIC acopladas aparece en todas las combinaciones con confianza de hasta 80%; se cae solo al exigir 90%, porque su confianza muestral es de 89,6%.</p>
 </section>
 <section id="medidas-muestrales-vs.-ponderadas" class="level2" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="medidas-muestrales-vs.-ponderadas"><span class="header-section-number">11.2</span> Medidas muestrales vs. ponderadas</h2>
@@ -4436,7 +4436,7 @@ window.onload = function() {
 </table>
 </div>
 </div>
-<p>Si se permiten todas las variables como antecedente, las reglas hacia el RUT tienen confianza cercana al 100%, pero son casi tautológicas: declarar renta o estar en Cámara de Comercio exige tener RUT (ver <code>output/tablas/12c_reglas_rut.csv</code>). Al excluir esas variables, las combinaciones de internet, transferencias y local fijo predicen el RUT con confianza de 75–77% y lift de 3,4. <strong>El RUT no es exógeno al sistema: está asociado con la digitalización y con tener un local fijo</strong>, en segmentos que abarcan alrededor del 6% del universo.</p>
+<p>Si se permiten todas las variables como antecedente, las reglas hacia el RUT tienen confianza cercana al 100%, pero son casi tautológicas: declarar renta o estar en Cámara de Comercio exige tener RUT (ver <code>output/tablas/12c_reglas_rut.csv</code>). Al excluir esas variables, las combinaciones de internet, transferencias, dispositivos y local fijo acompañan al RUT con confianza ponderada de 75–77% y lift ponderado de 3,4. <strong>El RUT no es exógeno al sistema: está asociado con la digitalización y con tener un local fijo</strong>, en segmentos que abarcan alrededor del 6% del universo.</p>
 <hr>
 </section>
 </section>
@@ -4637,10 +4637,13 @@ window.onload = function() {
 <summary>Código</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>key_variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;DIRECTORIO&quot;</span>, <span class="st">&quot;SECUENCIA_P&quot;</span>, <span class="st">&quot;SECUENCIA_ENCUESTA&quot;</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> all_files[<span class="sc">-</span><span class="dv">1</span>]) {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">fread</span>(file, <span class="at">encoding =</span> <span class="st">&quot;Latin-1&quot;</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">&quot;SECUENCIA_PH&quot;</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(df)) <span class="cf">next</span>   <span class="co"># varias filas por negocio: se agrega aparte</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  final_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(final_df, df, <span class="at">by =</span> <span class="fu">intersect</span>(<span class="fu">colnames</span>(df), key_variables), <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="at">file =</span> file, <span class="at">encoding =</span> <span class="st">&quot;Latin-1&quot;</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">colClasses =</span> <span class="fu">list</span>(<span class="at">character =</span> <span class="fu">c</span>(<span class="st">&quot;COD_DPTO&quot;</span>, <span class="st">&quot;COD_DEPTO&quot;</span>, <span class="st">&quot;AREA&quot;</span>)))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="st">&quot;SECUENCIA_PH&quot;</span> <span class="sc">%in%</span> <span class="fu">colnames</span>(df)) <span class="cf">next</span>   <span class="co"># varias filas por negocio: se agrega aparte</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  merge_keys <span class="ot">&lt;-</span> <span class="fu">intersect</span>(<span class="fu">colnames</span>(df), key_variables)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(merge_keys) <span class="sc">==</span> <span class="dv">0</span>) <span class="cf">next</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  final_df <span class="ot">&lt;-</span> <span class="fu">merge</span>(final_df, df, <span class="at">by =</span> merge_keys, <span class="at">all.x =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p><strong>2. Depuración</strong> (<code>02_limpiar.R</code>): los códigos 98/99 (no sabe / no informa) se convierten en <code>NA</code>, se conservan solo registros con factor de expansión válido y se etiquetan las variables según el diccionario DANE.</p>
@@ -4710,10 +4713,13 @@ window.onload = function() {
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>calc_dist <span class="ot">&lt;-</span> <span class="cf">function</span>(dt, variable) {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  dt[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">get</span>(variable)), .(<span class="at">Cantidad =</span> <span class="fu">sum</span>(F_EXP)), by <span class="ot">=</span> variable][</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    , Distribucion_Pct <span class="sc">:</span><span class="er">=</span> <span class="fu">round</span>(Cantidad <span class="sc">/</span> <span class="fu">sum</span>(Cantidad) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)]</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>calc_dist <span class="ot">&lt;-</span> <span class="cf">function</span>(dt, variable, <span class="at">peso =</span> <span class="st">&quot;F_EXP&quot;</span>) {   <span class="co"># &quot;FEX_C&quot; en los cuadros por departamento</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>variable <span class="sc">%in%</span> <span class="fu">colnames</span>(dt)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> dt[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">get</span>(variable)), .(<span class="at">Cantidad =</span> <span class="fu">sum</span>(<span class="fu">get</span>(peso), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), by <span class="ot">=</span> variable]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  res[, Distribucion_Pct <span class="sc">:</span><span class="er">=</span> <span class="fu">round</span>((Cantidad <span class="sc">/</span> <span class="fu">sum</span>(Cantidad)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">2</span>)]</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">setorderv</span>(res, variable)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(res)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p><strong>5. Apriori con medidas ponderadas</strong> (<code>05_apriori.R</code> y <code>00_config.R</code>):</p>
@@ -4738,11 +4744,23 @@ window.onload = function() {
 <div class="cell" data-layout-align="center">
 <details class="code-fold">
 <summary>Código</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>base[, grupo <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  usa_internet <span class="sc">!=</span> <span class="dv">1</span> <span class="sc">&amp;</span> tiene_rut <span class="sc">!=</span> <span class="dv">1</span>, <span class="st">&quot;Excluidos&quot;</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  usa_internet <span class="sc">==</span> <span class="dv">1</span> <span class="sc">&amp;</span> tiene_rut <span class="sc">==</span> <span class="dv">1</span>, <span class="st">&quot;Integrados&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">default =</span> <span class="st">&quot;En transición&quot;</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>base[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">internet =</span> usa_internet <span class="sc">==</span> <span class="dv">1</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">rut      =</span> tiene_rut <span class="sc">==</span> <span class="dv">1</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>base[, subgrupo <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span>internet <span class="sc">&amp;</span> <span class="sc">!</span>rut, <span class="st">&quot;Sin internet y sin RUT&quot;</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>   internet <span class="sc">&amp;</span> <span class="sc">!</span>rut, <span class="st">&quot;Con internet, sin RUT&quot;</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span>internet <span class="sc">&amp;</span>  rut, <span class="st">&quot;Con RUT, sin internet&quot;</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>   internet <span class="sc">&amp;</span>  rut, <span class="st">&quot;Con internet y con RUT&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>base[, grupo <span class="sc">:</span><span class="er">=</span> <span class="fu">fcase</span>(</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  subgrupo <span class="sc">==</span> <span class="st">&quot;Sin internet y sin RUT&quot;</span>, <span class="st">&quot;Excluidos&quot;</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  subgrupo <span class="sc">==</span> <span class="st">&quot;Con internet y con RUT&quot;</span>, <span class="st">&quot;Integrados&quot;</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">default =</span> <span class="st">&quot;En transición&quot;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p><strong>Correcciones durante el proceso.</strong> Al auditar el pipeline para esta versión se corrigieron seis errores, todos documentados en el código: (1) el conteo de personal ocupado usaba el módulo de trabajadores, que está incompleto; ahora se usa la definición DANE (propietario + P3032) y se reproduce exactamente el boletín (82,3% unipersonal, 6.879.489 personas ocupadas); (2) la Figura 4C graficaba el porcentaje de negocios por sector en lugar del personal promedio; (3) las etiquetas del tipo de contabilidad en Apriori estaban desplazadas (lo rotulado “Libro diario” era en realidad “cuaderno u otro registro”); (4) los porcentajes de RUT e internet por departamento (cuadro J2) no estaban ponderados; (5) la variable P469 («¿el negocio es visible al público?») entraba en Apriori con la etiqueta «paga arriendo»: las medidas de las reglas no cambian, pero su lectura sí; (6) los cuadros por departamento (J1 y J2) omitían San Andrés y usaban el factor nacional; ahora usan el factor departamental <code>FEX_C</code> y reproducen el boletín departamental del DANE.</p>
@@ -4759,7 +4777,7 @@ window.onload = function() {
 <p><strong>Objetivo propuesto:</strong> reducir la tasa de micronegocios sin RUT del 77,6% al 50% en tres años.</p>
 <p><strong>Medidas:</strong></p>
 <ul>
-<li><strong>Simplificación radical del RUT:</strong> proceso en línea desde el celular, sin costo y sin exigir local fijo; la dirección del negocio puede ser la vivienda del propietario (el 57,5% no tiene local fijo).</li>
+<li><strong>Simplificación radical del RUT:</strong> proceso en línea desde el celular, sin costo y sin exigir local fijo; la dirección del negocio puede ser la vivienda del propietario (el 57,5% opera en la vivienda, puerta a puerta o de forma ambulante).</li>
 <li><strong>Incentivo de acceso vinculado:</strong> asociar el RUT activo a beneficios concretos —acceso a microcrédito o a pagos digitales sin costo—, para que deje de ser solo una obligación.</li>
 <li><strong>Focalización territorial y de género:</strong> priorizar zonas rurales, donde la informalidad fiscal es más aguda, con enfoque diferencial hacia las mujeres propietarias.</li>
 <li><strong>Sin presión tributaria inmediata:</strong> diferir la primera obligación tributaria tras el registro; el objetivo inicial es la formalización, no la recaudación.</li>
@@ -4777,7 +4795,7 @@ window.onload = function() {
 </section>
 <section id="eje-3-financiamiento-e-inclusión-financiera" class="level2" data-number="14.3">
 <h2 data-number="14.3" class="anchored" data-anchor-id="eje-3-financiamiento-e-inclusión-financiera"><span class="header-section-number">14.3</span> Eje 3: Financiamiento e inclusión financiera</h2>
-<p><strong>Diagnóstico que lo justifica:</strong> 85,8% no solicitó crédito; 76,9% inició sin financiación externa; entre quienes solicitaron crédito, 22,9% lo hizo con prestamistas gota a gota.</p>
+<p><strong>Diagnóstico que lo justifica:</strong> 85,8% no solicitó crédito; 76,8% inició sin financiación externa; entre quienes solicitaron crédito, 22,9% lo hizo con prestamistas gota a gota.</p>
 <p><strong>Objetivo propuesto:</strong> aumentar la solicitud de crédito formal del 14,2% al 40% en tres años.</p>
 <ul>
 <li><strong>Microcrédito digital:</strong> producto sin sucursal ni garantías físicas, con evaluación de riesgo basada en el historial de transacciones digitales —coherente con la fuerte asociación entre RUT y pagos digitales—.</li>
@@ -4787,7 +4805,7 @@ window.onload = function() {
 </section>
 <section id="eje-4-renovación-y-modernización" class="level2" data-number="14.4">
 <h2 data-number="14.4" class="anchored" data-anchor-id="eje-4-renovación-y-modernización"><span class="header-section-number">14.4</span> Eje 4: Renovación y modernización</h2>
-<p><strong>Diagnóstico que lo justifica:</strong> 47,4% de negocios con 10+ años; los negocios antiguos se asocian con no usar redes sociales ni dispositivos (lift ~1,27).</p>
+<p><strong>Diagnóstico que lo justifica:</strong> 47,4% de negocios con 10+ años; los negocios antiguos se asocian con no usar redes sociales ni dispositivos (lift ponderado de 1,2 a 1,3).</p>
 <p><strong>Objetivo propuesto:</strong> incorporar a 500.000 micronegocios con más de diez años al ecosistema digital en dos años.</p>
 <ul>
 <li><strong>Programa de modernización:</strong> asesoría técnica gratuita en digitalización de procesos y crédito especial para inversión en tecnología.</li>
@@ -4920,7 +4938,7 @@ window.onload = function() {
 <li>La segmentación usa dos variables por transparencia; otras definiciones (por ejemplo, con los índices sintéticos) producirían grupos de distinto tamaño.</li>
 </ul>
 <hr>
-<p><em>Documento elaborado con R + Quarto. Análisis reproducible a partir de los microdatos oficiales del DANE.</em> <em>Autor: <strong>Daniel Molina Barrios</strong> — Economista &amp; Data Scientist · <a href="https://github.com/dmetrics1">GitHub</a> · <a href="https://www.linkedin.com/in/danieljmolina/">LinkedIn</a></em> <em>Última actualización: octubre de 2026.</em></p>
+<p><em>Documento elaborado con R + Quarto. Análisis reproducible a partir de los microdatos oficiales del DANE.</em> <em>Autor: <strong>Daniel Molina Barrios</strong> — Economista &amp; Data Scientist · <a href="https://github.com/dmetrics1">GitHub</a> · <a href="https://www.linkedin.com/in/danieljmolina/">LinkedIn</a></em> <em>Última actualización: 10 de noviembre de 2026.</em></p>
 </section>
 </section>
 

@@ -264,7 +264,8 @@ inspect(reglas_top30)
 reglas_df <- as(reglas, "data.frame")
 write.csv(reglas_df, file.path(DIR_OUTPUT_TABS, "06_reglas_asociacion_todas.csv"), row.names = FALSE)
 
-# Medidas ponderadas por F_EXP (representativas del universo de 5,3M)
+# Medidas ponderadas por F_EXP (los 77.202 registros completos suman
+# 5,2 M de negocios; el universo total es de 5,3 M)
 reglas_pond_df <- cbind(as.data.table(reglas_df), medidas_ponderadas(reglas, trans))
 write.csv(reglas_pond_df, file.path(DIR_OUTPUT_TABS, "06b_reglas_ponderadas.csv"),
           row.names = FALSE, fileEncoding = "UTF-8")

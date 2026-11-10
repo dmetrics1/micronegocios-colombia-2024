@@ -16,7 +16,7 @@
 # mismo maxlen, el subconjunto con soporte ≥ s y confianza ≥ c es
 # idéntico a correr apriori() con (s, c). La redundancia (is.redundant)
 # también se conserva: la regla más general de una redundante tiene
-# soporte y confianza mayores, así que pertenece al mismo subconjunto.
+# soporte y confianza iguales o mayores, así que pertenece al mismo subconjunto.
 # =====================================================================
 
 source(file.path("scripts", "00_config.R"))

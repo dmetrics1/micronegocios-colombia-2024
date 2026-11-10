@@ -20,11 +20,11 @@ Fuentes: `output/tablas/boletin/`, `output/tablas/03_indices_distribucion.csv`, 
 
 ## 2. Minería de Reglas de Asociación (Apriori)
 
-Apriori se ejecutó sobre 30 variables categóricas (77.202 registros completos) con **soporte ≥ 15%**, **confianza ≥ 70%** y antecedentes de hasta tres ítems. De 119.456 reglas quedaron 55.906 no redundantes. Las medidas se recalcularon ponderando cada registro por F_EXP; abajo se reportan las ponderadas.
+Apriori se ejecutó sobre 30 variables categóricas (99 ítems; 77.202 registros completos de los 78.501 de la muestra, cuyos F_EXP suman 5.203.185) con **soporte ≥ 15%**, **confianza ≥ 70%** y antecedentes de hasta tres ítems. De 119.456 reglas quedaron 55.906 no redundantes. Las medidas se recalcularon ponderando cada registro por F_EXP; abajo se reportan las ponderadas.
 
 ### **Patrón 1: El Ecosistema de la Exclusión Digital**
 `{Sin Dispositivos, Sin Celular de Negocio, Sin Transferencias} => {Sin Internet en el Local}`
-- **Confianza:** 99,6% | **Soporte:** 27,6% | **Lift:** 1,90
+- **Confianza:** 99,6% | **Soporte:** 27,6% (≈1,44 millones de negocios) | **Lift:** 1,90 (1,97 en la muestra)
 - **Interpretación:** La exclusión digital es acumulada: en un núcleo de micronegocios que opera en un entorno totalmente analógico, la ausencia de una herramienta coincide con la ausencia de las demás. El patrón se mantiene en las 16 combinaciones de umbrales evaluadas.
 
 ### **Patrón 2: El Celular como Puerta de Entrada**
@@ -39,8 +39,8 @@ Apriori se ejecutó sobre 30 variables categóricas (77.202 registros completos)
 
 ### **Patrón 4: RUT y Pagos Digitales**
 `{Tiene RUT, Usa Celular} => {Acepta Transferencias}`
-- **Lift:** 2,01 (el más alto de todo el conjunto de reglas)
-- **Interpretación:** La formalización fiscal está fuertemente asociada a los pagos digitales. Con soporte ≥ 5%, las combinaciones de internet, transferencias y local fijo se asocian con tener RUT (confianza ~77%, lift 3,4): el RUT **no** es independiente del resto del sistema, aunque esas combinaciones abarcan solo alrededor del 6% del universo.
+- **Confianza:** 81,5% | **Soporte:** 16,9% | **Lift:** 2,08 (2,01 en la muestra; el más alto de todo el conjunto de reglas, tanto ponderado como muestral)
+- **Interpretación:** La formalización fiscal está fuertemente asociada a los pagos digitales. Con soporte ≥ 15% ninguna regla termina en tener RUT; con soporte ≥ 5% y sin otras variables de formalización en el antecedente, `{Internet en Local, Acepta Transferencias, Local Fijo} => {Tiene RUT}` alcanza confianza 76,9% y lift 3,44: el RUT **no** es independiente del resto del sistema (no es exógeno), aunque esa regla abarca solo el 5,8% de los negocios.
 
 Fuentes: `output/tablas/06b_reglas_ponderadas.csv`, `12a_reglas_clave.csv`, `12d_reglas_rut_sin_formalizacion.csv`.
 
@@ -53,10 +53,10 @@ Definida cruzando acceso a internet y tenencia de RUT (`scripts/06_segmentacion.
 | Grupo | Definición | % del universo | Acepta transferencias | Lleva registros | Ahorró |
 |---|---|---|---|---|---|
 | Excluidos | Sin internet y sin RUT | 46,2% | 5,7% | 12,6% | 11,6% |
-| En transición | Solo uno de los dos | 35,7% | 57,6% | 34,5% | 19,8% |
+| En transición | Solo uno de los dos (31,4% internet sin RUT; 4,2% RUT sin internet) | 35,7% | 57,6% | 34,5% | 19,8% |
 | Integrados | Internet y RUT | 18,2% | 86,9% | 75,4% | 31,1% |
 
-Fuentes: `output/tablas/11_segmentacion_grupos.csv`, `11b_perfil_grupos.csv`.
+Fuentes: `output/tablas/11_segmentacion_grupos.csv`, `11a_segmentacion_subgrupos.csv`, `11b_perfil_grupos.csv`.
 
 ---
 
@@ -70,5 +70,5 @@ Fuentes: `output/tablas/11_segmentacion_grupos.csv`, `11b_perfil_grupos.csv`.
 
 ---
 **Generado por:** Pipeline Analítico EMICRON 2024
-**Fecha:** Octubre 2026
+**Fecha:** Octubre 2026 (cifras revisadas contra `output/tablas/` el 2026-11-10)
 **Fuentes:** Microdatos DANE 2024.
