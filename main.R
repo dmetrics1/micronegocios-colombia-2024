@@ -55,7 +55,7 @@ source("scripts/02_limpiar.R")
 # 3. Cuadros Estadísticos (Réplica Boletín DANE) — VERSIÓN COMPLETA
 # =====================================================================
 cat("\n[3/8] Ejecutando 03_cuadros_boletin_COMPLETO.R...\n")
-source("scripts/03_cuadros_boletin_COMPLETO.R") # 85 cuadros DANE
+source("scripts/03_cuadros_boletin_COMPLETO.R") # 70 cuadros ponderados del boletín DANE
 
 # 4. Análisis Exploratorio de Datos (EDA)
 # =====================================================================
