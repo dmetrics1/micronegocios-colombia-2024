@@ -181,6 +181,9 @@
   .f .num { font:700 128px/1 var(--dm-font-mono); color:var(--dm-text-title); letter-spacing:-.03em; }
   .f .lbl { font:500 30px/1.35 var(--dm-font-body); color:var(--dm-text-muted); margin-top:16px; min-height:130px; }
 
+  .xflow { display:flex; align-items:center; gap:20px; padding:18px 0 18px 44px; font:500 26px var(--dm-font-body); color:var(--dm-text-muted); }
+  .xflow .ar { font:700 44px/1 var(--dm-font-mono); color:var(--dm-kpi); }
+  .xflow b { font:700 30px var(--dm-font-mono); color:var(--dm-kpi); margin-right:10px; }
   /* portada */
   .hero-net { position:absolute; top:-30px; right:-50px; width:700px; height:700px; opacity:.95; z-index:0; }
   .slide.cover { grid-template-columns:minmax(0,1fr); grid-template-rows:1fr; }
@@ -282,23 +285,23 @@
 </section>
 
 <!-- ============ 4 · DATOS ============ -->
-<section class="slide two" style="grid-template-columns:1.1fr .9fr; align-content:stretch;">
-  <div class="stack" style="gap:36px;">
+<section class="slide two" style="grid-template-columns:1.12fr .88fr; align-content:stretch; gap:70px;">
+  <div class="stack" style="gap:40px; justify-content:center;">
     <div class="slide-num">02</div>
-    <h2>Los datos: EMICRON 2024</h2>
-    <ul class="big">
-      <li><b><span data-v="muestra" data-f="num0"></span> negocios encuestados</b> en <span data-v="n_modulos"></span> módulos: identificación, TIC, inclusión financiera, ventas, personal…</li>
-      <li>Cada registro trae un <b>factor de expansión</b> (<code>F_EXP</code>): la muestra representa <span data-v="universo" data-f="num0"></span> unidades. Sin él describiríamos la muestra, no al país.</li>
-      <li>Microdatos abiertos en <code>microdatos.dane.gov.co</code>, en CSV. Incluidos en el repositorio.</li>
-      <li><span data-v="n_apriori" data-f="num0"></span> registros completos en las 30 variables del análisis de reglas.</li>
+    <h2 style="white-space:nowrap;">Los datos: EMICRON 2024</h2>
+    <ul class="big" style="gap:26px;">
+      <li><b><span data-v="n_modulos"></span> módulos en CSV</b>, unidos con <code>data.table</code></li>
+      <li><b>Datos abiertos</b> del DANE, en el repositorio</li>
+      <li><b><span data-v="n_apriori" data-f="num0"></span> registros completos</b> para las reglas</li>
     </ul>
   </div>
-  <div class="stack" style="gap:36px; justify-content:center;">
-    <div class="card"><div class="top">Muestra</div><div class="stat" style="border:none; padding:0;"><div class="num" data-v="muestra" data-f="num0"></div><div class="lbl">encuestas → <span data-v="universo" data-f="mill1"></span> millones de negocios</div></div></div>
-    <div class="card"><div class="top">Módulos</div><div class="stat" style="border:none; padding:0;"><div class="num"><span data-v="n_modulos"></span> CSV</div><div class="lbl">unidos por la llave del negocio con <code>data.table</code></div></div></div>
+  <div class="stack" style="gap:0; justify-content:center;">
+    <div class="card"><div class="top">Muestra</div><div class="stat" style="border:none; padding:0;"><div class="num" data-v="muestra" data-f="num0"></div><div class="lbl">encuestas a micronegocios</div></div></div>
+    <div class="xflow"><span class="ar">↓</span><span><b>× F_EXP</b> factor de expansión</span></div>
+    <div class="card" style="border-color:rgba(6,182,212,.35);"><div class="top">Universo</div><div class="stat" style="border:none; padding:0;"><div class="num" data-v="universo" data-f="mill1"></div><div class="lbl">millones de micronegocios en el país</div></div></div>
   </div>
-  <span class="src">data/raw/2024 · output/tablas/11_segmentacion_grupos.csv</span>
-  <aside class="notes">La EMICRON es la encuesta de micronegocios del DANE. Setenta y ocho mil quinientas encuestas en once módulos, cada una con su factor de expansión. Ese factor es clave y va a volver a aparecer.</aside>
+  <span class="src">microdatos.dane.gov.co · data/raw/2024 · output/tablas/11_segmentacion_grupos.csv</span>
+  <aside class="notes">Los datos son la EMICRON 2024, la encuesta de micronegocios del DANE. Son setenta y ocho mil quinientas encuestas. Cada una trae un factor de expansión, que dice a cuántos negocios del país representa esa encuesta. Con ese factor, la muestra se convierte en los cinco coma tres millones de micronegocios del país. Sin él, estaría describiendo la muestra y no a Colombia. Son once módulos en CSV, abiertos, y están en el repositorio. Para las reglas uso los setenta y siete mil doscientos registros completos.</aside>
 </section>
 
 <!-- ============ 5 · PIPELINE ============ -->
