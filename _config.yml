@@ -1,0 +1,18 @@
+# Configuración de GitHub Pages (Jekyll).
+# El sitio solo necesita el reporte HTML (autocontenido) y las diapositivas.
+# Los datos y el código siguen en el repositorio, pero no se publican en la web:
+# sin esto, cada despliegue copiaba ~107 MB y la sincronización agotaba el tiempo.
+exclude:
+  - data
+  - renv
+  - renv.lock
+  - scripts
+  - tests
+  - paper
+  - main.R
+  - "*.Rproj"
+  - "*.qmd"
+  - custom-wide-pro.scss
+  - presentacion/build.R
+  - presentacion/data
+  - CITATION.cff
