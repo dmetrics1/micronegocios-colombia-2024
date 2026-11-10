@@ -284,5 +284,5 @@ window.DATOS = {
       "Pct_Con_RUT": 27.91
     }
   ],
-  "generado_en": "2026-10-21 15:39"
+  "generado_en": "2026-11-10 10:01"
 };

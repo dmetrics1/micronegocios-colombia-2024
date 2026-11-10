@@ -217,16 +217,25 @@ figuras <- function(dark) {
     `Cámara de Comercio` = Camara_comercio_pct, `Ahorró el último año` = Ahorro_pct,
     `Solicitó crédito` = Solicito_credito_pct, `Zona rural` = Rural_pct)],
     id.vars = "grupo", variable.name = "indicador", value.name = "pct")
-  pl[, grupo := factor(grupo, levels = names(cols_g))][, indicador := factor(indicador, levels = rev(unique(indicador)))]
-  p <- ggplot(pl, aes(x = pct, y = indicador, colour = grupo)) +
-    geom_line(aes(group = indicador), colour = t$line, linewidth = 5) +
-    geom_point(size = 8) +
-    geom_text(aes(label = format(round(pct), nsmall = 0)), colour = t$textTitle, family = DM_FONT_MONO, size = 4.2, fontface = "bold") +
-    scale_colour_manual(values = cols_g, name = NULL) +
-    scale_x_continuous(labels = label_percent(scale = 1, accuracy = 1), limits = c(-2, 102)) +
+  pl[, grupo := factor(grupo, levels = names(cols_g))]
+  pl[, indicador := factor(indicador, levels = unique(indicador))]
+  # Barras agrupadas: un panel por indicador, la cifra al final de cada barra.
+  # (El gráfico de puntos anterior encimaba los valores cercanos, p. ej. 11/15/20.)
+  p <- ggplot(pl, aes(x = pct, y = factor(grupo, levels = rev(names(cols_g))), fill = grupo)) +
+    geom_col(width = 0.78) +
+    geom_text(aes(label = paste0(round(pct), "%")), hjust = -0.18, colour = t$textTitle,
+              family = DM_FONT_MONO, size = 6.4, fontface = "bold") +
+    facet_wrap(~indicador, ncol = 1, strip.position = "top") +
+    scale_fill_manual(values = cols_g, name = NULL) +
+    scale_x_continuous(limits = c(0, 108), expand = c(0, 0)) +
     labs(x = NULL, y = NULL) +
-    dm_theme(t, 22) + guides(colour = guide_legend(override.aes = list(size = 7)))
-  guardar(p, "perfil", 1000, 700, dark)
+    dm_theme(t, 22) +
+    theme(axis.text = element_blank(), axis.ticks = element_blank(), panel.grid = element_blank(),
+          legend.position = "none", panel.spacing = unit(14, "pt"),
+          strip.text = element_text(hjust = 0, colour = t$textBody, family = DM_FONT_BODY, size = 21,
+                                    margin = margin(0, 0, 4, 0)),
+          strip.background = element_blank())
+  guardar(p, "perfil", 900, 860, dark)
 
   # --- Mapas ---
   cod <- c(`05` = "Antioquia", `08` = "Atlántico", `11` = "Bogotá D.C.", `13` = "Bolívar", `15` = "Boyacá",

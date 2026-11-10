@@ -407,14 +407,14 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
       <p class="lead">reglas terminan en <b>tiene RUT</b>.</p>
       <p class="body muted">En el resumen lo llamé <i>"factor exógeno"</i>. Un revisor objetó: <b>la ausencia de reglas no prueba exogeneidad</b>. Tenía razón: los negocios con RUT son el <span data-v="rut_pct" data-f="pct1"></span> del universo y sus combinaciones no alcanzan el umbral.</p>
     </div>
-    <div class="card stack" style="gap:28px; justify-content:center; border-color:rgba(245,158,11,.35);">
-      <div class="top amber">con soporte ≥ 5 %, sin otras variables de formalización en el antecedente</div>
-      <div class="rulebox" style="font-size:40px; padding:36px 40px;"><span class="brace">{</span><span class="lhs" data-v="regla_rut.lhs" data-f="lhs"></span><span class="brace">}</span><span class="arrow">⇒</span><span class="brace">{</span><span class="rhs" data-v="regla_rut.rhs"></span><span class="brace">}</span></div>
+    <div class="card stack" style="gap:22px; justify-content:safe center; border-color:rgba(245,158,11,.35);">
+      <div class="top amber" style="margin-bottom:0;">con soporte ≥ 5 %, sin otras variables de formalización en el antecedente</div>
+      <div class="rulebox" style="font-size:34px; padding:26px 34px;"><span class="brace">{</span><span class="lhs" data-v="regla_rut.lhs" data-f="lhs"></span><span class="brace">}</span><span class="arrow">⇒</span><span class="brace">{</span><span class="rhs" data-v="regla_rut.rhs"></span><span class="brace">}</span></div>
       <div class="stat-row" style="gap:36px;">
-        <div class="stat amber"><div class="num" style="font-size:96px;" data-v="regla_rut.lift" data-f="num2"></div><div class="lbl">lift ponderado</div></div>
-        <div class="stat"><div class="num" style="font-size:96px;" data-v="regla_rut.conf" data-f="pct1"></div><div class="lbl">confianza</div></div>
+        <div class="stat amber"><div class="num" style="font-size:84px;" data-v="regla_rut.lift" data-f="num2"></div><div class="lbl">lift ponderado</div></div>
+        <div class="stat"><div class="num" style="font-size:84px;" data-v="regla_rut.conf" data-f="pct1"></div><div class="lbl">confianza</div></div>
       </div>
-      <p class="body muted">Y la regla con <b>el lift más alto de todo el análisis</b> (<span class="mono amber" data-v="regla_max.lift" data-f="num2"></span>) es {<span data-v="regla_max.lhs" data-f="lhs"></span>} ⇒ {<span data-v="regla_max.rhs"></span>}. El silencio era del umbral, no del RUT.</p>
+      <p class="body muted" style="font-size:27px;">Y la regla con <b>el lift más alto de todo el análisis</b> (<span class="mono amber" data-v="regla_max.lift" data-f="num2"></span>) es {<span data-v="regla_max.lhs" data-f="lhs"></span>} ⇒ {<span data-v="regla_max.rhs"></span>}. El silencio era del umbral, no del RUT.</p>
     </div>
   </div>
   <span class="src">output/tablas/12d_reglas_rut_sin_formalizacion.csv · 06b_reglas_ponderadas.csv</span>
@@ -428,11 +428,11 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <p class="body-xl">Cruzo <b>internet</b> × <b>RUT</b>. Los grupos no se solapan y cubren a todos.</p>
     <div class="gbar" id="gbar"></div>
     <div class="legend" style="flex-direction:column; gap:12px;"><span><i style="background:var(--dm-negative)"></i><b>Excluidos</b> · sin internet ni RUT</span><span><i style="background:var(--dm-accent-3)"></i><b>En transición</b> · solo uno de los dos</span><span><i style="background:var(--dm-positive)"></i><b>Integrados</b> · internet y RUT</span></div>
-    <p class="body muted">El resumen que envié decía <span class="mono">65 / 8 / 27</span>. Esas cifras no salían de ningún script. <b>Estas sí</b>, y la lectura se mantiene: una mayoría excluida, un grupo en transición y una minoría integrada.</p>
+    <p class="body muted">El resumen que envié decía 65/8/27. Esas cifras no salían de ningún script. <b>Estas sí</b>, y la lectura se mantiene: una mayoría excluida, un grupo en transición y una minoría integrada.</p>
   </div>
   <div class="stack" style="gap:16px; min-height:0;">
     <div class="kicker" style="text-align:center;">Perfil con variables que <b>no</b> definen los grupos (ponderado)</div>
-    <div class="figbox"><img class="fig" data-fig="perfil" alt="Perfil de los grupos"></div>
+    <div class="figbox" style="flex:1;"><img class="fig" data-fig="perfil" alt="Perfil de los grupos"></div>
   </div>
   <span class="src">output/tablas/11_segmentacion_grupos.csv · 11b_perfil_grupos.csv · scripts/06_segmentacion.R</span>
   <aside class="notes">Con esas dos variables armo tres grupos que no se solapan y cubren a todos. Aquí hay una confesión: el resumen decía sesenta y cinco, ocho y veintisiete, y esas cifras no salían de ningún script. Al hacerlo reproducible, cambiaron. Lo importante es la derecha: los grupos se separan en variables que no usé para definirlos. Transferencias: del seis al ochenta y siete por ciento. Son co-ocurrencias, no efectos, pero el paquete es consistente.</aside>
