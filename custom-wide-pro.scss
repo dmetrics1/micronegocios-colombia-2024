@@ -402,3 +402,6 @@ hr { border-color: $dm-line; opacity: 1; }
 #quarto-margin-sidebar { display: none !important; }
 .quarto-secondary-nav { display: none !important; }
 .sidebar nav, .quarto-sidebar-toggle { border: none !important; }
+
+/* Sin ligaduras en el código: «<-» debe verse como se escribe en R, no como una flecha */
+code, pre, .sourceCode, kbd { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
