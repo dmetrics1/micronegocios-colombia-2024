@@ -154,10 +154,12 @@ figuras <- function(dark) {
     geom_vline(xintercept = 0, colour = t$textMuted, linewidth = 0.5) +
     geom_segment(aes(x = 0, xend = dif, yend = etiqueta), colour = t$ink$navy, linewidth = 1.8) +
     geom_point(aes(colour = abs(dif) <= 0.1), size = 6.5) +
-    geom_text(aes(label = ifelse(abs(dif) > 0.1, paste0("+", format(round(dif, 2), decimal.mark = ",")), "")),
-              hjust = -0.4, family = DM_FONT_MONO, colour = t$accent3, size = 6, fontface = "bold") +
+    # sprintf por elemento: format() sobre un vector rellena con espacios ("+ 1,0")
+    geom_text(aes(label = ifelse(abs(dif) > 0.1, paste0("+", sub(".", ",", sprintf("%.2f", dif), fixed = TRUE)), "")),
+              hjust = -0.35, family = DM_FONT_MONO, colour = t$accent3, size = 6, fontface = "bold") +
     scale_colour_manual(values = c(`TRUE` = t$accent2, `FALSE` = t$accent3), guide = "none") +
-    scale_x_continuous(labels = function(x) paste0(ifelse(x > 0, "+", ""), format(x, decimal.mark = ",")), limits = c(-1.3, 1.5)) +
+    scale_x_continuous(labels = function(x) ifelse(is.na(x), "", paste0(ifelse(x > 0, "+", ""), sub(".", ",", sprintf("%.1f", x), fixed = TRUE))),
+                       breaks = seq(-1, 1.5, 0.5), limits = c(-1.3, 1.95)) +
     labs(x = "Diferencia pipeline − DANE (puntos porcentuales)", y = NULL) +
     dm_theme(t, 22)
   guardar(p, "validacion", 980, 720, dark)
