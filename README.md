@@ -3,7 +3,7 @@
 [![R](https://img.shields.io/badge/R-4.5-276DC3?style=flat-square&logo=r&logoColor=white)](https://www.r-project.org/)
 [![Quarto](https://img.shields.io/badge/Quarto-1.8-06B6D4?style=flat-square&logo=quarto&logoColor=white)](https://quarto.org/)
 [![renv](https://img.shields.io/badge/renv-lockfile-10B981?style=flat-square)](renv.lock)
-[![Tests](https://img.shields.io/badge/pruebas-31%2F31-10B981?style=flat-square)](tests/validar_resultados.R)
+[![Tests](https://img.shields.io/badge/pruebas-40%2F40-10B981?style=flat-square)](tests/validar_resultados.R)
 [![License](https://img.shields.io/github/license/dmetrics1/micronegocios-colombia-2024?style=flat-square&color=2563EB)](LICENSE)
 [![Live Report](https://img.shields.io/badge/Reporte-en%20vivo-1E40AF?style=flat-square&logo=html5&logoColor=white)](https://dmetrics1.github.io/micronegocios-colombia-2024/)
 
@@ -158,7 +158,7 @@ cbind(as(reglas, "data.frame")[, c("rules", "lift")], medidas_ponderadas(reglas,
 Rscript tests/validar_resultados.R
 ```
 
-Comprueba que las salidas existen, que 10 indicadores coinciden con el boletín del DANE, que el total de personal ocupado reproduce la cifra oficial (6.879.489), que los grupos suman 100 % y que las reglas cumplen los umbrales. Última ejecución: **31 de 31 pruebas superadas** (2026-10-17).
+Comprueba que las salidas existen, que 10 indicadores coinciden con el boletín del DANE, que el total de personal ocupado reproduce la cifra oficial (6.879.489), que las participaciones por departamento reproducen el boletín departamental del DANE (factor `FEX_C`), que los grupos suman 100 % y que las reglas cumplen los umbrales. Última ejecución: **40 de 40 pruebas superadas** (2026-11-10).
 
 ## 📁 Estructura del repositorio
 
