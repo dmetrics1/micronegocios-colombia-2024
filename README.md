@@ -59,7 +59,7 @@ Lo que puedes reutilizar:
 
 - `{sin computador ni tableta, sin celular de negocio, sin transferencias} ⇒ {sin internet en el local}` — **confianza 99,6 %, soporte 27,6 %, lift 1,90**. La exclusión digital es acumulada: cuando falta una herramienta, faltan todas. Estable en las 16 combinaciones de umbrales evaluadas.
 - `{usa celular, acepta transferencias} ⇒ {internet en el local}` — **lift ponderado 1,87**. Las TIC co-ocurren como sistema.
-- `{tiene RUT, usa celular} ⇒ {acepta transferencias}` — **lift 2,01**, el más alto del análisis. Con soporte ≥ 5 %, las combinaciones de internet, transferencias y local fijo se asocian con tener RUT (confianza 77 %, lift 3,4): la formalización no es independiente de la digitalización.
+- `{tiene RUT, usa celular} ⇒ {acepta transferencias}` — **lift ponderado 2,08** (2,01 en la muestra), el más alto del análisis. Con soporte ≥ 5 %, las combinaciones de internet, transferencias y local fijo se asocian con tener RUT (confianza 77 %, lift 3,4): la formalización no es independiente de la digitalización.
 
 **Segmentación** (internet × RUT, grupos excluyentes y exhaustivos): **Excluidos 46,2 %** · **En transición 35,7 %** · **Integrados 18,2 %**. Los grupos se diferencian en variables que no los definen: aceptan transferencias el 5,7 % de los excluidos frente al 86,9 % de los integrados.
 

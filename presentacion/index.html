@@ -430,7 +430,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
         <div class="stat amber"><div class="num" style="font-size:84px;" data-v="regla_rut.lift" data-f="num2"></div><div class="lbl">lift ponderado</div></div>
         <div class="stat"><div class="num" style="font-size:84px;" data-v="regla_rut.conf" data-f="pct1"></div><div class="lbl">confianza</div></div>
       </div>
-      <p class="body muted" style="font-size:27px;">Y la regla con <b>el lift más alto de todo el análisis</b> (<span class="mono amber" data-v="regla_max.lift" data-f="num2"></span>) es {<span data-v="regla_max.lhs" data-f="lhs"></span>} ⇒ {<span data-v="regla_max.rhs"></span>}. El silencio era del umbral, no del RUT.</p>
+      <p class="body muted" style="font-size:27px;">Y la regla con <b>el lift ponderado más alto de todo el análisis</b> (<span class="mono amber" data-v="regla_max.lift_p" data-f="num2"></span>) es {<span data-v="regla_max.lhs" data-f="lhs"></span>} ⇒ {<span data-v="regla_max.rhs"></span>}. El silencio era del umbral, no del RUT.</p>
     </div>
   </div>
   <span class="src">output/tablas/12d_reglas_rut_sin_formalizacion.csv · 06b_reglas_ponderadas.csv</span>
@@ -491,8 +491,8 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
       <p class="body muted" style="margin-top:auto; font-size:20px;">Evidencia: regla de exclusión acumulada · 11c_celular_x_internet.csv</p>
     </div>
     <div class="card stack" style="gap:16px; padding:36px 40px;">
-      <div class="num mono" style="font:700 92px/1 var(--dm-font-mono); color:var(--dm-accent-3);" data-v="regla_max.lift" data-f="num2"></div>
-      <h3 style="font-size:34px;">lift de RUT + celular ⇒ transferencias</h3>
+      <div class="num mono" style="font:700 92px/1 var(--dm-font-mono); color:var(--dm-accent-3);" data-v="regla_max.lift_p" data-f="num2"></div>
+      <h3 style="font-size:34px;">lift ponderado de RUT + celular ⇒ transferencias</h3>
       <p class="body muted" style="font-size:26px;">La formalización co-ocurre con pagos digitales, internet y local fijo. Un <b>RUT desde el celular</b>, atado a pagos y registros simples, trabaja a favor de la estructura.</p>
       <p class="body muted" style="margin-top:auto; font-size:20px;">Evidencia: 06b_reglas_ponderadas.csv · 12d_reglas_rut_sin_formalizacion.csv</p>
     </div>
