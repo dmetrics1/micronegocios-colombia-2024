@@ -42,6 +42,10 @@ extra  <- fread("../data/reference/dane_boletin_extra.csv", encoding = "UTF-8")
 val[, generado := mapply(function(a, f, c) { d <- bol(a); d[d[[1]] == f][[c]] }, archivo, fila, columna)]
 val[, dif := generado - valor_dane]
 
+# El soporte ponderado es una proporción de los 77.202 registros de Apriori, así que
+# los negocios se cuentan con la suma de sus F_EXP (5.203.185), no con el universo total.
+peso_apriori <- sum(arules::transactionInfo(readRDS("../data/processed/transacciones_apriori.rds"))$weight)
+
 cv <- function(m) comp[medida == m, valor]
 r_excl <- clave[hallazgo == "Exclusión digital acumulada"]
 r_cel  <- clave[hallazgo == "Sin celular → sin internet"]
@@ -83,7 +87,7 @@ DATOS <- list(
   val_max_dif   = max(abs(val$dif)),
   val_max_ind   = val$indicador[which.max(abs(val$dif))],
   regla_excl    = c(rule_parts(r_excl$regla), list(conf = r_excl$confidence_pond * 100, sop = r_excl$support_pond * 100,
-                     lift = r_excl$lift_pond, lift_m = r_excl$lift, negocios = r_excl$support_pond * sum(seg$Universo))),
+                     lift = r_excl$lift_pond, lift_m = r_excl$lift, negocios = r_excl$support_pond * peso_apriori)),
   regla_cel     = c(rule_parts(r_cel$regla), list(conf = r_cel$confidence_pond * 100, lift = r_cel$lift_pond)),
   regla_tic     = c(rule_parts(r_tic$regla), list(conf = r_tic$confidence_pond * 100, conf_m = r_tic$confidence * 100,
                      lift = r_tic$lift_pond, lift_m = r_tic$lift)),
@@ -181,8 +185,9 @@ figuras <- function(dark) {
   guardar(p, "scatter", 1100, 620, dark)
 
   # --- Red de reglas ---
+  # Las 40 de mayor lift ya incluyen las dos únicas reglas que terminan en
+  # transferencias; agregarlas aparte las duplicaba y creaba un nodo vacío (NA).
   top <- reglas[order(-lift_pond)][1:40]
-  top <- rbind(top, reglas[grepl("=> {acepta_transferencia=Sí}", rules, fixed = TRUE)][order(-lift_pond)][1:6])
   edges <- rbindlist(lapply(seq_len(nrow(top)), function(i) {
     partes <- strsplit(gsub("[{}]", "", top$rules[i]), " => ")[[1]]
     data.table(from = strsplit(partes[1], ",")[[1]], to = partes[2], lift = top$lift_pond[i])

@@ -31,7 +31,7 @@ window.DATOS = {
     "sop": 27.6301154152609,
     "lift": 1.90231649530864,
     "lift_m": 1.97335071089112,
-    "negocios": 1463636.84143722
+    "negocios": 1437645.89416387
   },
   "regla_cel": {
     "lhs": "sin celular de negocio",
@@ -284,5 +284,5 @@ window.DATOS = {
       "Pct_Con_RUT": 27.91
     }
   ],
-  "generado_en": "2026-11-10 10:43"
+  "generado_en": "2026-11-10 17:43"
 };

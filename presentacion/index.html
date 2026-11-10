@@ -379,7 +379,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
   <div class="funnel">
     <div class="f"><div class="bar" style="height:62%;"></div><div class="num" data-v="n_generadas" data-f="num0"></div><div class="lbl">reglas generadas por <code>apriori()</code></div></div>
     <div class="f"><div class="bar" style="height:29%;"></div><div class="num" data-v="n_no_redund" data-f="num0"></div><div class="lbl">no redundantes: se quita una regla si otra más general ya tiene igual o mayor confianza (<code>is.redundant()</code>)</div></div>
-    <div class="f"><div class="bar" style="height:4%;"></div><div class="num" data-v="n_39"></div><div class="lbl">con soporte &gt; 20 % en los análisis dirigidos: las que sostienen el relato</div></div>
+    <div class="f"><div class="bar" style="height:4%;"></div><div class="num" data-v="n_39"></div><div class="lbl">de mayor lift (generales y dirigidas) con soporte &gt; 20 %: las que sostienen el relato</div></div>
   </div>
   <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 10_TABLA_RESUMEN_FILTRADA_20PCT.csv</span>
   <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y trabajo con las treinta y nueve que tienen soporte mayor al veinte por ciento en los análisis dirigidos. Tres de ellas son las que les voy a contar.</aside>
@@ -409,7 +409,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <span class="caveat" style="align-self:flex-start;">asociación ≠ causalidad</span>
   </div>
   <div class="figbox"><img class="fig" data-fig="red" alt="Red de las reglas con mayor lift"></div>
-  <span class="src">40 reglas con mayor lift ponderado + 6 mejores hacia transferencias · ancho = n.º de reglas · output/tablas/06b_reglas_ponderadas.csv</span>
+  <span class="src">40 reglas con mayor lift ponderado · ancho = n.º de reglas · output/tablas/06b_reglas_ponderadas.csv</span>
   <aside class="notes">Si dibujamos las reglas con mayor lift como una red, los ítems digitales forman un solo bloque. Y a la izquierda abajo, el bloque positivo: celular, internet y RUT apuntando a transferencias. No son variables sueltas: es un sistema acoplado. Una política que ataque un solo eslabón está trabajando contra la estructura.</aside>
 </section>
 
