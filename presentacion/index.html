@@ -672,6 +672,13 @@ clave[1, confidence_pond]<br>
     if (val === undefined || val === null) { el.textContent = "—"; console.warn("sin dato:", el.dataset.v); return; }
     el.textContent = F[el.dataset.f || "raw"](val);
   });
+  // Los contadores animados arrancan con su valor final: así el PDF y la impresión
+  // no muestran 0. La animación desde 0 sigue corriendo al llegar a la diapositiva.
+  const fijarContadores = () => document.querySelectorAll("[data-count]").forEach(el => {
+    const v = get(el.dataset.count); if (v != null) el.textContent = nf(0).format(v);
+  });
+  fijarContadores();
+  window.addEventListener("beforeprint", fijarContadores);
 
   // ---------- componentes construidos desde datos ----------
   const gbar = document.getElementById("gbar");
