@@ -102,6 +102,16 @@
   .stat .sub { font:400 24px/1.3 var(--dm-font-body); color:var(--dm-text-muted); margin-top:8px; }
   .stat.amber { border-top-color:var(--dm-accent-3); } .stat.amber .num { color:var(--dm-accent-3); }
   .stat.pos { border-top-color:var(--dm-positive); } .stat.pos .num { color:var(--dm-positive); }
+  .stat.neg { border-top-color:var(--dm-negative); } .stat.neg .num { color:var(--dm-negative); }
+  /* diapositiva 13: tarjetas de departamento */
+  .dep { padding-top:22px; }
+  .dep .dep-tag { font:600 20px var(--dm-font-body); letter-spacing:.14em; text-transform:uppercase; color:var(--dm-text-muted); }
+  .dep .dep-name { font:700 38px/1.15 var(--dm-font-heading); color:var(--dm-text-title); margin-top:6px; }
+  .dep .dep-nums { display:grid; grid-template-columns:1fr 1fr; column-gap:24px; margin-top:12px; }
+  .dep .dep-nums .num { font-size:60px; }
+  .dep .dep-nums .u { font:500 24px var(--dm-font-body); color:var(--dm-text-muted); margin-top:4px; }
+  .dep .sub { margin-top:10px; }
+  .dep-note { font-size:27px; line-height:1.4; }
 
   .kpi-big { font:700 300px/1 var(--dm-font-mono); font-variant-numeric:tabular-nums; color:var(--dm-kpi); letter-spacing:-.04em; }
   .kpi-ctx { font:500 42px/1.4 var(--dm-font-body); color:var(--dm-text-title); max-width:1300px; }
@@ -455,10 +465,26 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
 <!-- ============ 13 · MAPA ============ -->
 <section class="slide" style="grid-template-rows:auto 1fr auto; row-gap:30px; align-content:stretch;">
   <div class="head"><h2>El mapa de la brecha</h2><span class="chip">gris = sin cobertura EMICRON</span></div>
-  <div class="figbox"><img class="fig" data-fig="mapas" alt="Mapas de internet y RUT por departamento"></div>
-  <div class="stat-row" id="deptos"></div>
-  <span class="src">output/tablas/boletin/J2_Indicadores_por_Departamento.csv · geometría simplificada</span>
-  <aside class="notes">La brecha también es territorial. A la izquierda, internet; a la derecha, RUT. Bogotá en la punta en ambos; la Costa Caribe y el suroccidente rezagados. Donde hay menos internet hay menos RUT. Cruzar la densidad de micronegocios con las tasas de desconexión dice dónde rinde más cada peso.</aside>
+  <div class="two" style="grid-template-columns:1.32fr .68fr; gap:64px; align-items:center;">
+    <div class="figbox" style="height:100%;"><img class="fig" data-fig="mapas" alt="Mapas de internet y RUT por departamento"></div>
+    <div class="stack" style="gap:32px;">
+      <div class="stat pos dep">
+        <div class="dep-tag">El más conectado</div>
+        <div class="dep-name" data-v="dep_alto.COD_DEPTO_DESC"></div>
+        <div class="dep-nums"><div><div class="num" data-v="dep_alto.Pct_Con_Internet" data-f="pct1"></div><div class="u">internet</div></div><div><div class="num" data-v="dep_alto.Pct_Con_RUT" data-f="pct1"></div><div class="u">RUT</div></div></div>
+        <div class="sub"><span data-v="dep_alto.Pct_Distribucion" data-f="pct1"></span> de los micronegocios</div>
+      </div>
+      <div class="stat neg dep">
+        <div class="dep-tag">El menos conectado</div>
+        <div class="dep-name" data-v="dep_bajo.COD_DEPTO_DESC"></div>
+        <div class="dep-nums"><div><div class="num" data-v="dep_bajo.Pct_Con_Internet" data-f="pct1"></div><div class="u">internet</div></div><div><div class="num" data-v="dep_bajo.Pct_Con_RUT" data-f="pct1"></div><div class="u">RUT</div></div></div>
+        <div class="sub"><span data-v="dep_bajo.Pct_Distribucion" data-f="pct1"></span> de los micronegocios (<span data-v="dep_bajo.puesto"></span>.º del país)</div>
+      </div>
+      <p class="body dep-note">En <b data-v="dep_rut_bajo" data-f="lista"></b>, menos de 6 de cada 100 micronegocios tienen RUT.</p>
+    </div>
+  </div>
+  <span class="src">output/tablas/boletin/J2_Indicadores_por_Departamento.csv · r = <span data-v="cor_deptos" data-f="num2"></span> entre internet y RUT por departamento · geometría simplificada</span>
+  <aside class="notes">La brecha también es territorial. A la izquierda, internet; a la derecha, RUT, con la misma escala. Los dos mapas se parecen: donde hay menos internet hay menos RUT, con una correlación de cero coma siete entre departamentos. Bogotá está a la cabeza en internet, con ochenta y uno por ciento. Al otro extremo, Nariño, el cuarto departamento con más micronegocios, tiene el internet más bajo: diecisiete por ciento. Y en el Caribe, en Sucre, La Guajira, Córdoba y Magdalena, menos de seis de cada cien tienen RUT. Cruzar cuántos micronegocios hay con qué tan desconectados están dice dónde rinde más cada peso.</aside>
 </section>
 
 <!-- ============ 14 · ROBUSTEZ ============ -->
@@ -636,7 +662,8 @@ clave[1, confidence_pond]<br>
     mill1: v => nf(1).format(v / 1e6),
     mill2: v => nf(2).format(v / 1e6),
     frac4: v => nf(4).format(v / 100),
-    lhs:  v => Array.isArray(v) ? v.join(" + ") : String(v)
+    lhs:  v => Array.isArray(v) ? v.join(" + ") : String(v),
+    lista: v => !Array.isArray(v) ? String(v) : v.length < 2 ? v.join("") : v.slice(0, -1).join(", ") + " y " + v[v.length - 1]
   };
   const get = (path) => path.split(/\.|\[|\]/).filter(Boolean).reduce((o, k) => (o == null ? o : o[k]), D);
 
@@ -655,12 +682,6 @@ clave[1, confidence_pond]<br>
     d.innerHTML = F.pct1(g.Porcentaje);
     d.title = g.grupo;
     gbar.appendChild(d);
-  });
-
-  const deptos = document.getElementById("deptos");
-  D.top3_deptos.forEach(d => {
-    deptos.insertAdjacentHTML("beforeend",
-      `<div class="stat" style="padding-top:18px;"><div class="num" style="font-size:64px;">${F.pct1(d.Pct_Con_Internet)} <span class="muted" style="font-size:30px;">internet</span><br>${F.pct1(d.Pct_Con_RUT)} <span class="muted" style="font-size:30px;">RUT</span></div><div class="lbl">${d.COD_DEPTO_DESC} · ${F.pct1(d.Pct_Distribucion)} de los micronegocios</div></div>`);
   });
 
   const tbl = document.getElementById("tbl-comp");

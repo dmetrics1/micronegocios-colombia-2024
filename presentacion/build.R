@@ -108,7 +108,12 @@ DATOS <- list(
   idx_form_5    = idx[Indice == "Formalización (0-5)" & Puntaje == 5, Pct],
   comparacion   = comp,
   validacion    = val[, .(cuadro, indicador, valor_dane, generado = round(generado, 2), dif = round(dif, 2))],
-  top3_deptos   = J2[order(-Pct_Distribucion)][1:3, .(COD_DEPTO_DESC, Pct_Distribucion, Pct_Con_Internet, Pct_Con_RUT)],
+  # Diapositiva 13: los dos extremos de conectividad y el Caribe sin RUT
+  dep_alto      = as.list(J2[which.max(Pct_Con_Internet), .(COD_DEPTO_DESC, Pct_Distribucion, Pct_Con_Internet, Pct_Con_RUT)]),
+  dep_bajo      = c(as.list(J2[which.min(Pct_Con_Internet), .(COD_DEPTO_DESC, Pct_Distribucion, Pct_Con_Internet, Pct_Con_RUT)]),
+                    list(puesto = frank(-J2$Pct_Distribucion, ties.method = "min")[which.min(J2$Pct_Con_Internet)])),
+  dep_rut_bajo  = J2[Pct_Con_RUT < 6][order(Pct_Con_RUT), COD_DEPTO_DESC],   # texto: "menos de 6 de cada 100"
+  cor_deptos    = cor(J2$Pct_Con_Internet, J2$Pct_Con_RUT),
   generado_en   = format(Sys.time(), "%Y-%m-%d %H:%M")
 )
 
@@ -262,14 +267,17 @@ figuras <- function(dark) {
                            labels = label_percent(scale = 1, accuracy = 1), name = NULL, na.value = t$surface3) +
       labs(subtitle = titulo) +
       dm_theme(t, 24) +
-      theme(axis.text = element_blank(), panel.grid = element_blank(),
+      theme(axis.text = element_blank(), axis.ticks = element_blank(),
+            panel.grid = element_blank(), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
             plot.subtitle = element_text(colour = t$textTitle, family = DM_FONT_HEADING, face = "bold", size = 34, hjust = 0.5),
-            legend.position = "right", legend.key.height = unit(2.2, "cm"), legend.key.width = unit(0.6, "cm"),
-            plot.margin = margin(0, 0, 0, 0))
+            legend.position = "right", legend.key.height = unit(3.2, "cm"), legend.key.width = unit(0.6, "cm"),
+            legend.text = element_text(size = 22), plot.margin = margin(0, 6, 0, 6))
   }
+  # Una sola escala de color para los dos mapas (misma escala 0–100 %)
   p <- (mapa("Pct_Con_Internet", "Con internet") + mapa("Pct_Con_RUT", "Con RUT")) +
+    plot_layout(guides = "collect") +
     plot_annotation(theme = theme(plot.background = element_rect(fill = "transparent", colour = NA)))
-  guardar(p, "mapas", 1700, 640, dark)
+  guardar(p, "mapas", 1180, 760, dark)
 
   # --- Rejilla de sensibilidad ---
   s <- copy(sens)

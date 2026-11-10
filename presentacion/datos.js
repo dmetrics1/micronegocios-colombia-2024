@@ -264,25 +264,20 @@ window.DATOS = {
       "dif": 0
     }
   ],
-  "top3_deptos": [
-    {
-      "COD_DEPTO_DESC": "Antioquia",
-      "Pct_Distribucion": 12.11,
-      "Pct_Con_Internet": 62.61,
-      "Pct_Con_RUT": 34.83
-    },
-    {
-      "COD_DEPTO_DESC": "Bogotá D.C.",
-      "Pct_Distribucion": 11.19,
-      "Pct_Con_Internet": 80.81,
-      "Pct_Con_RUT": 49.57
-    },
-    {
-      "COD_DEPTO_DESC": "Valle del Cauca",
-      "Pct_Distribucion": 8.51,
-      "Pct_Con_Internet": 67.9,
-      "Pct_Con_RUT": 27.91
-    }
-  ],
-  "generado_en": "2026-11-10 17:43"
+  "dep_alto": {
+    "COD_DEPTO_DESC": "Bogotá D.C.",
+    "Pct_Distribucion": 11.19,
+    "Pct_Con_Internet": 80.81,
+    "Pct_Con_RUT": 49.57
+  },
+  "dep_bajo": {
+    "COD_DEPTO_DESC": "Nariño",
+    "Pct_Distribucion": 7.74,
+    "Pct_Con_Internet": 16.6,
+    "Pct_Con_RUT": 7.04,
+    "puesto": 4
+  },
+  "dep_rut_bajo": ["Sucre", "La Guajira", "Córdoba", "Magdalena"],
+  "cor_deptos": 0.714075630445732,
+  "generado_en": "2026-11-10 18:08"
 };
