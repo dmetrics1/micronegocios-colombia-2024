@@ -54,6 +54,21 @@ personal_pipe <- sum(bol("E2a_Personal_Promedio_Sector.csv")$Personal_Total_Expa
 prueba("Total personal ocupado = boletín DANE (±0,01 %)", abs(personal_pipe - personal_dane) / personal_dane <= 1e-4,
        sprintf("DANE %s vs pipeline %s", fmt(personal_dane), fmt(personal_pipe)))
 
+cat("\n== 2b. Cuadros por departamento (factor departamental FEX_C) ==\n")
+J1   <- bol("J1_Micronegocios_por_Departamento.csv")
+dpto <- fread("data/reference/dane_boletin_departamental.csv", encoding = "UTF-8")
+prueba("J1 tiene los 24 departamentos y Bogotá (incluye San Andrés)",
+       nrow(J1) == 25 && "San Andrés" %in% J1$COD_DEPTO_DESC, sprintf("%d filas", nrow(J1)))
+prueba("Total departamental = boletín departamental DANE (5.262.313)",
+       round(sum(J1$Cantidad)) == dpto[departamento == "Total", valor], fmt(sum(J1$Cantidad)))
+for (d in dpto[departamento != "Total", departamento]) {
+  gen <- J1[COD_DEPTO_DESC == d, Distribucion_Pct]
+  ofi <- dpto[departamento == d, valor]
+  prueba(sprintf("J1 · participación %s", d), length(gen) == 1 && abs(gen - ofi) <= 0.05,
+         sprintf("DANE %.1f vs pipeline %.2f", ofi, gen))
+}
+prueba("J2 cubre los 25 departamentos", nrow(bol("J2_Indicadores_por_Departamento.csv")) == 25)
+
 cat("\n== 3. Consistencia interna ==\n")
 seg <- leer("11_segmentacion_grupos.csv")
 prueba("Universo expandido = 5.297.252", round(sum(seg$Universo)) == 5297252, fmt(sum(seg$Universo)))
@@ -81,6 +96,9 @@ prueba("Regla de exclusión digital: confianza ponderada > 99 %",
        clave[hallazgo == "Exclusión digital acumulada", confidence_pond] > 0.99)
 prueba("Ninguna regla hacia tiene_rut=Sí con los umbrales principales",
        sum(grepl("=> {tiene_rut=Sí}", reglas$rules, fixed = TRUE)) == 0)
+prueba("P469 aparece como 'visible_al_publico', no con la etiqueta errónea 'paga_arriendo'",
+       !any(grepl("paga_arriendo", reglas$rules, fixed = TRUE)) &&
+         any(grepl("visible_al_publico", reglas$rules, fixed = TRUE)))
 prueba("Tabla filtrada (soporte > 20 %) tiene 39 reglas", nrow(leer("10_TABLA_RESUMEN_FILTRADA_20PCT.csv")) == 39)
 
 cat("\n== Resumen ==\n")

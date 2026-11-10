@@ -22,10 +22,20 @@ if (!file.exists(ruta_base)) {
 
 message(sprintf("Base cargada: %d filas x %d columnas", nrow(base), ncol(base)))
 
+# 1b. FACTOR DE EXPANSIÓN DEPARTAMENTAL (FEX_C)
+# =====================================================================
+# F_EXP es el factor nacional (suma 5.297.252). Para cifras por departamento
+# el DANE usa FEX_C (proyecciones CNPV 2018, suma 5.262.313), publicado aparte
+# en data/raw/. Reproduce el boletín departamental (Antioquia 12,1 %).
+factores_dpto <- fread(file.path(PROJECT_ROOT, "data", "raw", "factores_departamental_2024_proy_2018.csv"))
+stopifnot(!anyDuplicated(factores_dpto, by = c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA")))
+base <- merge(base, factores_dpto, by = c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA"), all.x = TRUE)
+stopifnot(!anyNA(base$FEX_C))
+
 # 2. SELECCIÓN DE VARIABLES (Opcional, pero recomendado para aligerar memoria)
 # =====================================================================
 vars_seleccionadas <- c(
-  "DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA", "F_EXP",
+  "DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA", "F_EXP", "FEX_C",
   # Target / Emprendimiento
   "P639", 
   # Identificación
@@ -62,7 +72,7 @@ base <- base[, ..vars_presentes]
 # =====================================================================
 # Muchas numéricas o categóricas pueden tener 98 (No Sabe) o 99 (No Informa)
 # Las convertimos a NA. Excluímos llaves y variables donde 99 pueda ser válido (edad).
-vars_limpiar <- setdiff(names(base), c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA", "F_EXP", "P241", "AREA", "COD_DEPTO"))
+vars_limpiar <- setdiff(names(base), c("DIRECTORIO", "SECUENCIA_P", "SECUENCIA_ENCUESTA", "F_EXP", "FEX_C", "P241", "AREA", "COD_DEPTO"))
 
 for (j in vars_limpiar) {
   if (is.numeric(base[[j]])) {
@@ -207,8 +217,9 @@ etiquetar_emicron <- function(datos) {
   
   # Geografía y Región
   datos[, COD_DEPTO_DESC := factor(as.numeric(COD_DEPTO), 
-      levels = c(5, 8, 11, 13, 15, 17, 18, 19, 20, 23, 25, 27, 41, 44, 47, 50, 52, 54, 63, 66, 68, 70, 73, 76), 
-      labels = c("Antioquia", "Atlántico", "Bogotá D.C.", "Bolívar", "Boyacá", "Caldas", "Caquetá", "Cauca", "Cesar", "Córdoba", "Cundinamarca", "Chocó", "Huila", "La Guajira", "Magdalena", "Meta", "Nariño", "Norte de Santander", "Quindío", "Risaralda", "Santander", "Sucre", "Tolima", "Valle del Cauca"))]
+      levels = c(5, 8, 11, 13, 15, 17, 18, 19, 20, 23, 25, 27, 41, 44, 47, 50, 52, 54, 63, 66, 68, 70, 73, 76, 88),
+      labels = c("Antioquia", "Atlántico", "Bogotá D.C.", "Bolívar", "Boyacá", "Caldas", "Caquetá", "Cauca", "Cesar", "Córdoba", "Cundinamarca", "Chocó", "Huila", "La Guajira", "Magdalena", "Meta", "Nariño", "Norte de Santander", "Quindío", "Risaralda", "Santander", "Sucre", "Tolima", "Valle del Cauca", "San Andrés"))]
+  stopifnot(!anyNA(datos$COD_DEPTO_DESC))  # los 24 departamentos y Bogotá deben tener etiqueta
   
   return(datos)
 }
@@ -241,8 +252,8 @@ renombres <- c(
   
   # Ubicación Física
   "P3053" = "tipo_ubicacion",
-  "P3055" = "comparte_con_vivienda",
-  "P469" = "paga_arriendo",
+  "P3055" = "propiedad_emplazamiento",  # D7: propio, arriendo, usufructo...
+  "P469" = "visible_al_publico",        # D8: ¿el negocio es visible al público?
   
   # Variables usadas para Formalización
   "P1633" = "tiene_rut",

@@ -233,7 +233,7 @@ figuras <- function(dark) {
            `17` = "Caldas", `18` = "Caquetá", `19` = "Cauca", `20` = "Cesar", `23` = "Córdoba",
            `25` = "Cundinamarca", `27` = "Chocó", `41` = "Huila", `44` = "La Guajira", `47` = "Magdalena",
            `50` = "Meta", `52` = "Nariño", `54` = "Norte de Santander", `63` = "Quindío", `66` = "Risaralda",
-           `68` = "Santander", `70` = "Sucre", `73` = "Tolima", `76` = "Valle del Cauca")
+           `68` = "Santander", `70` = "Sucre", `73` = "Tolima", `76` = "Valle del Cauca", `88` = "San Andrés")
   co <- st_read("data/colombia_departamentos_simplificado.geojson", quiet = TRUE)
   co$COD_DEPTO_DESC <- cod[co$DPTO]
   co <- merge(co, J2, by = "COD_DEPTO_DESC", all.x = TRUE)

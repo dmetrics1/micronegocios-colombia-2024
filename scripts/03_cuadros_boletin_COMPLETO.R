@@ -34,11 +34,12 @@ if (!dir.exists(dir_boletin)) dir.create(dir_boletin, recursive = TRUE)
 # =====================================================================
 
 # 2.1 Función básica: Distribución y Cantidad
-calc_dist <- function(dt, variable) {
+# peso: "F_EXP" (nacional) por defecto; "FEX_C" para cuadros por departamento
+calc_dist <- function(dt, variable, peso = "F_EXP") {
   if (!variable %in% colnames(dt)) return(NULL)
 
   res <- dt[!is.na(get(variable)), .(
-    Cantidad = sum(F_EXP, na.rm = TRUE)
+    Cantidad = sum(get(peso), na.rm = TRUE)
   ), by = variable]
 
   res[, Distribucion_Pct := round((Cantidad / sum(Cantidad)) * 100, 2)]
@@ -276,20 +277,21 @@ cuadros[["K1_1_Afiliacion_Organizaciones"]] <- calc_dist(base, "P3002_DESC")
 # =====================================================================
 # GRUPO J: GEOGRAFÍA (DEPARTAMENTOS)
 # =====================================================================
-cuadros[["J1_Micronegocios_por_Departamento"]] <- calc_dist(base, "COD_DEPTO_DESC")
+# Por departamento se usa el factor departamental FEX_C, como el boletín
+# departamental del DANE (F_EXP está calibrado al total nacional).
+cuadros[["J1_Micronegocios_por_Departamento"]] <- calc_dist(base, "COD_DEPTO_DESC", peso = "FEX_C")
 
-# Indicadores multidimensionales por departamento
+# Indicadores multidimensionales por departamento (ponderados por FEX_C)
 calc_dpto_multidim <- function(dt) {
   res <- dt[, .(
-    Cantidad_Negocios = sum(F_EXP, na.rm = TRUE),
-    Pct_Distribucion = round(sum(F_EXP, na.rm = TRUE) / dt[, sum(F_EXP, na.rm = TRUE)] * 100, 2),
-    Ingresos_Promedio = round(weighted.mean(VENTAS_MES_ANTERIOR, F_EXP, na.rm = TRUE), 2),
-    Personal_Promedio = round(weighted.mean(personal_total, F_EXP, na.rm = TRUE), 2),
-    Idx_Formalizacion_Prom = round(weighted.mean(idx_formalizacion, F_EXP, na.rm = TRUE), 2),
-    Idx_Digital_Prom = round(weighted.mean(idx_digital, F_EXP, na.rm = TRUE), 2),
-    # Porcentajes ponderados por F_EXP (antes se contaban registros sin ponderar)
-    Pct_Con_RUT = round(sum(F_EXP[tiene_rut %in% 1]) * 100 / sum(F_EXP[!is.na(tiene_rut)]), 2),
-    Pct_Con_Internet = round(sum(F_EXP[usa_internet %in% 1]) * 100 / sum(F_EXP[!is.na(usa_internet)]), 2)
+    Cantidad_Negocios = sum(FEX_C, na.rm = TRUE),
+    Pct_Distribucion = round(sum(FEX_C, na.rm = TRUE) / dt[, sum(FEX_C, na.rm = TRUE)] * 100, 2),
+    Ingresos_Promedio = round(weighted.mean(VENTAS_MES_ANTERIOR, FEX_C, na.rm = TRUE), 2),
+    Personal_Promedio = round(weighted.mean(personal_total, FEX_C, na.rm = TRUE), 2),
+    Idx_Formalizacion_Prom = round(weighted.mean(idx_formalizacion, FEX_C, na.rm = TRUE), 2),
+    Idx_Digital_Prom = round(weighted.mean(idx_digital, FEX_C, na.rm = TRUE), 2),
+    Pct_Con_RUT = round(sum(FEX_C[tiene_rut %in% 1]) * 100 / sum(FEX_C[!is.na(tiene_rut)]), 2),
+    Pct_Con_Internet = round(sum(FEX_C[usa_internet %in% 1]) * 100 / sum(FEX_C[!is.na(usa_internet)]), 2)
   ), by = "COD_DEPTO_DESC"]
 
   setorderv(res, "Cantidad_Negocios", order = -1)

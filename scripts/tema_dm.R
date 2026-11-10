@@ -129,7 +129,7 @@ DM_ITEMS <- c(
   "declara_renta=No_responsable" = "no declara renta", "declara_renta=Sí" = "declara renta",
   "declara_ica=No_responsable" = "no responsable de ICA", "declara_ica=Sí" = "declara ICA",
   "tipo_ubicacion=Local_fijo" = "local fijo", "tipo_ubicacion=Vivienda" = "opera en la vivienda",
-  "paga_arriendo_local=Sí" = "paga arriendo", "paga_arriendo_local=No" = "no paga arriendo",
+  "visible_al_publico=Sí" = "visible al público", "visible_al_publico=No" = "no visible al público",
   "rol_propietario=Cuenta_propia" = "cuenta propia", "rol_propietario=Patrón" = "patrón o empleador",
   "es_persona_juridica=No" = "persona natural", "es_persona_juridica=Sí" = "persona jurídica",
   "sexo_propietario=Hombre" = "propietario hombre", "sexo_propietario=Mujer" = "propietaria mujer",

@@ -267,22 +267,22 @@ window.DATOS = {
   "top3_deptos": [
     {
       "COD_DEPTO_DESC": "Antioquia",
-      "Pct_Distribucion": 11.89,
-      "Pct_Con_Internet": 61.98,
-      "Pct_Con_RUT": 35.02
+      "Pct_Distribucion": 12.11,
+      "Pct_Con_Internet": 62.61,
+      "Pct_Con_RUT": 34.83
     },
     {
       "COD_DEPTO_DESC": "Bogotá D.C.",
-      "Pct_Distribucion": 11.12,
-      "Pct_Con_Internet": 80.8,
-      "Pct_Con_RUT": 49.54
+      "Pct_Distribucion": 11.19,
+      "Pct_Con_Internet": 80.81,
+      "Pct_Con_RUT": 49.57
     },
     {
       "COD_DEPTO_DESC": "Valle del Cauca",
       "Pct_Distribucion": 8.51,
-      "Pct_Con_Internet": 67.86,
-      "Pct_Con_RUT": 28.11
+      "Pct_Con_Internet": 67.9,
+      "Pct_Con_RUT": 27.91
     }
   ],
-  "generado_en": "2026-10-21 09:26"
+  "generado_en": "2026-10-21 15:39"
 };

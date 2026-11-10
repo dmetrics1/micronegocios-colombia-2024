@@ -48,7 +48,7 @@ vars_apriori <- c(
   
   # --- NUEVAS: Ubicación (2) ---
   "tipo_ubicacion",         # P3053
-  "paga_arriendo",          # P469 renombrada
+  "visible_al_publico",     # P469: ¿el negocio es visible al público?
   
   # --- NUEVAS: Seguridad social propietario (1) ---
   "paga_seg_social_prop",   # P3088
@@ -71,7 +71,7 @@ vars_pago <- c("acepta_efectivo", "acepta_cheque", "acepta_transferencia",
                "acepta_factura_plazo", "acepta_tarjeta_debito", "acepta_tarjeta_credito")
 vars_tic <- c("internet_en_local", "usa_redes_sociales", "usa_dispositivos",
               "usa_celular_negocio", "tiene_sitio_web")
-vars_bin_nuevas <- c("P3031", "P1056", "paga_arriendo", "solicito_credito", "tiene_ahorros")
+vars_bin_nuevas <- c("P3031", "P1056", "visible_al_publico", "solicito_credito", "tiene_ahorros")
 
 for (v in c(vars_pago, vars_tic, vars_bin_nuevas)) {
   if (v %in% names(base_apr)) {
@@ -110,14 +110,13 @@ for (v in c("tiene_rut", "tiene_camara_comercio",
   base_apr[, (v) := recode_sino(get(v))]
 }
 
-for (v in c("P3031", "P1056", "paga_arriendo", "solicito_credito", "tiene_ahorros")) {
+for (v in c("P3031", "P1056", "visible_al_publico", "solicito_credito", "tiene_ahorros")) {
   base_apr[, (v) := recode_sino(get(v))]
 }
 
 # Renombrar P-codes a nombres legibles
 setnames(base_apr, "P3031", "tiene_personal")
 setnames(base_apr, "P1056", "es_persona_juridica")
-setnames(base_apr, "paga_arriendo", "paga_arriendo_local")
 
 # --- Contabilidad (P640, según Diccionario EMICRON 2024) ---
 base_apr[, tipo_contabilidad := fcase(

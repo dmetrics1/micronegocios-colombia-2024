@@ -340,7 +340,7 @@ Esta cifra admite varias lecturas compatibles entre sí: una preferencia por el 
 
 ![**Figura 8A:** Micronegocios por departamento: Top 10](output/figuras/27_J1_departamentos_top10.png)
 
-La distribución geográfica refleja la distribución de la población y la actividad económica: los tres principales territorios —Antioquia (11,9%), Bogotá D.C. (11,1%) y Valle del Cauca (8,5%)— concentran el 31,5% del universo.
+La distribución geográfica refleja la distribución de la población y la actividad económica: los tres principales territorios —Antioquia (12,1%), Bogotá D.C. (11,2%) y Valle del Cauca (8,5%)— concentran el 31,8% del universo. Como en el boletín departamental del DANE, estas participaciones usan el factor de expansión departamental (`FEX_C`), que suma 5.262.313 micronegocios en los 24 departamentos y Bogotá.
 
 La focalización de programas de conectividad debería cruzar la densidad de micronegocios con las tasas de desconexión departamentales (cuadro J2) para identificar los territorios prioritarios.
 
@@ -445,7 +445,7 @@ Muestra las combinaciones de ítems que acompañan la aceptación de transferenc
 
 ![**Figura 9F:** Grafo de las reglas hacia negocios con 10 o más años](output/figuras/18_apriori_grafo_antiguedad.png)
 
-Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no pagar arriendo y propietario hombre. Son asociaciones moderadas (lift cercano a 1,27): describen un perfil, no una regla rígida.
+Los negocios con más de diez años se asocian con no usar redes sociales ni dispositivos electrónicos, no ser visibles al público y propietario hombre. Son asociaciones moderadas (lift cercano a 1,27): describen un perfil, no una regla rígida.
 
 ---
 
@@ -647,7 +647,7 @@ base[, grupo := fcase(
 )]
 ```
 
-**Correcciones durante el proceso.** Al auditar el pipeline para esta versión se corrigieron cuatro errores, todos documentados en el código: (1) el conteo de personal ocupado usaba el módulo de trabajadores, que está incompleto; ahora se usa la definición DANE (propietario + P3032) y se reproduce exactamente el boletín (82,3% unipersonal, 6.879.489 personas ocupadas); (2) la Figura 4C graficaba el porcentaje de negocios por sector en lugar del personal promedio; (3) las etiquetas del tipo de contabilidad en Apriori estaban desplazadas (lo rotulado "Libro diario" era en realidad "cuaderno u otro registro"); (4) los porcentajes de RUT e internet por departamento (cuadro J2) no estaban ponderados.
+**Correcciones durante el proceso.** Al auditar el pipeline para esta versión se corrigieron seis errores, todos documentados en el código: (1) el conteo de personal ocupado usaba el módulo de trabajadores, que está incompleto; ahora se usa la definición DANE (propietario + P3032) y se reproduce exactamente el boletín (82,3% unipersonal, 6.879.489 personas ocupadas); (2) la Figura 4C graficaba el porcentaje de negocios por sector en lugar del personal promedio; (3) las etiquetas del tipo de contabilidad en Apriori estaban desplazadas (lo rotulado "Libro diario" era en realidad "cuaderno u otro registro"); (4) los porcentajes de RUT e internet por departamento (cuadro J2) no estaban ponderados; (5) la variable P469 («¿el negocio es visible al público?») entraba en Apriori con la etiqueta «paga arriendo»: las medidas de las reglas no cambian, pero su lectura sí; (6) los cuadros por departamento (J1 y J2) omitían San Andrés y usaban el factor nacional; ahora usan el factor departamental `FEX_C` y reproducen el boletín departamental del DANE.
 
 ---
 
