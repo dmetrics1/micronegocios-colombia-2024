@@ -63,6 +63,7 @@ rule_parts <- function(r) {
 DATOS <- list(
   universo      = sum(seg$Universo),
   muestra       = sum(seg$Muestra),
+  peso_apriori  = peso_apriori,   # suma de F_EXP de los registros de Apriori (5.203.185)
   n_apriori     = round(reglas$count[1] / reglas$support[1]),
   n_modulos     = length(list.files("../data/raw/2024", pattern = "\\.csv$")),
   n_cuadros     = length(list.files("../output/tablas/boletin", pattern = "\\.csv$")),

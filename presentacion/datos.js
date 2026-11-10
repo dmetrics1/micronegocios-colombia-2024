@@ -1,6 +1,7 @@
 window.DATOS = {
   "universo": 5297252,
   "muestra": 78501,
+  "peso_apriori": 5203184.54178378,
   "n_apriori": 77202,
   "n_modulos": 11,
   "n_cuadros": 70,
@@ -279,5 +280,5 @@ window.DATOS = {
   },
   "dep_rut_bajo": ["Sucre", "La Guajira", "Córdoba", "Magdalena"],
   "cor_deptos": 0.714075630445732,
-  "generado_en": "2026-11-10 18:08"
+  "generado_en": "2026-11-10 18:38"
 };

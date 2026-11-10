@@ -337,8 +337,8 @@
     <div class="card flat" style="padding:30px 36px;"><div class="top">03 · 05</div><h3>Ponderar y minar</h3><p class="body muted" style="margin-top:10px; font-size:26px;">Cuadros con <code>F_EXP</code>; Apriori con <code>arules</code> y medidas ponderadas.</p></div>
     <div class="card flat" style="padding:30px 36px;"><div class="top">06 · 07 · Quarto</div><h3>Segmentar, probar, contar</h3><p class="body muted" style="margin-top:10px; font-size:26px;">Tres grupos, rejilla de umbrales y un reporte que lee las tablas.</p></div>
   </div>
-  <div class="codecard" style="font-size:25px; padding:24px 40px; line-height:1.55; white-space:pre;"><span class="k">renv</span>::restore()                           <span class="c"># mismas versiones de paquetes (renv.lock)</span><br><span class="k">source</span>(<span class="s">"main.R"</span>)                          <span class="c"># 01 → 07 en ~2 minutos</span><br>quarto render REPORTE_WIDE_PRO_2024.qmd   <span class="c"># reporte</span></div>
-  <aside class="notes">Siete scripts y un main. Consolidar los once módulos con data.table; depurar con el diccionario del DANE; producir los cuadros ponderados; correr Apriori; segmentar y probar robustez; y renderizar con Quarto. Dos minutos de ejecución. Las versiones de los paquetes están fijadas con renv. Ningún número de esta charla está escrito a mano: se calculan a partir de las tablas de salida.</aside>
+  <div class="codecard" style="font-size:25px; padding:24px 40px; line-height:1.55; white-space:pre;"><span class="k">renv</span>::restore()                           <span class="c"># mismas versiones de paquetes (renv.lock)</span><br><span class="k">source</span>(<span class="s">"main.R"</span>)                          <span class="c"># corre los scripts 01 → 07</span><br>quarto render REPORTE_WIDE_PRO_2024.qmd   <span class="c"># reporte</span></div>
+  <aside class="notes">Siete pasos y un main. Consolidar los once módulos con data.table; depurar con el diccionario del DANE; producir los cuadros ponderados; correr Apriori; segmentar y probar robustez; y renderizar con Quarto. Las versiones de los paquetes están fijadas con renv. Ninguna cifra de resultados está escrita a mano: se calculan a partir de las tablas de salida.</aside>
 </section>
 
 <!-- ============ 6 · VALIDACIÓN ============ -->
@@ -392,7 +392,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <div class="f"><div class="bar" style="height:4%;"></div><div class="num" data-v="n_39"></div><div class="lbl">de mayor lift (generales y dirigidas) con soporte &gt; 20 %: las que sostienen el relato</div></div>
   </div>
   <span class="src">output/tablas/12_sensibilidad_umbrales.csv · 10_TABLA_RESUMEN_FILTRADA_20PCT.csv</span>
-  <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y de las de mayor lift, generales y dirigidas, me quedo con las treinta y nueve que tienen soporte mayor al veinte por ciento. Tres de ellas son las que les voy a contar.</aside>
+  <aside class="notes">Con esos umbrales salen ciento diecinueve mil reglas; quitando las redundantes quedan cincuenta y seis mil; y de las de mayor lift, generales y dirigidas, me quedo con las treinta y nueve que tienen soporte mayor al veinte por ciento. De ahí salen los hallazgos que les voy a contar.</aside>
 </section>
 
 <!-- ============ 9 · REGLA MÁS FUERTE ============ -->
@@ -415,12 +415,12 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <div class="slide-num">04</div>
     <h2>El sistema acoplado</h2>
     <p class="body" style="font-size:31px;">Las reglas de mayor lift dibujan <b>un solo bloque digital</b>: sin computador, sin celular, sin registro… todo apunta a <span class="hi">sin internet</span>.</p>
-    <p class="body" style="font-size:31px;">Y un bloque positivo: celular, internet y <span class="amber">RUT</span> apuntando a <span class="hi">transferencias</span>.</p>
+    <p class="body" style="font-size:31px;">Y un bloque positivo: celular y <span class="amber">RUT</span> apuntando a <span class="hi">transferencias</span>.</p>
     <span class="caveat" style="align-self:flex-start;">asociación ≠ causalidad</span>
   </div>
   <div class="figbox"><img class="fig" data-fig="red" alt="Red de las reglas con mayor lift"></div>
   <span class="src">40 reglas con mayor lift ponderado · ancho = n.º de reglas · output/tablas/06b_reglas_ponderadas.csv</span>
-  <aside class="notes">Si dibujamos las reglas con mayor lift como una red, los ítems digitales forman un solo bloque. Y a la izquierda abajo, el bloque positivo: celular, internet y RUT apuntando a transferencias. No son variables sueltas: es un sistema acoplado. Una política que ataque un solo eslabón está trabajando contra la estructura.</aside>
+  <aside class="notes">Si dibujamos las reglas con mayor lift como una red, los ítems digitales forman un solo bloque. Y a la izquierda abajo, el bloque positivo: celular y RUT apuntando a transferencias. No son variables sueltas: es un sistema acoplado. Una política que ataque un solo eslabón está trabajando contra la estructura.</aside>
 </section>
 
 <!-- ============ 11 · ¿Y EL RUT? ============ -->
@@ -444,7 +444,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     </div>
   </div>
   <span class="src">output/tablas/12d_reglas_rut_sin_formalizacion.csv · 06b_reglas_ponderadas.csv</span>
-  <aside class="notes">Y el RUT. Con los umbrales principales, ninguna regla termina en "tiene RUT". En el resumen lo llamé exógeno. Un revisor me corrigió y tenía razón: que Apriori no encuentre reglas con soporte del quince por ciento solo dice que los negocios con RUT son pocos. Bajé el soporte al cinco y saqué las variables de formalización del antecedente. Resultado: internet, transferencias y local fijo predicen el RUT con setenta y siete por ciento de confianza y lift de tres coma cuatro. Y la regla con el lift más alto de todo el análisis es RUT más celular, implica transferencias. El silencio era del umbral, no del RUT.</aside>
+  <aside class="notes">Y el RUT. Con los umbrales principales, ninguna regla termina en "tiene RUT". En el resumen lo llamé exógeno. Un revisor me corrigió y tenía razón: que Apriori no encuentre reglas con soporte del quince por ciento solo dice que los negocios con RUT son pocos. Bajé el soporte al cinco y saqué las variables de formalización del antecedente. Resultado: internet, transferencias y local fijo se asocian con tener RUT: setenta y siete por ciento de confianza y lift de tres coma cuatro. Y la regla con el lift más alto de todo el análisis es RUT más celular, implica transferencias. El silencio era del umbral, no del RUT.</aside>
 </section>
 
 <!-- ============ 12 · GRUPOS ============ -->
@@ -459,7 +459,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <div class="figbox" style="flex:1;"><img class="fig" data-fig="perfil" alt="Perfil de los grupos"></div>
   </div>
   <span class="src">output/tablas/11_segmentacion_grupos.csv · 11b_perfil_grupos.csv · scripts/06_segmentacion.R</span>
-  <aside class="notes">Con esas dos variables armo tres grupos que no se solapan y cubren a todos. Casi todos los que están en transición ya tienen internet pero no RUT: un millón setecientos mil negocios conectados que todavía no se formalizan. Lo importante es la derecha: los grupos se separan en variables que no usé para definirlos. Transferencias: del seis al ochenta y siete por ciento. Son co-ocurrencias, no efectos, pero el paquete es consistente.</aside>
+  <aside class="notes">Con esas dos variables armo tres grupos que no se solapan y cubren a todos. Casi todos los que están en transición ya tienen internet pero no RUT: casi un millón setecientos mil negocios conectados que todavía no se formalizan. Lo importante es la derecha: los grupos se separan en variables que no usé para definirlos. Transferencias: del seis al ochenta y siete por ciento. Son co-ocurrencias, no efectos, pero el paquete es consistente.</aside>
 </section>
 
 <!-- ============ 13 · MAPA ============ -->
@@ -538,7 +538,7 @@ lift_pond <span class="o">&lt;-</span> s_xy / (s_x * s_y)
     <ul class="big" style="gap:18px;">
       <li style="font-size:29px;"><b>Repositorio</b> con datos, scripts, <code>renv.lock</code> y el reporte: <code>github.com/dmetrics1/micronegocios-colombia-2024</code></li>
       <li style="font-size:29px;"><b>Reporte</b> en GitHub Pages, generado con Quarto: sus tablas de resultados se leen de las mismas salidas.</li>
-      <li style="font-size:29px;"><b>Estas diapositivas</b> no tienen ninguna cifra escrita a mano: <code>build.R</code> las lee de <code>output/tablas/</code> y las inyecta.</li>
+      <li style="font-size:29px;"><b>Estas diapositivas</b> no tienen ningún resultado escrito a mano: <code>build.R</code> las lee de <code>output/tablas/</code> y las inyecta.</li>
     </ul>
     <p class="lead" style="font-size:36px;">Si el DANE publica la EMICRON 2025: cambio la carpeta de datos, corro <code>main.R</code>, corro <code>build.R</code>… y esta charla se actualiza sola.</p>
   </div>
@@ -554,7 +554,7 @@ clave[1, confidence_pond]<br>
 <br>
 <span class="c"># datos.js generado el <span data-v="generado_en"></span></span>
   </div>
-  <aside class="notes">Todo está abierto: datos, código, versiones de paquetes, reporte y estas diapositivas. Y aquí está la tesis aplicada a la propia charla: ninguna cifra está escrita a mano. Si mañana sale la EMICRON 2025, cambio la carpeta de datos y la charla se actualiza sola.</aside>
+  <aside class="notes">Todo está abierto: datos, código, versiones de paquetes, reporte y estas diapositivas. Y aquí está la tesis aplicada a la propia charla: ningún resultado está escrito a mano. Si mañana sale la EMICRON 2025, cambio la carpeta de datos y la charla se actualiza sola.</aside>
 </section>
 
 <!-- ============ 17 · CIERRE ============ -->
@@ -574,7 +574,7 @@ clave[1, confidence_pond]<br>
   <span class="eyebrow" style="color:var(--dm-accent-3); background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.3);">Respaldo</span>
   <h2>¿Por qué 15 % y 70 %?</h2>
   <ul class="big" style="gap:30px;">
-    <li><b>Soporte 15 %</b>: el patrón aparece en ≈ <span data-v="sop15_registros" data-f="num0"></span> registros de la muestra, más de <span data-v="sop15_negocios" data-f="num0"></span> negocios en el universo. Prioriza patrones con peso poblacional; evita reglas de nicho.</li>
+    <li><b>Soporte 15 %</b>: el patrón aparece en ≈ <span data-v="sop15_registros" data-f="num0"></span> registros de la muestra, del orden de <span data-v="sop15_negocios" data-f="num0"></span> negocios en el universo. Prioriza patrones con peso poblacional; evita reglas de nicho.</li>
     <li><b>Confianza 70 %</b>: la regla se cumple en 7 de cada 10 casos con el antecedente.</li>
     <li><b><code>maxlen = 4</code></b>: hasta 3 ítems en el antecedente, para que las reglas sean legibles.</li>
     <li><b>Redundancia</b> (<code>arules::is.redundant</code>): se elimina una regla si existe otra más general —subconjunto del antecedente, mismo consecuente— con igual o mayor confianza. <span class="mono" data-v="n_generadas" data-f="num0"></span> → <span class="mono" data-v="n_no_redund" data-f="num0"></span>.</li>
@@ -647,7 +647,7 @@ clave[1, confidence_pond]<br>
   D.perfil_rural_excl = D.perfil.find(p => p.grupo === "Excluidos").Rural_pct;
   D.perfil_rural_int  = D.perfil.find(p => p.grupo === "Integrados").Rural_pct;
   D.sop15_registros = 0.15 * D.n_apriori;
-  D.sop15_negocios  = 0.15 * D.universo;
+  D.sop15_negocios  = 0.15 * D.peso_apriori;   // pesos de los 77.202 registros de Apriori
 
   // ---------- formato es-CO ----------
   const nf = (d) => new Intl.NumberFormat("es-CO", { minimumFractionDigits: d, maximumFractionDigits: d });
