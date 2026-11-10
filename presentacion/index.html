@@ -328,16 +328,15 @@
 
 <!-- ============ 6 · VALIDACIÓN ============ -->
 <section class="slide two" style="grid-template-columns:.85fr 1.15fr; align-content:stretch;">
-  <div class="stack" style="gap:40px; justify-content:center;">
-    <div class="slide-num">03</div>
+  <div class="slide-num" style="position:absolute; top:90px; left:110px;">03</div>
+  <div class="stack" style="gap:44px; justify-content:center;">
     <h2>Primero, empatar con el DANE</h2>
     <p class="body-xl">Comparé <span data-v="val_total"></span> indicadores clave contra el boletín técnico oficial. <b><span data-v="val_ok"></span> coinciden con menos de 0,1 puntos</b> de diferencia.</p>
-    <p class="body muted">El único que se aleja es la participación de la <b><span data-v="val_max_ind"></span></b>: <span class="amber mono" data-v="val_max_dif" data-f="pp2"></span> p.p. por encima. Lo dejo visible: la credibilidad se construye mostrando también lo que no cuadra.</p>
-    <span class="caveat">banda verde = ±0,1 p.p.</span>
+    <span class="caveat" style="align-self:flex-start;">banda verde = ±0,1 p.p.</span>
   </div>
   <div class="figbox"><img class="fig" data-fig="validacion" alt="Diferencia entre el pipeline y el DANE por indicador"></div>
   <span class="src">boletín técnico EMICRON 2024 (DANE) vs. output/tablas/boletin · presentacion/data/validacion_dane.csv</span>
-  <aside class="notes">Antes de buscar patrones, hay que demostrar que los cuadros están bien hechos. Comparé diez indicadores clave contra el boletín oficial: nueve coinciden con menos de una décima de punto. El único que se aleja es la agricultura, un punto por encima, y lo dejo visible. Esto es lo que me permite confiar en lo que viene.</aside>
+  <aside class="notes">Antes de buscar patrones, hay que demostrar que los cuadros están bien hechos. Comparé diez indicadores clave contra el boletín oficial: nueve coinciden con menos de una décima de punto. El único que se aleja es la agricultura, un punto por encima, y lo dejo visible: la credibilidad se construye mostrando también lo que no cuadra. Esto es lo que me permite confiar en lo que viene.</aside>
 </section>
 
 <!-- ============ 7 · APRIORI ============ -->
