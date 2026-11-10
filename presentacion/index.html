@@ -148,6 +148,9 @@
 
   .def { display:grid; grid-template-columns:260px 1fr; gap:32px; align-items:baseline; padding:30px 0; border-top:1px solid var(--dm-line); }
   .def:last-child { border-bottom:1px solid var(--dm-line); }
+  .defs-compact .def { grid-template-columns:200px 1fr; gap:24px; padding:22px 0; }
+  .defs-compact .def .term { font-size:32px; }
+  .defs-compact .def .desc { font-size:28px; }
   .def .term { font:700 40px var(--dm-font-mono); color:var(--dm-kpi); }
   .def .desc { font:400 32px/1.4 var(--dm-font-body); }
 
@@ -340,17 +343,17 @@
 </section>
 
 <!-- ============ 7 · APRIORI ============ -->
-<section class="slide two" style="grid-template-columns:1fr 1.05fr; align-content:stretch;">
+<section class="slide two" style="grid-template-columns:.88fr 1.12fr; align-content:stretch; gap:64px;">
   <div class="stack" style="gap:30px; justify-content:center;">
-    <h2>Apriori en 60 segundos</h2>
-    <p class="body-xl">Cada negocio es una <b>canasta</b> de características: <span class="hi">sin RUT</span>, <span class="hi">usa celular</span>, <span class="hi">acepta transferencias</span>… Una regla <b>{A} ⇒ {B}</b> se mide con:</p>
-    <div>
+    <h2 style="font-size:66px; white-space:nowrap;">Apriori en 60 segundos</h2>
+    <p class="body-xl" style="font-size:32px;">Cada negocio es una <b>canasta</b> de características: <span class="hi">sin RUT</span>, <span class="hi">usa celular</span>, <span class="hi">acepta transferencias</span>… Una regla <b>{A} ⇒ {B}</b> se mide con:</p>
+    <div class="defs-compact">
       <div class="def"><span class="term">soporte</span><span class="desc">¿qué tan común es ver A y B juntos?</span></div>
       <div class="def"><span class="term">confianza</span><span class="desc">entre los que tienen A, ¿cuántos tienen B?</span></div>
-      <div class="def"><span class="term">lift</span><span class="desc">¿cuántas veces más frecuente es B entre los que tienen A que en el total? <b>1 = independencia</b></span></div>
+      <div class="def"><span class="term">lift</span><span class="desc">¿cuántas veces más frecuente es B cuando está A? <b>1 = independencia</b></span></div>
     </div>
   </div>
-  <div class="codecard" style="align-self:center; font-size:25px; line-height:1.65;">
+  <div class="codecard" style="align-self:center; font-size:22px; line-height:1.7; white-space:nowrap; overflow:hidden;">
 trans <span class="o">&lt;-</span> <span class="k">as</span>(as.data.frame(base_apr), <span class="s">"transactions"</span>)<br>
 <span class="hl">transactionInfo(trans)$weight <span class="o">&lt;-</span> pesos  <span class="c"># F_EXP</span></span>
 <br>
