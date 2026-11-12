@@ -60,4 +60,4 @@ package-lock.json
 !data/reference/*.csv
 
 # Guion personal de la charla (se sincroniza por OneDrive, no se publica)
-presentacion/GUION_*.docx
+presentacion/GUION_*
