@@ -206,6 +206,8 @@
   .cover-main h1 { font-size:84px; max-width:1240px; }
   .cover-main .lead { font-size:40px; white-space:nowrap; }
   .cover-main .body { font-size:27px; }
+  .latinr-logo { display:block; height:auto; }
+  .cover-latinr { position:absolute; top:72px; left:110px; width:280px; z-index:2; }
   .cover-qr { position:absolute; right:110px; bottom:150px; display:flex; flex-direction:column; align-items:center; z-index:1; }
   .cover-qr .qr { width:190px; height:190px; padding:14px; border-radius:16px; }
   .cover-qr .qr-lbl { font-size:20px; margin-top:10px; }
@@ -261,6 +263,7 @@
     <p class="lead">Un enfoque de datos abiertos basado en R y Quarto</p>
     <p class="body muted"><b>Daniel José Molina Barrios</b> · Economista &amp; Data Scientist · Santa Marta · Datos: EMICRON 2024 — DANE</p>
   </div>
+  <img class="latinr-logo cover-latinr" src="assets/latinr-oscuro.svg" alt="LatinR" data-latinr>
   <div class="cover-qr">
     <div class="qr"><img src="assets/qr-deck.svg" alt="QR a las diapositivas"></div>
     <div class="qr-lbl">Sigue las diapositivas<br>en tu celular</div>
@@ -534,6 +537,7 @@ clave[1, confidence_pond]<br>
 
 <!-- ============ 17 · CIERRE ============ -->
 <section class="slide center" style="row-gap:44px; padding-bottom:120px;">
+  <img class="latinr-logo" src="assets/latinr-oscuro.svg" alt="LatinR" data-latinr style="width:300px;">
   <span class="eyebrow">Economía popular · R · datos abiertos</span>
   <h1 style="font-size:68px; max-width:1480px;">Las brechas de la economía popular <span class="grad-text">no vienen solas: vienen en paquete.</span><br>Con R y datos abiertos, cualquiera puede comprobarlo.</h1>
   <div style="display:flex; gap:80px; align-items:flex-start;">
@@ -687,6 +691,8 @@ clave[1, confidence_pond]<br>
   function logos() {
     const src = document.documentElement.dataset.theme === "light" ? "assets/logo-principal.svg" : "assets/logo-blanco.svg";
     document.querySelectorAll("[data-logo]").forEach(l => l.src = src);
+    const lr = document.documentElement.dataset.theme === "light" ? "assets/latinr-claro.svg" : "assets/latinr-oscuro.svg";
+    document.querySelectorAll("[data-latinr]").forEach(l => l.src = lr);
   }
   logos();
 
